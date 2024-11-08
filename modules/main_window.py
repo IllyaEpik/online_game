@@ -1,6 +1,9 @@
 import pygame
 pygame.init()
 import modules.buttons as m_buttons
+import modules.data as m_data
+import modules.images
+
 class Screen():
     def __init__(self):
         self.clock = pygame.time.Clock()
@@ -15,7 +18,8 @@ class Screen():
                 if event.type == pygame.QUIT:
                     game = False
             self.screen.fill((255,255,255))
-            m_buttons.button.create_button(self.screen)
+            for sprite in m_data.list_blits[m_data.progression]:
+                sprite.blit(self.screen)
             pygame.display.flip()
             self.clock.tick(60)
 
