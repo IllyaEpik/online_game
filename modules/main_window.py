@@ -17,6 +17,11 @@ class Screen():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    m_buttons.input.activate(event) 
+                    m_buttons.button_start.button_start(event)
+                if event.type == pygame.KEYDOWN:
+                    m_buttons.input.edit(event)
             self.screen.fill((255,255,255))
             for sprite in m_data.list_blits[m_data.progression]:
                 sprite.blit(self.screen)

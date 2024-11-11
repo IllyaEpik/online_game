@@ -4,3 +4,4 @@ list_blits = {
     "game": []
 }
 progression = "menu"
+id = None
