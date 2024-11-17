@@ -1,7 +1,7 @@
 import pygame , socket, random
 from modules.images import Image
 import modules.data as m_data
-from modules.ships import Ship 
+from modules.ships import Ship,fill_field
 
 class Button(Image):
     def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65):
@@ -71,72 +71,93 @@ class Input(Image):
 class Auto(Image):
     def __init__(self, width: int, height: int, x: int, y: int, name='', progression: str = "pre-game"):
         super().__init__(width, height, x, y, name, progression)
-    def randomship():
-        count_ships = 0 
-        while True:
-            row = random.randint(0, 9)
-            cell = random.randint(0, 9)
-            if m_data.my_field[row][cell] ==  0:
-                ship = Ship(x = 0, y = 0, cell = cell, row = row)
-                count_ships += 1
-                m_data.my_field[row][cell] = 1
-            if count_ships == 4:
-                break
-            
-        count_ships = 0
-        while True:
-            row = random.randint(0, 9)
-            cell = random.randint(0, 9)
-            try:
-                if m_data.my_field[row][cell] ==  0: 
-                    if m_data.my_field[row][cell+1] ==  0: 
-                        m_data.my_field[row][cell] = 2
-                        m_data.my_field[row][cell+1] = 2
-                        ship = Ship(x = 0, y = 0, cell = cell, row = row, name= "2")
-                        count_ships += 1
-            except:
-                pass
-            if count_ships == 3:
-                break
-
-        count_ships = 0
-        while True:
-            row = random.randint(0, 9)
-            cell = random.randint(0, 9)
-            try:
+        self.rect = pygame.Rect(x,y,width,height)
+    def randomship(self, cor):
+        print("Hello")
+        if self.rect.collidepoint(cor):
+            count_ships = 0  
+            m_data.my_field = [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ]
+            m_data.all_ships = []
+            # for ship in m_data.all_ships:
+                
+            while True:
+                row = random.randint(0, 9)
+                cell = random.randint(0, 9)
+                rotate = random.randint(0, 4)
                 if m_data.my_field[row][cell] ==  0:
-                    if m_data.my_field[row][cell+1] ==  0:
-                        if m_data.my_field[row][cell+2] ==  0:
-                            m_data.my_field[row][cell+2] = 3
-                            m_data.my_field[row][cell+1] = 3
-                            m_data.my_field[row][cell] = 3
-                            ship = Ship(x = 0, y = 0, cell = cell, row = row, name= "3")
+                    ship = Ship(x = 59, y = 115, cell = cell, row = row, rotate = rotate * 90)
+                    count_ships += 1
+                    m_data.my_field[row][cell] = 1
+                    fill_field(m_data.my_field)
+                if count_ships == 4:
+                    break
+                
+            count_ships = 0
+            while True:
+                row = random.randint(0, 9)
+                cell = random.randint(0, 9)
+                rotate = random.randint(0, 4)
+                try: 
+
+                    if m_data.my_field[row][cell] == 0: 
+                        if m_data.my_field[row][cell+1] == 0 and rotate % 2 == 0 or m_data.my_field[row+1][cell] == 0 and rotate % 2 == 1: 
+                            ship = Ship(x = 59, y = 115, cell = cell, row = row, name= "2", rotate = rotate * 90)
                             count_ships += 1
-            except:
-                print("deniska sosiska")
-            if count_ships == 2:
-                break
-        
-        count_ships = 0
-        while True:
-            row = random.randint(0, 9)
-            cell = random.randint(0, 9)
-            try:
-                if m_data.my_field[row][cell] ==  0:
-                    if m_data.my_field[row][cell+1] ==  0:
-                        if m_data.my_field[row][cell+2] ==  0:
-                            if m_data.my_field[row][cell+3] ==  0:
-                                m_data.my_field[row][cell+3] = 4
-                                m_data.my_field[row][cell+2] = 4
-                                m_data.my_field[row][cell+1] = 4
-                                m_data.my_field[row][cell] = 4
-                                ship = Ship(x = 0, y = 0, cell = cell, row = row, name= "4")
-                                count_ships += 1
-            except:
-                pass
-            if count_ships == 1:
-                break
+                            fill_field(m_data.my_field)
+                except:
+                    pass
+                if count_ships == 3:
+                    break
 
+            count_ships = 0
+            while True:
+                row = random.randint(0, 9)
+                cell = random.randint(0, 9)
+                rotate = random.randint(0, 4)
+                try:
+                    if m_data.my_field[row][cell] == 0:
+                        if m_data.my_field[row][cell+1] == 0 and rotate % 2 == 0 or m_data.my_field[row+1][cell] == 0 and rotate % 2 == 1:
+                            if m_data.my_field[row][cell+2] == 0 and rotate % 2 == 0 or m_data.my_field[row+2][cell] == 0 and rotate % 2 == 1:
+                                ship = Ship(x = 59, y = 115, cell = cell, row = row, name= "3", rotate= rotate * 90)
+                                count_ships += 1
+                                fill_field(m_data.my_field)
+                except:
+                    pass
+                if count_ships == 2:
+                    break
+            
+            count_ships = 0
+            while True:
+                row = random.randint(0, 9)
+                cell = random.randint(0, 9)
+                rotate = random.randint(0, 4)
+                try:
+                    if m_data.my_field[row][cell] ==  0:
+                        if m_data.my_field[row][cell+1] == 0 and rotate % 2 == 0 or m_data.my_field[row+1][cell] == 0 and rotate % 2 == 1:
+                            if m_data.my_field[row][cell+2] == 0 and rotate % 2 == 0 or m_data.my_field[row+2][cell] == 0 and rotate % 2 == 1:
+                                if m_data.my_field[row][cell+3] == 0 and rotate % 2 == 0 or m_data.my_field[row+3][cell] == 0 and rotate % 2 == 1:
+                                    ship = Ship(x = 59, y = 115, cell = cell, row = row, name= "4", rotate= rotate * 90)
+                                    count_ships += 1
+                                    fill_field(m_data.my_field)
+                except:
+                    pass
+                if count_ships == 1:
+                    for row1 in m_data.my_field:
+                        print(row1)
+
+                    break
+            
 
 
 
@@ -147,3 +168,5 @@ ip = socket.gethostbyname(hostname)
 ip = Button(x = 981, y = 59, width = 281, height = 84, name = "button_start", text = ip, size = 50)
 text_ip = Button(x = 981, y = 10, width = 281, height = 45, text = "user ip", size = 50)
 m_data.list_blits["menu"].append(text_ip)
+auto = Auto(width= 170, height= 58, x= 665, y= 610)
+# m_data.list_blits["pre-game"].append(auto)

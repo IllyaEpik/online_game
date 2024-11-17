@@ -21,10 +21,14 @@ class Screen():
                     if m_data.progression != "menu":
                         for ship in m_data.all_ships:
                             ship.place(event)
+                        
                     else:
-                        m_buttons.input.activate(event) 
+                        
                         m_buttons.button_start.button_start(event)
+    
                     if m_data.progression == "pre-game":
+                        m_buttons.auto.randomship(event.pos)
+                        m_buttons.input.activate(event) 
                         for ship in m_data.all_ships:
                             ship.activate(event)
                 if event.type == pygame.KEYDOWN:

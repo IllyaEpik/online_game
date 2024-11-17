@@ -2,7 +2,7 @@ import pygame, os
 import modules.data as m_data
 
 class Image():
-    def __init__(self, width: int, height: int, x: int, y: int, name = '', progression: str= "menu"):
+    def __init__(self, width: int, height: int, x: int, y: int, name = '', progression: str = "menu", rotate = 0): 
         self.width = width
         self.height = height
         self.x = x
@@ -10,15 +10,18 @@ class Image():
         self.name = name 
         self.progression = progression
         self.image = None 
+        self.rotate = rotate
         self.update_image()
         
     def update_image(self):
         try:
             self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
-            print(self.name)
             self.image = pygame.transform.scale(self.image, (self.width, self.height))
-            print(self.name)
-
+            print(132)
+            print(self.rotate, 98799808809)
+            self.image = pygame.transform.rotate(self.image, self.rotate) 
+            print(52234234)
+            
             if self in m_data.list_blits:
                 pass
             else:
