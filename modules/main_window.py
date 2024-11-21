@@ -19,9 +19,9 @@ class Screen():
                     game = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if m_data.progression != "menu":
+                        m_buttons.rotate.button_start(event)
                         for ship in m_data.all_ships:
                             ship.place(event)
-                        
                     else:
                         
                         m_buttons.button_start.button_start(event)

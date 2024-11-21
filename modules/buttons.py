@@ -20,9 +20,17 @@ class Button(Image):
 
     def button_start(self, event):
         if self.rect.collidepoint(event.pos):
-            m_data.ip = input.TEXT.split(" ")[1]
-            m_data.progression =  "pre-game"
-            print(m_data.ip)
+            if self.function == "ship":
+                for ship in m_data.all_ships:
+                    if ship.select:
+                       ship.rotate_ship()
+                       ship.select  = False
+            else:
+                m_data.ip = input.TEXT.split(" ")[1]
+                m_data.progression =  "pre-game"
+                print(m_data.ip)
+                for row in m_data.my_field:
+                    print(row)
     def blit(self, screen):
         if self.name != "":
             Image.blit(screen=screen, self = self)
@@ -169,4 +177,5 @@ ip = Button(x = 981, y = 59, width = 281, height = 84, name = "button_start", te
 text_ip = Button(x = 981, y = 10, width = 281, height = 45, text = "user ip", size = 50)
 m_data.list_blits["menu"].append(text_ip)
 auto = Auto(width= 170, height= 58, x= 665, y= 610)
+rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "", progression= "pre-game", text= "")
 # m_data.list_blits["pre-game"].append(auto)
