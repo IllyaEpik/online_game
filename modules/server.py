@@ -9,6 +9,7 @@ import modules.ships as m_ships
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
 # ip = "127.0.0.1"
+# ip = '46.118.25.208'
 print(ip)
 print(hostname)
 def activate():
@@ -21,7 +22,7 @@ def activate():
         data = client_data[-1].split(":")
         if data[0] == "field":
             data = data[1].split(" ")
-            for ship in data: 
+            for ship in data:
                 splited_data = ship.split(",")
                 m_ships.Ship(x = 724,y = 166,
                              field_cor = (724,166),

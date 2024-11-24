@@ -3,14 +3,16 @@ import socket, io,threading, pygame
 
 # client_screen = Screen().run()
 clock = pygame.time.Clock()
-client = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
 def activate():
+    global client
+    client = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
     
     # with socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM) as client:
-    client.connect((m_data.ip, 8800))
     ships = "field:"
     for ship in m_data.all_ships:
         ships += f"{ship.name},{ship.row},{ship.cell},{ship.rotate} "
+    print(m_data.ip)
+    client.connect((m_data.ip, 8800))
     send(ships.encode())
     # [['1',9,6], ['2',1,1]]# "'1',9,6 '2',1,1"
 

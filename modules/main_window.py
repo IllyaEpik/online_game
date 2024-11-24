@@ -19,7 +19,7 @@ class Screen():
                 if event.type == pygame.QUIT:
                     game = False
                     m_client.client.close()
-                    
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if m_data.progression != "menu":
                         m_buttons.rotate.button_start(event)
@@ -27,13 +27,13 @@ class Screen():
                             ship.place(event.pos)
                             print(ship.row)
                     else:
-                        
+                        m_buttons.input.activate(event) 
                         m_buttons.button_start.button_start(event)
     
                     if m_data.progression == "pre-game":
                         m_buttons.play.button_start(event)
                         m_buttons.auto.randomship(event.pos)
-                        m_buttons.input.activate(event) 
+                        
                         for ship in m_data.all_ships:
                             ship.activate(event)
                 if event.type == pygame.KEYDOWN:
