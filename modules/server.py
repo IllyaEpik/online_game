@@ -19,17 +19,23 @@ def activate():
         client = server.accept()
         print("Acept_Client")
         client_data = client[0].recv(1024).decode()
-        data = client_data[-1].split(":")
+        print('1231212312312123')
+        print(client_data)
+        data = client_data.split(":")
+        print('GOOD')
         if data[0] == "field":
+            print('GOOD1')
             data = data[1].split(" ")
             for ship in data:
                 splited_data = ship.split(",")
-                m_ships.Ship(x = 724,y = 166,
-                             field_cor = (724,166),
+                print('create ship')
+                print(splited_data)
+                m_ships.Ship(x = 724,y = 115,
+                             field_cor = (724,115),
                              name  = splited_data[0],
-                             row = splited_data[1],
-                             cell = splited_data[2],
-                             rotate = splited_data[3])
+                             row = int(splited_data[1]),
+                             cell = int(splited_data[2]),
+                             rotate = int(splited_data[3]))
         m_data.enemy_data.append(client_data)
         
 # 127.0.0.1

@@ -39,7 +39,7 @@ class Button(Image):
                     
                     m_data.progression = "game"
                     threading.Thread(target = m_server.activate).start()
-                    m_client.activate()
+                    threading.Thread(target = m_client.activate).start()
             else:
                 m_data.ip = input.TEXT.split(" ")[1]
                 m_data.progression =  "pre-game"
