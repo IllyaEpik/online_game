@@ -1,6 +1,9 @@
 import pygame , socket, random
 from modules.images import Image
 import modules.data as m_data
+import modules.client as m_client 
+import modules.server as m_server
+import threading
 from modules.ships import Ship,fill_field
 
 class Button(Image):
@@ -25,6 +28,18 @@ class Button(Image):
                     if ship.select:
                        ship.rotate_ship()
                        ship.select  = False
+            elif self.function == "play":
+                yes_no = True
+                for row in m_data.cells:
+                    for cell in m_data.cells[row]:
+                        if cell[1]:
+                            yes_no =  False
+                            
+                if yes_no:
+                    
+                    m_data.progression = "game"
+                    m_client.activate()
+                    threading.Thread(target = m_server.activate).start()
             else:
                 m_data.ip = input.TEXT.split(" ")[1]
                 m_data.progression =  "pre-game"
@@ -83,6 +98,7 @@ class Auto(Image):
     def randomship(self, cor):
         print("Hello")
         if self.rect.collidepoint(cor):
+            count = 0
             count_ships = 0  
             m_data.my_field = [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -97,18 +113,22 @@ class Auto(Image):
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
             m_data.all_ships = []
+            for row in m_data.cells:
+                for cell in m_data.cells[row]:
+                    cell[1] =  False
             # for ship in m_data.all_ships:
                 
             while True:
                 row = random.randint(0, 9)
                 cell = random.randint(0, 9)
                 rotate = random.randint(0, 4)
+                count += 1
                 if m_data.my_field[row][cell] ==  0:
                     ship = Ship(x = 59, y = 115, cell = cell, row = row, rotate = rotate * 90)
                     count_ships += 1
                     m_data.my_field[row][cell] = 1
                     fill_field(m_data.my_field)
-                if count_ships == 4:
+                if count_ships == 4 or count > 1000:
                     break
                 
             count_ships = 0
@@ -116,6 +136,7 @@ class Auto(Image):
                 row = random.randint(0, 9)
                 cell = random.randint(0, 9)
                 rotate = random.randint(0, 4)
+                count += 1
                 try: 
 
                     if m_data.my_field[row][cell] == 0: 
@@ -125,7 +146,7 @@ class Auto(Image):
                             fill_field(m_data.my_field)
                 except:
                     pass
-                if count_ships == 3:
+                if count_ships == 3 or count > 1000:
                     break
 
             count_ships = 0
@@ -133,6 +154,7 @@ class Auto(Image):
                 row = random.randint(0, 9)
                 cell = random.randint(0, 9)
                 rotate = random.randint(0, 4)
+                count += 1
                 try:
                     if m_data.my_field[row][cell] == 0:
                         if m_data.my_field[row][cell+1] == 0 and rotate % 2 == 0 or m_data.my_field[row+1][cell] == 0 and rotate % 2 == 1:
@@ -142,7 +164,7 @@ class Auto(Image):
                                 fill_field(m_data.my_field)
                 except:
                     pass
-                if count_ships == 2:
+                if count_ships == 2 or count > 1000:
                     break
             
             count_ships = 0
@@ -150,6 +172,7 @@ class Auto(Image):
                 row = random.randint(0, 9)
                 cell = random.randint(0, 9)
                 rotate = random.randint(0, 4)
+                count += 1
                 try:
                     if m_data.my_field[row][cell] ==  0:
                         if m_data.my_field[row][cell+1] == 0 and rotate % 2 == 0 or m_data.my_field[row+1][cell] == 0 and rotate % 2 == 1:
@@ -160,12 +183,13 @@ class Auto(Image):
                                     fill_field(m_data.my_field)
                 except:
                     pass
-                if count_ships == 1:
+                if count_ships == 1 or count > 1000:
                     for row1 in m_data.my_field:
                         print(row1)
 
                     break
-            
+            if count > 1000:
+                self.randomship(cor)
 
 
 
@@ -178,4 +202,5 @@ text_ip = Button(x = 981, y = 10, width = 281, height = 45, text = "user ip", si
 m_data.list_blits["menu"].append(text_ip)
 auto = Auto(width= 170, height= 58, x= 665, y= 610)
 rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "", progression= "pre-game", text= "")
+play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60)
 # m_data.list_blits["pre-game"].append(auto)

@@ -58,15 +58,18 @@ class Ship(m_images.Image):
             self.update_image()
         else: 
             self.rotate -= 90
+            self.select = True
         for count in range(int(self.name[0])):
             if self.rotate % 180 == 0:
                 m_data.my_field[self.row][self.cell+count] = int(self.name[0])
+                
             else:
                 m_data.my_field[self.row+count][self.cell] = int(self.name[0])
         
-    def place(self, event):
+    def place(self, pos):
+        print(pos)
         if self.select:
-            print(self.field.collidepoint(event.pos))
+            print(self.field.collidepoint(pos))
             for row in range(10):
                 for cell in range(10):
                     if m_data.my_field[row][cell] == 5:
@@ -83,14 +86,14 @@ class Ship(m_images.Image):
                                     m_data.my_field[self.row][self.cell+count] = int(self.name[0])
                                 else:
                                     m_data.my_field[self.row+count][self.cell] = int(self.name[0])
-                        except:print("копибара")
+                        except:print("капибара")
                         # m_data.my_field[row][cell] = 0
                     if m_data.my_field[row][cell] == 0:
                         rect = pygame.Rect(
                             self.field_cor[0] + cell * 55.7,
                             self.field_cor[1] + row * 55.7,
                             55.7,55.7)
-                        if rect.collidepoint(event.pos):
+                        if rect.collidepoint(pos):
                             for count in range(int(self.name[0])):
                                 if self.rotate % 180 == 0:
                                     m_data.my_field[self.row][self.cell+count] = 0
@@ -125,7 +128,7 @@ class Ship(m_images.Image):
                     self.celled = count
                     self.rect = pygame.Rect(self.x, self.y,self.width,self.height)
                     for row in m_data.my_field:
-                         print(row)      
+                        print(row)      
                     break
                 count += 1 
             # if self.field_cor[0] + 10 * 55.7 > cor[0]:
@@ -160,8 +163,21 @@ def clear_field(field):
         for cell in range(10):
             if field[row][cell] == 5:
                 field[row][cell] = 0
+size_ship = "1"
+for count in range(10):
+    ship = Ship(x = 59, y = 115, name = size_ship)
+    ship.select = True
+    ship.place((684, 220))
+    ship.select = False
+    if count == 3:
+        size_ship = "2"
+    if count == 6:
+        size_ship = "3"
+    if count == 8:
+        size_ship = "4"
 
-ship1 = Ship(x = 59, y = 115, cell = 8, row = 1)
-ship2 = Ship(x = 59, y = 115, cell = 5, row = 2)
-ship3 = Ship(x = 59, y = 115, cell = 2, row = 3)
+# ship1 = Ship(x = 59, y = 115, cell = 8, row = 1)
+# ship2 = Ship(x = 59, y = 115, cell = 5, row = 2)
+# ship3 = Ship(x = 59, y = 115, cell = 2, row = 3)
 fill_field(m_data.my_field)
+ship.place((1,1))

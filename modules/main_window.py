@@ -3,6 +3,7 @@ pygame.init()
 import modules.buttons as m_buttons
 import modules.data as m_data
 import modules.images
+import modules.client as m_client
 import modules.ships as m_ships
 class Screen():
     def __init__(self):
@@ -17,16 +18,20 @@ class Screen():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
+                    m_client.client.close()
+                    
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if m_data.progression != "menu":
                         m_buttons.rotate.button_start(event)
                         for ship in m_data.all_ships:
-                            ship.place(event)
+                            ship.place(event.pos)
+                            print(ship.row)
                     else:
                         
                         m_buttons.button_start.button_start(event)
     
                     if m_data.progression == "pre-game":
+                        m_buttons.play.button_start(event)
                         m_buttons.auto.randomship(event.pos)
                         m_buttons.input.activate(event) 
                         for ship in m_data.all_ships:
