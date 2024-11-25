@@ -14,29 +14,48 @@ print(ip)
 print(hostname)
 def activate():
     with socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM) as server:
+
         server.bind((f"{ip}", 8800))
         server.listen()
         client = server.accept()
         print("Acept_Client")
-        client_data = client[0].recv(1024).decode()
-        print('1231212312312123')
-        print(client_data)
-        data = client_data.split(":")
-        print('GOOD')
-        if data[0] == "field":
-            print('GOOD1')
-            data = data[1].split(" ")
-            for ship in data:
-                splited_data = ship.split(",")
-                print('create ship')
-                print(splited_data)
-                m_ships.Ship(x = 724,y = 115,
-                             field_cor = (724,115),
-                             name  = splited_data[0],
-                             row = int(splited_data[1]),
-                             cell = int(splited_data[2]),
-                             rotate = int(splited_data[3]))
-        m_data.enemy_data.append(client_data)
-        
+        while True:
+            client_data = client[0].recv(1024).decode()
+            # print('1231212312312123')
+            print(client_data)
+            data = client_data.split(":")
+            # print('GOOD')
+            if data[0] == "field":
+                # print('GOOD1')
+                data = data[1].split(" ")
+                for ship in data:
+                    splited_data = ship.split(",")
+                    if splited_data != [""]:
+                        
+                        print('create ship')
+                        print(splited_data)
+                        ship = m_ships.Ship(x = 724,y = 115,
+                                    field_cor = (724,115),
+                                    name  = splited_data[0],
+                                    row = int(splited_data[1]),
+                                    cell = int(splited_data[2]),
+                                    rotate = int(splited_data[3]),
+                                    add = False)
+                        for count in range(int(ship.name[0])):
+                            if ship.rotate % 180 == 0:
+                                
+                                m_data.enemy_field[ship.row][ship.cell+count] = int(ship.name[0])
+                            else:
+                                m_data.enemy_field[ship.row+count][ship.cell] = int(ship.name[0])
+
+                        m_data.enemy_ships.append(ship)
+
+                for row in m_data.enemy_field:
+                    print(row)
+            elif data[0] == "attack":
+                print("attack_get")
+
+                m_data.turn = True
+            m_data.enemy_data.append(client_data)
 # 127.0.0.1
 # activate()

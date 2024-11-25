@@ -3,14 +3,15 @@ import modules.data as m_data
 import pygame 
 
 class Ship(m_images.Image):
-    def __init__(self, x: int, y: int, name='1', row = 0, cell = 0, field_cor = [59, 115], rotate = 0):
+    def __init__(self, x: int, y: int, name='1', row = 0, cell = 0, field_cor = [59, 115], rotate = 0,add = True):
         self.width = int(name[0]) * 50
         self.height = 50
         print(self.height)
         super().__init__(self.width, self.height, x, y, name, "F", rotate)
         self.x += (cell * 55.7)
         self.y += (row * 55.7)
-        m_data.all_ships.append(self)
+        if add :
+            m_data.all_ships.append(self)
         print(self.y)
         self.select = False
         self.row = row
@@ -32,6 +33,7 @@ class Ship(m_images.Image):
             self.select = True
             print('eqw')
         else:
+            self.place(event.pos)
             self.select = False
 
     def rotate_ship(self): 
@@ -56,9 +58,13 @@ class Ship(m_images.Image):
         except:no_yes = False
         if no_yes: 
             self.update_image()
+            if self.rotate%180 ==0 :
+                self.rect = pygame.Rect(self.x, self.y,self.width,self.height)
+            else: 
+                self.rect = pygame.Rect(self.x, self.y,self.height,self.width)
         else: 
             self.rotate -= 90
-            self.select = True
+            # self.select = True
         for count in range(int(self.name[0])):
             if self.rotate % 180 == 0:
                 m_data.my_field[self.row][self.cell+count] = int(self.name[0])
@@ -67,15 +73,28 @@ class Ship(m_images.Image):
                 m_data.my_field[self.row+count][self.cell] = int(self.name[0])
         
     def place(self, pos):
-        print(pos)
+        # print(pos)
         if self.select:
             print(self.field.collidepoint(pos))
             for row in range(10):
                 for cell in range(10):
-                    if m_data.my_field[row][cell] == 5:
-                        try:
+                    
+                    #if m_data.my_field[row][cell] == 5:
+                    yes_no = False
+                    try:
+                        yes_no_1 = True
+                        for count in range(int(self.name[0])):
+                            # print(count,(self.name[0]),row,cell)
+                            if self.rotate % 180 == 0:
+                                if m_data.my_field[row][cell+count] != 0 and m_data.my_field[row][cell+count] != 5 :
+                                    yes_no_1 = False    
+                            else:                                
+                                if m_data.my_field[row][cell+count] != 0 and m_data.my_field[row][cell+count] != 5:
+                                    yes_no_1 = False   
+                        if yes_no_1:
+
                             for count in range(int(self.name[0])):
-                                print(count,(self.name[0]),row,cell)
+                                # print(count,(self.name[0]),row,cell)
                                 if self.rotate % 180 == 0:
                                     m_data.my_field[self.row][self.cell+count] = 0
                                 else:
@@ -86,9 +105,21 @@ class Ship(m_images.Image):
                                     m_data.my_field[self.row][self.cell+count] = int(self.name[0])
                                 else:
                                     m_data.my_field[self.row+count][self.cell] = int(self.name[0])
-                        except:print("капибара")
+                            yes_no_1 = True
+                            for count in range(int(self.name[0])):
+                            # print(count,(self.name[0]),row,cell)
+                                if self.rotate % 180 == 0:
+                                    if m_data.my_field[row][cell+count] != 0:
+                                        yes_no_1 = False    
+                                else:                                
+                                    if m_data.my_field[row][cell+count] != 0:
+                                        yes_no_1 = False   
+                            yes_no = True
+                    except:print("капибара")
+                    # try:
                         # m_data.my_field[row][cell] = 0
-                    if m_data.my_field[row][cell] == 0:
+                    # except:
+                    if yes_no:
                         rect = pygame.Rect(
                             self.field_cor[0] + cell * 55.7,
                             self.field_cor[1] + row * 55.7,
@@ -114,17 +145,19 @@ class Ship(m_images.Image):
                                     m_data.my_field[row+count][cell] = int(self.name[0])
                             self.select = False
                             fill_field(m_data.my_field)
+                            
                             for row in m_data.my_field:
                                 print(row)
                             return True
             count = 0
+            # print(int(self.name[0])
             for cell1 in m_data.cells[self.name[0]]:
                 print(cell1)
                 if not cell1[0]:
                     cell1[0] = True
                     self.x = cell1[1][0]
                     self.y = cell1[1][1]
-                    m_data.my_field[row][cell] = 0 
+                    m_data.my_field[self.row][self.cell] = 0 
                     self.celled = count
                     self.rect = pygame.Rect(self.x, self.y,self.width,self.height)
                     for row in m_data.my_field:
@@ -133,6 +166,7 @@ class Ship(m_images.Image):
                 count += 1 
             # if self.field_cor[0] + 10 * 55.7 > cor[0]:
             #     pax = 59, y = 115ss
+    print(m_data.cells)
     for row in m_data.my_field:
         print(row)
 def check(field, row, cell):

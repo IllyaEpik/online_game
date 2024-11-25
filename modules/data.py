@@ -7,6 +7,7 @@ progression = "menu"
 ip = None
 enemy_data = []
 all_ships = []
+enemy_ships = []
 my_field = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -31,6 +32,7 @@ enemy_field = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
+turn = True
 cells = {
     "1":[
         [False, [728, 450]],

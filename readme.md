@@ -2,6 +2,7 @@
 
 + os 
 + pillow
-+ io
++ random
++ threading
 + pygame
 + socket

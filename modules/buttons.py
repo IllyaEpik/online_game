@@ -22,6 +22,7 @@ class Button(Image):
         self.rect = pygame.Rect(x,y,width,height)
 
     def button_start(self, event):
+        print(self.rect)
         if self.rect.collidepoint(event.pos):
             if self.function == "ship":
                 for ship in m_data.all_ships:
@@ -29,17 +30,18 @@ class Button(Image):
                        ship.rotate_ship()
                        ship.select  = False
             elif self.function == "play":
+                print('132312312sdf')
                 yes_no = True
                 for row in m_data.cells:
                     for cell in m_data.cells[row]:
-                        if cell[1]:
+                        if cell[0]:
                             yes_no =  False
                             
                 if yes_no:
                     
                     m_data.progression = "game"
-                    threading.Thread(target = m_server.activate).start()
                     threading.Thread(target = m_client.activate).start()
+                    threading.Thread(target = m_server.activate,daemon=True).start()
             else:
                 m_data.ip = input.TEXT.split(" ")[1]
                 m_data.progression =  "pre-game"
@@ -115,7 +117,7 @@ class Auto(Image):
             m_data.all_ships = []
             for row in m_data.cells:
                 for cell in m_data.cells[row]:
-                    cell[1] =  False
+                    cell[0] =  False
             # for ship in m_data.all_ships:
                 
             while True:
