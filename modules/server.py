@@ -54,8 +54,46 @@ def activate():
                     print(row)
             elif data[0] == "attack":
                 print("attack_get")
+                pos = data[1].split(" ")[0].split(",")
+                pos = [int(pos[0]), int(pos[1])]
+                if data[1].split(" ")[-1] == "miss":
+                    m_data.turn = True
+                    m_data.my_field[pos[0]][pos[1]] = 7
+                else:
+                    m_data.my_field[pos[0]][pos[1]] = 6
+                    
+                    for ship in m_data.enemy_ships:
+                        ship.check_enemy()
+                    explosions = []
+                    
+                    for ship in m_data.enemy_ships:
+                        if ship in m_data.all_ships:
+                            cells = []
+                            for count in range(int(ship.name[0])):
+                                if ship.rotate %180 == 0 and m_data.my_field[ship.row][ship.cell+count] != int(ship.name[0]):
+                                    cells.append([ship.row, ship.cell+count])
+                                
+                                elif ship.rotate %180 != 0 and m_data.my_field[ship.row+count][ship.cell] != int(ship.name[0]):
+                                    cells.append([ship.row+count, ship.cell])
+                            for explosion in m_data.list_explosions:
+                                # [1 3] 
+                                # 1 == [1,1]
+                                for celll in cells:
+                                    print(explosion[1], celll[0], explosion[2], celll[1])
+                                    
 
-                m_data.turn = True
+                                    if explosion[1] == celll[0] and explosion[2] == celll[1]:
+                                        explosions += [explosion[0]]
+                                
+                    for ex in explosions:
+                        try:
+                            m_data.list_blits['game'].remove(ex)
+                        except:
+                            pass
+                        # m_data.list_explosions.remove(ex)
+                        
+                #     m_data.turn = False
+                
             m_data.enemy_data.append(client_data)
 # 127.0.0.1
 # activate()

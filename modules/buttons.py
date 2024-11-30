@@ -1,59 +1,85 @@
-import pygame , socket, random
+# імпорт чужих модулів для роботи
+import pygame , socket
+import threading, random
+# імпорт наших модулів
 from modules.images import Image
 import modules.data as m_data
 import modules.client as m_client 
 import modules.server as m_server
-import threading
 from modules.ships import Ship,fill_field
-
+# класс з кнопками
 class Button(Image):
+    # метод з створенням параметрів
     def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65):
+        # задаємо параметри в класс зображень
         Image.__init__(self, width=width, height=height, x=x, y=y, name=name, progression=progression)
+        # переносимо параметри в змінні
         self.WIDTH_BUT = width
         self.HEIGHT_BUT = height
         self.X = x
         self.Y = y
         self.function = fun
-        self.X_text = 497
-        self.Y_text = 350
+        self.TEXT = text  
+        # створюємо параметри
         self.COLOR = (0, 0, 0)
         self.FONT = pygame.font.SysFont("OldEnglishText", size)
-        self.TEXT = text  
         self.rect = pygame.Rect(x,y,width,height)
-
+    # метод з кнопкою старт
     def button_start(self, event):
-        print(self.rect)
+        # якщо кнопка натиснута
         if self.rect.collidepoint(event.pos):
+            # якщо функція корабль то
             if self.function == "ship":
+                # цикл для всіх кораблів
                 for ship in m_data.all_ships:
+                    # якщо корабль виділен
                     if ship.select:
+                        # поворот корабля   
                        ship.rotate_ship()
+                        # виділення корабля
                        ship.select  = False
+            # інакше функція гра
             elif self.function == "play":
-                print('132312312sdf')
+
+                # змінна да_ні дорівнює правді
                 yes_no = True
+                # цикл для стандартних клітинок
                 for row in m_data.cells:
+                    # цикл для клітинок в ряду
                     for cell in m_data.cells[row]:
+                        # якщо кораблі не розставлені
                         if cell[0]:
+                            # змінна да_ні змінюється на неправду 
                             yes_no =  False
-                            
+                # якщо всі кораблі розставлені
                 if yes_no:
-                    
+                    # переходимо в гру
                     m_data.progression = "game"
+                    # активує клієнта одночасно з роботою кода
                     threading.Thread(target = m_client.activate).start()
+                    # активує сервер
                     threading.Thread(target = m_server.activate,daemon=True).start()
             else:
+                # записання ip 
                 m_data.ip = input.TEXT.split(" ")[1]
+                # перехід в пре-гру
                 m_data.progression =  "pre-game"
-                print(m_data.ip)
-                for row in m_data.my_field:
-                    print(row)
+                
+                # for row in m_data.my_field:
+                #     print(row)
+    # метод відображення поверхні на головному окні
     def blit(self, screen):
+        # якщо картинка задана 
         if self.name != "":
+            # відображення картинки
             Image.blit(screen=screen, self = self)
+        # задання розміру для тексту
         size = self.FONT.size(self.TEXT)
+        # задаємо y для тексту
         y = self.y + self.height/2-size[1]/2
+        # задаємо x для тексту
         x = self.x + self.width/2-size[0]/2
+        # відображення тексту на екрані
         screen.blit(self.FONT.render(self.TEXT,True,(0,0,0)), (x, y))
 
 # button = Button()

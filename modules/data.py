@@ -8,6 +8,8 @@ ip = None
 enemy_data = []
 all_ships = []
 enemy_ships = []
+list_explosions = []
+
 my_field = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
