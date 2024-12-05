@@ -24,5 +24,5 @@ class Audio():
             # якщо буде помилка при завантаженні, виводимо повідомлення про помилку
             print("Error: audio")
 track = Audio('Soundtrack')
-track.play()
+# track.play()
 # explosion = Audio('blas',0)

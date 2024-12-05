@@ -23,12 +23,40 @@ def attack(pos: tuple):
                         name = "explosion"
                         m_client.send(f"attack:{row},{cell} explosion".encode())
                         m_data.enemy_field[row][cell] = 6
+                        for ship in m_data.enemy_ships:
+                            ship.check_enemy()
+                        explosions = []
                         
+                        for ship in m_data.enemy_ships:
+                            if ship in m_data.all_ships:
+                                cells = []
+                                for count in range(int(ship.name[0])):
+                                    if ship.rotate %180 == 0 and m_data.my_field[ship.row][ship.cell+count] != int(ship.name[0]):
+                                        cells.append([ship.row, ship.cell+count])
+                                    
+                                    elif ship.rotate %180 != 0 and m_data.my_field[ship.row+count][ship.cell] != int(ship.name[0]):
+                                        cells.append([ship.row+count, ship.cell])
+                                for explosion in m_data.list_explosions:
+                                    # [1 3] 
+                                    # 1 == [1,1]
+                                    for celll in cells:
+                                        print(explosion[1], celll[0], explosion[2], celll[1])
+                                        
+
+                                        if explosion[1] == celll[0] and explosion[2] == celll[1]:
+                                            explosions += [explosion[0]]
+                                    
+                        for ex in explosions:
+                            try:
+                                m_data.list_blits['game'].remove(ex)
+                            except:
+                                pass
                     elif str(m_data.enemy_field[row][cell]) in list_miss:
                         m_data.enemy_field[row][cell] = 7
                         name = "miss"
                         m_data.turn = False
                         m_client.send(f"attack:{row},{cell} miss".encode())
+                    
                     if name:
                         image = m_images.Image(
                             progression = "game",

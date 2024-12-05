@@ -1,5 +1,5 @@
 import modules.data as m_data 
-import socket, pygame
+import socket
 
 # создамо функцію для відправкм даних на сервер
 def send(data):

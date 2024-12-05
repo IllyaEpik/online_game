@@ -1,5 +1,5 @@
 # імпортуємо модуль pygame
-import pygame
+import pygame,threading
 # ініціалізуємо pygame
 pygame.init()
 # імпортуємо наші модулі 
@@ -9,6 +9,7 @@ import modules.images
 import modules.client as m_client
 import modules.ships as m_ships
 import modules.attack as m_attack
+import modules.server as m_server
 # 
 class Screen():
     # ініціалізуємо screen
@@ -69,6 +70,15 @@ class Screen():
                 if event.type == pygame.KEYDOWN:
                     # додає символи до input
                     m_buttons.input.edit(event)
+                    # активує клієнта одночасно з роботою кода
+                    print(event.key)
+                    if event.key == pygame.K_c:
+                        print('good')
+                        threading.Thread(target = m_client.activate).start()
+                    if event.key == pygame.K_s:
+                        print('asd')
+                        # активує сервер
+                        threading.Thread(target = m_server.activate,daemon=True).start()
             # цикл відображення всього що є в списку
             for sprite in m_data.list_blits[m_data.progression]:
                 # відображення елементу

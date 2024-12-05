@@ -55,16 +55,14 @@ class Button(Image):
                 if yes_no:
                     # переходимо в гру
                     m_data.progression = "game"
-                    # активує клієнта одночасно з роботою кода
-                    print('good')
-                    threading.Thread(target = m_client.activate).start()
-                    print('asd')
-                    # активує сервер
-                    threading.Thread(target = m_server.activate,daemon=True).start()
+                    
             else:
                 # записання ip d
                 m_data.ip = input.TEXT.split(" ")[1]
-                # перехід в пре-гру
+                if m_data.ip == "":
+                    m_data.ip = m_server.ip
+                    
+                # перехід в пре-гру"
                 m_data.progression =  "pre-game"
                 
                 # for row in m_data.my_field:
