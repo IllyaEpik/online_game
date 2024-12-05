@@ -3,7 +3,7 @@ import pygame, os
 # ініцілізуємо звук
 pygame.mixer.init()
 # встановлємо гучність для відтворення музики
-pygame.mixer.music.set_volume(1)
+pygame.mixer.music.set_volume(0.5)
 # створення класу для роботи з аудіо
 class Audio():
     # ініцілізуємо клас аудіо 

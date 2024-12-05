@@ -134,7 +134,7 @@ class Ship(m_images.Image):
                                 if m_data.my_field[row][cell + count] != 0 and m_data.my_field[row][cell + count] != 5:
                                     yes_no_1 = False    
                             else:                                 
-                                if m_data.my_field[row][cell + count] != 0 and m_data.my_field[row][cell + count] != 5:
+                                if m_data.my_field[row + count][cell] != 0 and m_data.my_field[row + count][cell] != 5:
                                     yes_no_1 = False   
                         if yes_no_1:
                             for count in range(int(self.name[0])):
@@ -154,7 +154,7 @@ class Ship(m_images.Image):
                                     if m_data.my_field[row][cell + count] != 0:
                                         yes_no_1 = False    
                                 else:                                 
-                                    if m_data.my_field[row][cell + count] != 0:
+                                    if m_data.my_field[row + count][cell] != 0:
                                         yes_no_1 = False   
                             yes_no = True
                     except:
