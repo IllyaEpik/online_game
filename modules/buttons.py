@@ -56,11 +56,13 @@ class Button(Image):
                     # переходимо в гру
                     m_data.progression = "game"
                     # активує клієнта одночасно з роботою кода
+                    print('good')
                     threading.Thread(target = m_client.activate).start()
+                    print('asd')
                     # активує сервер
                     threading.Thread(target = m_server.activate,daemon=True).start()
             else:
-                # записання ip 
+                # записання ip d
                 m_data.ip = input.TEXT.split(" ")[1]
                 # перехід в пре-гру
                 m_data.progression =  "pre-game"
@@ -84,7 +86,7 @@ class Button(Image):
 
 # button = Button()
 class Input(Image):
-    def __init__(self, width: int, height: int,x = 0,y = 0, name = "", progression = "menu", color = (0,0,0), text = "id: "):
+    def __init__(self, width: int, height: int,x = 0,y = 0, name = "", progression = "menu", color = (0,0,0), text = "ip: "):
         Image.__init__(self, width=width, height=height, x=x, y=y, name=name, progression=progression)
         self.COLOR = color
         self.FONT = pygame.font.SysFont("OldEnglishText", 65)
@@ -106,7 +108,7 @@ class Input(Image):
             self.enter = True
         else:
             self.enter = False
-        print(self.enter)
+        # print(self.enter)
     def edit(self,event):
         if self.enter:
             key = pygame.key.name(event.key)
@@ -124,7 +126,7 @@ class Auto(Image):
         super().__init__(width, height, x, y, name, progression)
         self.rect = pygame.Rect(x,y,width,height)
     def randomship(self, cor):
-        print("Hello")
+        # print("Hello")
         if self.rect.collidepoint(cor):
             count = 0
             count_ships = 0  

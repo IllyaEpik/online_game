@@ -2,6 +2,7 @@ import pygame
 import modules.data as m_data
 import modules.images as m_images
 import modules.client as m_client
+import modules.audio as m_audio
 list_miss = "05"
 list_explosion = "1234"
 def attack(pos: tuple):
@@ -39,5 +40,6 @@ def attack(pos: tuple):
                         )
                         if name == 'explosion':
                             print(image, row, cell)
+                            # m_audio.explosion.play()
                             m_data.list_explosions.append([image, row, cell])
-                        
+                            # m_audio.track.play()

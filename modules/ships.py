@@ -11,7 +11,7 @@ class Ship(m_images.Image):
         # Розміри корабля залежать від його імені (перший символ - це кількість клітин корабля)
         self.width = int(name[0]) * 50
         self.height = 50
-        print(self.height)
+        # print(self.height)
         # Викликаємо конструктор батьківського класу (Image) для ініціалізації зображення
         super().__init__(self.width, self.height, x, y, name, "F", rotate)
         # Встановлюємо нові координати для корабля на полі
@@ -20,7 +20,7 @@ class Ship(m_images.Image):
         # Якщо корабель треба додати, додаємо його до загального списку кораблів
         if add:
             m_data.all_ships.append(self)
-        print(self.y)
+        # print(self.y)
         # Ініціалізація деяких змінних
         self.select = False  # Перевірка, чи вибрано корабель
         self.row = row
@@ -57,11 +57,11 @@ class Ship(m_images.Image):
             else:
                 m_data.all_ships.append(self)
                 field = m_data.enemy_field
-                print(cells)
+                # print(cells)
                 for celll in cells:
                     row = celll[0]
                     cell = celll[1]
-                    print(row, cell)
+                    # print(row, cell)
                     fill_field(m_data.enemy_field)
                     check(field=field, row=row + 1, cell=cell + 1, values=[5, 7])
                     check(field=field, row=row - 1, cell=cell - 1, values=[5, 7])
@@ -76,13 +76,13 @@ class Ship(m_images.Image):
     def activate(self, event):
         if self.rect.collidepoint(event.pos):
             self.select = True
-            print('eqw')
+            # print('eqw')
         else:
             self.place(event.pos)
             self.select = False
     # Метод для обертання корабля
     def rotate_ship(self):
-        print(2132132312123123231213231)
+        # print(2132132312123123231213231)
         # Очищаємо місце для нового положення корабля на полі
         for count in range(int(self.name[0])):
             if self.rotate % 180 == 0:
@@ -123,7 +123,7 @@ class Ship(m_images.Image):
     # Метод для зміщення корабля на нову позицію
     def place(self, pos):
         if self.select:
-            print(self.field.collidepoint(pos))
+            # print(self.field.collidepoint(pos))
             for row in range(10):
                 for cell in range(10):
                     yes_no = False
@@ -158,7 +158,8 @@ class Ship(m_images.Image):
                                         yes_no_1 = False   
                             yes_no = True
                     except:
-                        print("капибара")
+                        pass
+                        # print("капибара")
                     if yes_no:
                         rect = pygame.Rect(
                             self.field_cor[0] + cell * 55.7,
@@ -188,7 +189,7 @@ class Ship(m_images.Image):
                             return True
             count = 0
             for cell1 in m_data.cells[self.name[0]]:
-                print(cell1)
+                # print(cell1)
                 if not cell1[0]:
                     cell1[0] = True
                     self.x = cell1[1][0]
@@ -200,7 +201,7 @@ class Ship(m_images.Image):
                         print(row)      
                     break
                 count += 1 
-    print(m_data.cells)
+    # print(m_data.cells)
     for row in m_data.my_field:
         print(row)
 # Функція перевірки на полі для кожної клітинки
@@ -211,7 +212,7 @@ def check(field, row, cell, values=[0, 5]):
             if field[row][cell] == values[0]:
                 field[row][cell] = values[1]
                 if values[1] == 7:
-                    print(11)
+                    # print(11)
                     image = m_images.Image(
                         progression="game",
                         name="miss",

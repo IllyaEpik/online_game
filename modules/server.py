@@ -1,23 +1,34 @@
 import socket
 import modules.data as m_data
-import threading 
 import modules.ships as m_ships
 # from .main_window import Screen
 
 # server_screen = Screen().run()
 # server = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
-hostname = socket.gethostname()
-ip = socket.gethostbyname(hostname)
+# hostname = socket.gethostname()
+# ip = socket.gethostbyname(hostname)
 # ip = "127.0.0.1"
 # ip = '46.118.25.208'
-print(ip)
-print(hostname)
+# print(ip)
+# print(hostname)
+print(socket.SO_KEEPALIVE,'132123132321132132132')
 def activate():
+    print('cool')
     with socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM) as server:
-
+        print('cool1')
+        hostname = socket.gethostname()
+        print('cool2')
+        ip = socket.gethostbyname(hostname)
+        print('cool3')
         server.bind((f"{ip}", 8800))
+        print('cool4')
         server.listen()
+        print('cool5')
         client = server.accept()
+        print('cool6')
+        for coun in range(100):
+            print(client[1],"katkit")
+        # print()
         print("Acept_Client")
         while True:
             client_data = client[0].recv(1024).decode()
