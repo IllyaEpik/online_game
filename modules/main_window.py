@@ -70,15 +70,9 @@ class Screen():
                 if event.type == pygame.KEYDOWN:
                     # додає символи до input
                     m_buttons.input.edit(event)
-                    # активує клієнта одночасно з роботою кода
-                    print(event.key)
-                    if event.key == pygame.K_c:
-                        print('good')
-                        threading.Thread(target = m_client.activate).start()
-                    if event.key == pygame.K_s:
-                        print('asd')
-                        # активує сервер
-                        threading.Thread(target = m_server.activate,daemon=True).start()
+                    
+                    
+                    
             # цикл відображення всього що є в списку
             for sprite in m_data.list_blits[m_data.progression]:
                 # відображення елементу

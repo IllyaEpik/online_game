@@ -64,7 +64,14 @@ class Button(Image):
                     
                 # перехід в пре-гру"
                 m_data.progression =  "pre-game"
-                
+                # if event.key == pygame.K_c:
+                print('good')
+                # активує клієнта одночасно з роботою кода
+                threading.Thread(target = m_client.activate).start()
+                    # if event.key == pygame.K_s:
+                print('asd')
+                # активує сервер
+                threading.Thread(target = m_server.activate,daemon=True).start()
                 # for row in m_data.my_field:
                 #     print(row)
     # метод відображення поверхні на головному окні
