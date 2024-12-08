@@ -43,13 +43,14 @@ class Ship(m_images.Image):
     # Метод для перевірки, чи можна поставити корабель
     def check_enemy(self):
         yes_no = 0
+        field = m_data.enemy_field
         cells = []
         for count in range(int(self.name[0])):
             # Перевіряємо горизонтальне або вертикальне розміщення корабля
-            if self.rotate % 180 == 0 and m_data.my_field[self.row][self.cell + count] != int(self.name[0]):
+            if self.rotate % 180 == 0 and m_data.enemy_field[self.row][self.cell + count] != int(self.name[0]):
                 cells.append([self.row, self.cell + count])
                 yes_no += 1
-            elif self.rotate % 180 != 0 and m_data.my_field[self.row + count][self.cell] != int(self.name[0]):
+            elif self.rotate % 180 != 0 and m_data.enemy_field[self.row + count][self.cell] != int(self.name[0]):
                 cells.append([self.row + count, self.cell])
                 yes_no += 1
                 
@@ -59,17 +60,18 @@ class Ship(m_images.Image):
                 pass
             else:
                 self.explosion = True
+
                 m_data.all_ships.append(self)
                 
                 m_client.send(f"explosion:{self.row},{self.cell}".encode())
 
-                field = m_data.enemy_field
+            
                 # print(cells)
                 for celll in cells:
                     row = celll[0]
                     cell = celll[1]
                     # print(row, cell)
-                    fill_field(m_data.enemy_field)
+                    fill_field(field)
                     check(field=field, row=row + 1, cell=cell + 1, values=[5, 7])
                     check(field=field, row=row - 1, cell=cell - 1, values=[5, 7])
                     check(field=field, row=row - 1, cell=cell + 1, values=[5, 7])

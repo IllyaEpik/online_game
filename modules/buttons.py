@@ -38,6 +38,61 @@ class Button(Image):
                        ship.rotate_ship()
                         # виділення корабля
                        ship.select  = False
+            elif self.function == "win_lose":
+                m_data.revenge = True
+                m_data.progression = "pre-game"
+                size_ship = "1"
+                m_data.enemy_ships = []
+                m_data.all_ships = []
+                m_data.my_field = [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+
+                # Створення списку, у якому зберігаеться усе поле ворога
+                m_data.enemy_field = [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+                m_data.turn = True
+                # list_count = []
+                m_data.list_blits["game"] = []
+                m_data.list_explosions = []
+                play_field = Image(width = 1280, height = 851, x = 0, y = 0, name = "play_field", progression = "game", edit = False)
+                # for count in range(len(m_data.list_blits["game"])):
+                #     if m_data.list_blits["game"][count].name in "miss, explosion":
+                #         list_count += [count]
+                # for count in range(len(list_count)):
+                #     del m_data.list_blits["game"][list_count[-(count + 1)]]
+                for count in range(10):
+                    ship = Ship(x=59, y=115, name=size_ship)
+                    ship.select = True
+                    ship.place((684, 220))
+                    ship.select = False
+                    if count == 3:
+                        size_ship = "2"
+                    if count == 6:
+                        size_ship = "3"
+                    if count == 8:
+                        size_ship = "4"
+            elif self.function == "check":
+                return True
             # інакше функція гра
             elif self.function == "play":
 
@@ -55,16 +110,22 @@ class Button(Image):
                 if yes_no:
                     # переходимо в гру
                     m_data.progression = "game"
+                    print(m_data.my_field)
                     print('good')
-                    # активує клієнта одночасно з роботою кода
-                    threading.Thread(target = m_client.activate).start()
-                        # if event.key == pygame.K_s:
-                    print('asd')
-                    # активує сервер
-                    threading.Thread(target = m_server.activate,daemon=True).start()
-                    
+                    if not m_data.revenge:
+                        # активує клієнта одночасно з роботою кода
+                        threading.Thread(target = m_client.activate).start()
+                        print('asd')
+                        # активує сервер
+                        threading.Thread(target = m_server.activate,daemon=True).start()
+                    else:
+                        ships = "field:"
+                        for ship in m_data.all_ships:
+                            ships += f"{ship.name},{ship.row},{ship.cell},{ship.rotate} "
+                        # визиваємо функцію для відправки даних на сервер
+                        m_client.send(ships.encode())  
             else:
-                # записання ip d
+                # записання ip
                 m_data.ip = input.TEXT.split(" ")[1]
                 if m_data.ip == "":
                     m_data.ip = m_server.ip
@@ -117,7 +178,8 @@ class Input(Image):
     def edit(self,event):
         if self.enter:
             key = pygame.key.name(event.key)
-            if event.key == pygame.K_BACKSPACE and self.TEXT != "id: ":
+            print(self.TEXT)
+            if event.key == pygame.K_BACKSPACE and self.TEXT != "ip: ":
                 
                 # Убирает последний символ текста 
                 self.TEXT = self.TEXT[:-1]
@@ -238,4 +300,7 @@ m_data.list_blits["menu"].append(text_ip)
 auto = Auto(width= 170, height= 58, x= 665, y= 610)
 rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "", progression= "pre-game", text= "")
 play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60)
+revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "win", fun= "win_lose")
+out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text = "", fun = "check")
+m_data.list_blits["lose"].extend([revenge, out])
 # m_data.list_blits["pre-game"].append(auto)

@@ -43,7 +43,15 @@ class Screen():
                         pass 
                 # коли кнопка миші натиснута
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                        
+                    if m_data.progression in "winlose":
+                        m_buttons.revenge.button_start(event)
+                        if m_buttons.out.button_start(event):
+                            game = False
+                            try:
+                                # відключаємо клієнта
+                                m_client.client.close()
+                            except:
+                                pass 
                     # якщо прогресс дорівнює меню то
                     if m_data.progression == "menu":
                         # вибір місця написання
@@ -78,11 +86,14 @@ class Screen():
                 # відображення елементу
                 sprite.blit(self.screen)
             # якщо знаходимось не в меню то
-            if m_data.progression != "menu":
+            if m_data.progression in "pre-game":
                 # цикл для відображення всіх кораблів
                 for ship in m_data.all_ships:
                     # саме відображення кораблів
                     ship.blit(self.screen)
+                # for sprite in m_data.list_blits["game"]:
+                #     if sprite.name in "miss, explosion":
+                #         sprite.blit(self.screen)
             # оновлення екрану 
             pygame.display.flip()
             # фпс

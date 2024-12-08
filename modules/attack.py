@@ -25,7 +25,11 @@ def attack(pos: tuple):
                                 55.7)
                 # перевірка на колізію
                 if rect.collidepoint(pos):
-                    
+                    for rows in m_data.enemy_field:
+                        print(rows)
+                    print('ok')
+                    for rows in m_data.my_field:
+                        print(rows)
                     # 6 - explosion 7 - miss
                     # змінна ім'я зі значенням нічого
                     name = None
@@ -108,4 +112,16 @@ def attack(pos: tuple):
                     for ship in m_data.enemy_ships:
                         # перевіряє ворожий корабль
                         ship.check_enemy()
-# def win_lose():
+    win_lose()
+def win_lose():
+    yes_no = True
+    print(m_data.enemy_ships, 153)
+
+    for ship in m_data.all_ships:
+        if ship in m_data.enemy_ships:
+            pass
+        elif not ship.explosion:
+            yes_no = False
+    if yes_no and m_data.enemy_ships:
+        m_data.progression = "lose"
+        m_client.send("lose:".encode())

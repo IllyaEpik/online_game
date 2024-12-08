@@ -56,3 +56,5 @@ left_ship = Image(width = 381, height = 316, x = 10, y = 260, name = "left_ship"
 hat = Image(width = 187, height = 150, x= 370, y = 252, name = "hat")
 # создаємо фон для самої гри
 play_field = Image(width = 1280, height = 851, x = 0, y = 0, name = "play_field", progression = "game", edit = False)
+lose = Image(width = 1280, height = 851, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
+win = Image(width = 1280, height = 851, x = 0, y = 0, name = "win", progression = "win", edit = False)

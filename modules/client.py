@@ -6,14 +6,13 @@ def send(data):
     # відправляємо дані серверу
     print(data)
     client.sendall(data)
-
+client = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
 def activate():
     global client
     print('lod')
     try:
         # создаємо клієнта
         print('hello')
-        client = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
         print('hi')
         # шифруємо поле гри
         ships = "field:"
