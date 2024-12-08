@@ -4,6 +4,7 @@ import socket
 # создамо функцію для відправкм даних на сервер
 def send(data):
     # відправляємо дані серверу
+    print(data)
     client.sendall(data)
 
 def activate():

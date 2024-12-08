@@ -78,7 +78,38 @@ def activate():
                         # m_data.list_explosions.remove(ex)
                         
                 #     m_data.turn = False
-                
+            elif data[0] == "explosion":
+                pos = data[1].split(",")
+                pos = [int(pos[0]), int(pos[1])]
+                for ship in m_data.all_ships:
+                    if ship in m_data.enemy_ships:
+                        pass
+                    elif ship.row == pos[0] and ship.cell == pos[1]:
+                        ship.explosion = True
+                        # cells = []
+                        # for count in range(int(ship.name[0])):
+                        #     if ship.rotate % 180 == 0 and m_data.my_field[ship.row][ship.cell + count] != int(ship.name[0]):
+                        #         cells.append([ship.row, ship.cell + count])
+
+                        #     elif ship.rotate % 180 != 0 and m_data.my_field[ship.row + count][ship.cell] != int(ship.name[0]):
+                        #         cells.append([ship.row + count, ship.cell])
+    
+                        # field = m_data.my_field
+                        # # print(cells)
+                        # for celll in cells:
+                        #     row = celll[0]
+                        #     cell = celll[1]
+                        #     # print(row, cell)
+                        #     m_ships.fill_field(field)
+                        #     ship.check(field=field, row=row + 1, cell=cell + 1, values=[5, 7])
+                        #     ship.check(field=field, row=row - 1, cell=cell - 1, values=[5, 7])
+                        #     ship.check(field=field, row=row - 1, cell=cell + 1, values=[5, 7])
+                        #     ship.check(field=field, row=row + 1, cell=cell - 1, values=[5, 7])
+                        #     ship.check(field=field, row=row + 1, cell=cell, values=[5, 7])
+                        #     ship.check(field=field, row=row, cell=cell + 1, values=[5, 7])
+                        #     ship.check(field=field, row=row - 1, cell=cell, values=[5, 7])
+                        #     ship.check(field=field, row=row, cell=cell - 1, values=[5, 7])
+
             m_data.enemy_data.append(client_data)
 # 127.0.0.1
 # activate()

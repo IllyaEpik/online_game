@@ -1,6 +1,8 @@
 # імпортуємо файли
 import modules.images as m_images
 import modules.data as m_data
+import modules.client as m_client
+
 # імпортуємо модуль pygame
 import pygame 
 
@@ -11,6 +13,7 @@ class Ship(m_images.Image):
         # Розміри корабля залежать від його імені (перший символ - це кількість клітин корабля)
         self.width = int(name[0]) * 50
         self.height = 50
+        self.explosion = False
         # print(self.height)
         # Викликаємо конструктор батьківського класу (Image) для ініціалізації зображення
         super().__init__(self.width, self.height, x, y, name, "F", rotate)
@@ -55,7 +58,11 @@ class Ship(m_images.Image):
             if self in m_data.all_ships:
                 pass
             else:
+                self.explosion = True
                 m_data.all_ships.append(self)
+                
+                m_client.send(f"explosion:{self.row},{self.cell}".encode())
+
                 field = m_data.enemy_field
                 # print(cells)
                 for celll in cells:
