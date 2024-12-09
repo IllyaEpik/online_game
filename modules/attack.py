@@ -33,10 +33,13 @@ def attack(pos: tuple):
                     # 6 - explosion 7 - miss
                     # змінна ім'я зі значенням нічого
                     name = None
+                    
+                    
                     # умова для клітинок заповнених ворожими кораблями
                     if str(m_data.enemy_field[row][cell]) in list_explosion:
                         # відправляє закодовані данні
-                        m_client.send(f"attack:{row},{cell} explosion".encode())
+                        
+                       
                         # import time
                         # time.sleep(0.1)
                         # відповідає за те яка клітинка створиться
@@ -46,40 +49,43 @@ def attack(pos: tuple):
                         # for ship in m_data.enemy_ships:
                         # список з клітинками в яких є кораблі
                         explosions = []
-                        # 
+                        for row2 in m_data.enemy_field:
+                            print(row2,'the best')
                         # цикл для ворожих кораблів
                         for ship in m_data.enemy_ships:
                             # перевіряє ворожий корабль
                             ship.check_enemy()
-                            # умова для всіх кораблів
-                            if ship in m_data.all_ships:
-                                # список з клітинками кораблів
-                                cells = []
-                                # цикл для додавання всіх клітинок корабля до cells
-                                for count in range(int(ship.name[0])):
-                                    # якщо корабель стоїть горизонтально то
-                                    if ship.rotate %180 == 0 and m_data.my_field[ship.row][ship.cell+count] != int(ship.name[0]):
-                                        # додається клітика
-                                        cells.append([ship.row, ship.cell+count])
-                                    # інакше якщо корабель стоїть вертикалюно то
-                                    elif ship.rotate %180 != 0 and m_data.my_field[ship.row+count][ship.cell] != int(ship.name[0]):
-                                        # додається клітинка
-                                        cells.append([ship.row+count, ship.cell])
-                                #
+                            # список з клітинками кораблів
+                            cells = []
+                            # цикл для додавання всіх клітинок корабля до cells
+                            for count in range(int(ship.name)):
+                                # якщо корабель стоїть горизонтально то
+                                if ship.rotate %180 == 0 and m_data.enemy_field[ship.row][ship.cell+count] != int(ship.name[0]):
+                                    # додається клітика
+                                    cells.append([ship.row, ship.cell+count])
+                                # інакше якщо корабель стоїть вертикалюно то
+                                elif ship.rotate %180 != 0 and m_data.enemy_field[ship.row+count][ship.cell] != int(ship.name[0]):
+                                    # додається клітинка
+                                    cells.append([ship.row+count, ship.cell])
+                            # 
+                            if int(ship.name) == len(cells):
+                                # 
                                 for explosion in m_data.list_explosions:
                                     #
                                     for celll in cells:
                                         #
                                         if explosion[1] == celll[0] and explosion[2] == celll[1]:
                                             #
-                                            explosions += [explosion[0]]
+                                            explosions.append(explosion[0])
                         #           
                         for ex in explosions:
                             try:
                                 #
+                                # del m_data.list_blits['game'][ex]
                                 m_data.list_blits['game'].remove(ex)
                             except:
-                                pass
+                                print('reoeroreoreoreooeroeroreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+                                # pass
                     #
                     elif str(m_data.enemy_field[row][cell]) in list_miss:
                         #
@@ -89,9 +95,10 @@ def attack(pos: tuple):
                         #
                         m_data.turn = False
                         #
-                        m_client.send(f"attack:{row},{cell} miss".encode())
+                      
                     #
-                    if name:
+                    if name: 
+                        m_client.send(f"attack:{row},{cell} {name}".encode())
                         #
                         image = m_images.Image(
                             progression = "game",
@@ -109,9 +116,9 @@ def attack(pos: tuple):
                             #
                             m_data.list_explosions.append([image, row, cell])
                             # m_audio.track.play()
-                    for ship in m_data.enemy_ships:
+                    # for ship in m_data.enemy_ships:
                         # перевіряє ворожий корабль
-                        ship.check_enemy()
+                        # ship.check_enemy()
     win_lose()
 def win_lose():
     yes_no = True
