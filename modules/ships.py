@@ -64,8 +64,8 @@ class Ship(m_images.Image):
                 m_data.all_ships.append(self)
                 
                 m_client.send(f"explosion:{self.row},{self.cell}".encode())
+                
 
-            
                 # print(cells)
                 for celll in cells:
                     row = celll[0]
@@ -138,7 +138,7 @@ class Ship(m_images.Image):
                     yes_no = False
                     try:
                         yes_no_1 = True
-                        for count in range(int(self.name[0])):
+                        for count in range(int(self.name)):
                             if self.rotate % 180 == 0:
                                 if m_data.my_field[row][cell + count] != 0 and m_data.my_field[row][cell + count] != 5:
                                     yes_no_1 = False    
@@ -165,9 +165,11 @@ class Ship(m_images.Image):
                                 else:                                 
                                     if m_data.my_field[row + count][cell] != 0:
                                         yes_no_1 = False   
-                            yes_no = True
+                            if yes_no_1:
+                                yes_no = True
+                            fill_field(m_data.my_field)
                     except:
-                        pass
+                        print('errrrrrrrrrrrrrrrrrrrrrrrror')
                         # print("капибара")
                     if yes_no:
                         rect = pygame.Rect(
@@ -175,13 +177,15 @@ class Ship(m_images.Image):
                             self.field_cor[1] + row * 55.7,
                             55.7, 55.7)
                         if rect.collidepoint(pos):
+                            print(m_data.cells,self.celled)
+                            print()
                             for count in range(int(self.name[0])):
                                 if self.rotate % 180 == 0:
                                     m_data.my_field[self.row][self.cell + count] = 0
                                 else:
                                     m_data.my_field[self.row + count][self.cell] = 0
-                            if self.celled:
-                                m_data.cells[self.name[0]][self.celled][0] = False
+                            if self.celled != None:
+                                m_data.cells[self.name][self.celled][0] = False
                                 self.celled = None
                             self.row = row
                             self.cell = cell
@@ -195,24 +199,32 @@ class Ship(m_images.Image):
                                     m_data.my_field[row + count][cell] = int(self.name[0])
                             self.select = False
                             fill_field(m_data.my_field)
+                            print(m_data.cells,self.celled)
                             return True
             count = 0
-            for cell1 in m_data.cells[self.name[0]]:
+            for cell1 in m_data.cells[self.name]:
                 # print(cell1)
                 if not cell1[0]:
                     cell1[0] = True
                     self.x = cell1[1][0]
                     self.y = cell1[1][1]
-                    m_data.my_field[self.row][self.cell] = 0 
+                    for count1 in range(int(self.name[0])):
+                        if self.rotate % 180 == 0:
+                            m_data.my_field[self.row][self.cell + count1] = 0
+                        else:
+                            m_data.my_field[self.row + count1][self.cell] = 0
+                    # m_data.my_field[self.row][self.cell] = 0 
                     self.celled = count
                     self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
                     for row in m_data.my_field:
                         print(row)      
                     break
                 count += 1 
-    # print(m_data.cells)
-    for row in m_data.my_field:
-        print(row)
+        fill_field(m_data.my_field)
+        # print(m_data.cells)
+
+        for row in m_data.my_field:
+            print(row)
 # Функція перевірки на полі для кожної клітинки
 def check(field, row, cell, values=[0, 5]):
     if row != -1 and -1 != cell:

@@ -9,9 +9,9 @@
 ## Назва проекту: Онлайн гра морський бій/ name project: Online game sea battles
 
 #### опис:
-    * Ця гра дозволяє грати у морський бій удвох на різних комп'ютерах.
+* Ця гра дозволяє грати у морський бій удвох на різних комп'ютерах.
 #### description:
-    * This game allows two players to play the sea battles on different computers
+* This game allows two players to play the sea battles on different computers
 
 #### модулі/modules:
 + os 
@@ -19,7 +19,7 @@
 + random
 + threading
 + pygame
-+ socket
++ socket 
 
 # структура проекту / project structure:
 * Перше вікно: введення IP-адреси/First window: IP address input
@@ -28,14 +28,16 @@
 * Четверте вікно: результат гри (програш чи перемога)/Fourth window: game result (lose or victory)
 
 # інструкція для запуску:
-1. Треба відкрити термінал bash(інструкція нижче)
-2. У терміналі прописати команду: 
-- git clone <посилання на проект у гіт хабі>
-3. Відкрити папку проекту((Visual Studio Code) Зберху у хот барі: File -> Open folder -> шлях до папки у якій проект клонувався -> відкрити)
-4. Потім треба відкрити термінал і прописати команду:
-- pip install -r requirements.txt
-5. Запустити проект у файлі main.py
+1. Для початку потрібно встановити:
+* Python останньої версії
+- https://www.python.org/downloads/
+2. Зайти на Git Hub
+3. У репозиторії проекту натиснути зелену кнопку "Code"
+![alt text](image.png)
+4. Обрати "Завантажити ZIP"
+5. Перейти до завантаженого архіву та розархівувати його(Права кнопка миші -> "Витягнути до поточної папки".)
+
 
 # instructions for launch
-1. Open the Bash Terminal(steps to open the Bash terminal below)
-2. Clone the Repository using the command:
+
+

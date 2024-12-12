@@ -13,6 +13,7 @@ def attack(pos: tuple):
     # створення глобальних змінних
     global list_miss, list_explosion
     # умова для повора кораблів
+    # blits = True
     if m_data.turn:
         # цикл для ряду
         for row in range(10):
@@ -25,11 +26,16 @@ def attack(pos: tuple):
                                 55.7)
                 # перевірка на колізію
                 if rect.collidepoint(pos):
-                    for rows in m_data.enemy_field:
-                        print(rows)
-                    print('ok')
-                    for rows in m_data.my_field:
-                        print(rows)
+                    image = m_images.Image(
+                            progression = "game",
+                            name = "",
+                            x = 725+55.7*cell,
+                            y = 115+55.7*row,
+                            width= 55.7,
+                            height=55.7
+                    )
+                    # for rows in m_data.enemy_field:
+                    #     print(rows)
                     # 6 - explosion 7 - miss
                     # змінна ім'я зі значенням нічого
                     name = None
@@ -37,17 +43,20 @@ def attack(pos: tuple):
                     
                     # умова для клітинок заповнених ворожими кораблями
                     if str(m_data.enemy_field[row][cell]) in list_explosion:
+                        m_data.enemy_field[row][cell] = 6
                         # відправляє закодовані данні
-                        
+                        image.name = 'explosion'
+                        image.update_image()
+                        m_data.list_explosions.append([image, row, cell])
                        
                         # import time
                         # time.sleep(0.1)
                         # відповідає за те яка клітинка створиться
                         name = "explosion"
                         # клітинка з вибухнувшим кораблем
-                        m_data.enemy_field[row][cell] = 6
                         # for ship in m_data.enemy_ships:
                         # список з клітинками в яких є кораблі
+
                         explosions = []
                         for row2 in m_data.enemy_field:
                             print(row2,'the best')
@@ -57,6 +66,7 @@ def attack(pos: tuple):
                             ship.check_enemy()
                             # список з клітинками кораблів
                             cells = []
+                          
                             # цикл для додавання всіх клітинок корабля до cells
                             for count in range(int(ship.name)):
                                 # якщо корабель стоїть горизонтально то
@@ -70,6 +80,7 @@ def attack(pos: tuple):
                             # 
                             if int(ship.name) == len(cells):
                                 # 
+                                # blits = False
                                 for explosion in m_data.list_explosions:
                                     #
                                     for celll in cells:
@@ -77,12 +88,13 @@ def attack(pos: tuple):
                                         if explosion[1] == celll[0] and explosion[2] == celll[1]:
                                             #
                                             explosions.append(explosion[0])
-                        #           
+                        
                         for ex in explosions:
                             try:
                                 #
                                 # del m_data.list_blits['game'][ex]
                                 m_data.list_blits['game'].remove(ex)
+                                
                             except:
                                 print('reoeroreoreoreooeroeroreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
                                 # pass
@@ -92,6 +104,8 @@ def attack(pos: tuple):
                         m_data.enemy_field[row][cell] = 7
                         #
                         name = "miss"
+                        image.name = 'miss'
+                        image.update_image()
                         #
                         m_data.turn = False
                         #
@@ -100,21 +114,12 @@ def attack(pos: tuple):
                     if name: 
                         m_client.send(f"attack:{row},{cell} {name}".encode())
                         #
-                        image = m_images.Image(
-                            progression = "game",
-                            name = name,
-                            x = 725+55.7*cell,
-                            y = 115+55.7*row,
-                            width= 55.7,
-                            height=55.7
-                        )
+                        
                         #
-                        if name == 'explosion':
-                            #
-                            print(image, row, cell)
-                            # m_audio.explosion.play()
-                            #
-                            m_data.list_explosions.append([image, row, cell])
+                        # if name == 'explosion':
+                        #     #
+                        #     print(image, row, cell)
+                            
                             # m_audio.track.play()
                     # for ship in m_data.enemy_ships:
                         # перевіряє ворожий корабль
