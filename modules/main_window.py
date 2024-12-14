@@ -10,6 +10,9 @@ import modules.client as m_client
 import modules.ships as m_ships
 import modules.attack as m_attack
 import modules.server as m_server
+import modules.audio as m_audio
+
+
 # 
 class Screen():
     # ініціалізуємо screen
@@ -56,6 +59,7 @@ class Screen():
                     if m_data.progression == "menu":
                         # вибір місця написання
                         m_buttons.input.activate(event) 
+                        m_buttons.music.button_start(event)
                         # перехід в пре-гру етап
                         m_buttons.button_start.button_start(event)
                     # якщо прогресс дорівнює пре-грі то
@@ -85,6 +89,8 @@ class Screen():
             for sprite in m_data.list_blits[m_data.progression]:
                 # відображення елементу
                 sprite.blit(self.screen)
+            if m_data.progression == "menu" and m_audio.track.stoped:
+                pygame.draw.line(self.screen,(255,50,50),(42,115,),(120,43),10)
             # якщо знаходимось не в меню то
             if m_data.progression in "pre-game":
                 # цикл для відображення всіх кораблів

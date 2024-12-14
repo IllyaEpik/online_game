@@ -12,17 +12,24 @@ class Audio():
         self.audio = None 
         self.name = name 
         self.loops = loops
+        self.stoped = True
     # метод для відтворення аудіо
     def play(self):
         try:
             # завантаження музику по вказаному шляху
             pygame.mixer.music.load(os.path.abspath(f"{__file__}/../../audio/{self.name}.mp3"))
+            self.stoped = False
             # відтворюємо музику
             self.audio = pygame.mixer.music.play(loops= self.loops)
             print(self.audio)
         except:
             # якщо буде помилка при завантаженні, виводимо повідомлення про помилку
             print("Error: audio")
+    def stop(self):
+        pygame.mixer.music.stop()
+        self.stoped = True
+# pygame.mixer_music.load()
+    
 track = Audio('Soundtrack')
 track.play()
 # explosion = Audio('blas',0)

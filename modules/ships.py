@@ -85,10 +85,14 @@ class Ship(m_images.Image):
     def activate(self, event):
         if self.rect.collidepoint(event.pos):
             self.select = True
+            self.name = self.name[0] + "_select"
             # print('eqw')
         else:
             self.place(event.pos)
             self.select = False
+            self.name = self.name[0]
+            #int(self.name[0]) => int(self.name[0])
+        self.update_image()
     # Метод для обертання корабля
     def rotate_ship(self):
         # print(2132132312123123231213231)
@@ -138,7 +142,7 @@ class Ship(m_images.Image):
                     yes_no = False
                     try:
                         yes_no_1 = True
-                        for count in range(int(self.name)):
+                        for count in range(int(self.name[0])):
                             if self.rotate % 180 == 0:
                                 if m_data.my_field[row][cell + count] != 0 and m_data.my_field[row][cell + count] != 5:
                                     yes_no_1 = False    
@@ -185,7 +189,7 @@ class Ship(m_images.Image):
                                 else:
                                     m_data.my_field[self.row + count][self.cell] = 0
                             if self.celled != None:
-                                m_data.cells[self.name][self.celled][0] = False
+                                m_data.cells[self.name[0]][self.celled][0] = False
                                 self.celled = None
                             self.row = row
                             self.cell = cell
@@ -202,7 +206,7 @@ class Ship(m_images.Image):
                             print(m_data.cells,self.celled)
                             return True
             count = 0
-            for cell1 in m_data.cells[self.name]:
+            for cell1 in m_data.cells[self.name[0]]:
                 # print(cell1)
                 if not cell1[0]:
                     cell1[0] = True

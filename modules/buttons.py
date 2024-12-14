@@ -2,6 +2,7 @@
 import pygame , socket
 import threading, random
 # імпорт наших модулів
+import modules.audio as m_audio
 from modules.images import Image
 import modules.data as m_data
 import modules.client as m_client 
@@ -38,6 +39,14 @@ class Button(Image):
                        ship.rotate_ship()
                         # виділення корабля
                        ship.select  = False
+            elif self.function == "music":
+                if m_audio.track.stoped:
+                    m_audio.track.play()
+                    # self.name = "music"
+                else:
+                    m_audio.track.stop()
+                    # self.name = "music_off"
+                # self.update_image()
             elif self.function == "win_lose":
                 m_data.revenge = True
                 m_data.progression = "pre-game"
@@ -302,5 +311,6 @@ rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "
 play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60)
 revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "win", fun= "win_lose")
 out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text = "", fun = "check")
+music =Button(width = 76,height = 72,x = 42, y = 43, text = "", fun = "music", name =  "music")
 m_data.list_blits["lose"].extend([revenge, out])
 # m_data.list_blits["pre-game"].append(auto)
