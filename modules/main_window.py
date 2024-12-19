@@ -39,6 +39,7 @@ class Screen():
                 if event.type == pygame.QUIT:
                     # значення гри неправда
                     game = False
+                    m_data.end=True
                     try:
                         # відключаємо клієнта
                         m_client.client.close()
@@ -50,6 +51,7 @@ class Screen():
                         m_buttons.revenge.button_start(event)
                         if m_buttons.out.button_start(event):
                             game = False
+                            m_data.end=True
                             try:
                                 # відключаємо клієнта
                                 m_client.client.close()

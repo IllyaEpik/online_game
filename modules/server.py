@@ -21,8 +21,9 @@ def activate():
         hostname = socket.gethostname()
         # Повертає IP адрессу по імені хосту
         ip = socket.gethostbyname(hostname)
+        ip = '26.45.11.205'
         #  Під'єдання сервера до вказаного IP та порту
-        server.bind((f"{ip}", 8800))
+        server.bind(("0.0.0.0", 8800))
         # Функція listen активує очікування підключення користувача
         server.listen()
         # Підтверджуємо з'єднання від клієнту
@@ -32,8 +33,7 @@ def activate():
             print(client[1],"katkit")
         print("Acept_Client")
 
-        while True:
-            
+        while not m_data.end:
             # Отримання данних кліенту та декодування їх
             client_data = client[0].recv(1024).decode()
             print(client_data)
@@ -148,3 +148,4 @@ def activate():
                 m_data.progression = "win"
             # Додаємо отримані дані від клієнта до списку даних противника
             m_data.enemy_data.append(client_data)
+            print(client_data)
