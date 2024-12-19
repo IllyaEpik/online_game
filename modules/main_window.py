@@ -1,5 +1,5 @@
 # імпортуємо модуль pygame
-import pygame,threading
+import pygame, threading
 # ініціалізуємо pygame
 pygame.init()
 # імпортуємо наші модулі 

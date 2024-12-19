@@ -15,7 +15,9 @@
 
 #### модулі/modules:
 + pygame; модуль який дозволяе реалізувати саму гру / a module that enables game development.
+
 + pillow; модуль для роботи pygame / a module for working pygame
+=======
 + random; вбудований модуль, який потрібен для генерації випадкових чисел / a built-in which used for generating random numbers.
 + os; вбудований модуль для пошуку абсолютного шляху / a built-in module for finding absolute paths
 + threading; вбудований модуль, який обробляє потоки для одночасних завдань / handles threads for concurrent tasks.
@@ -77,12 +79,14 @@
 * For macOS  
 5. Navigate to the downloaded archive and extract it (double-click the archive to unpack it automatically).  
 6. Open the extracted folder and copy its path:  
+   ![alt text](images/readme/path_to_folder.png)
 7. Right-click on the folder -> Select "Get Info"-> Copy the path in the "Where" field.  
 8. Press **Command + Space**, type "Terminal", and hit Enter.  
 9. In the terminal, enter the command to navigate to the file:  
    **cd <path>**  
 10. Launch the game using the command:  
    **python3 main.py**
+   - ![alt text](images/readme/path_to_folder.png)
 
 # структура проекту / project structure:
 * Перше вікно: введення IP-адреси/First window: IP address input
@@ -203,6 +207,7 @@ class Screen():
 # створення екземпляру классу
 screen = Screen()
 ```
+
 
 ### Online_game/modules/attack.py: створення механіки атаки кораблів / 
 ```python
@@ -346,6 +351,7 @@ def win_lose():
         m_data.progression = "lose"
         m_client.send("lose:".encode())
 ```
+
 
 ### Online_game/modules/buttons.py: створення необхідних кнопок для застосунку / 
 ```python
