@@ -8,13 +8,16 @@ import modules.images as m_images
 hostname = socket.gethostname()
 # Повертає IP адрессу по імені хосту
 ip = socket.gethostbyname(hostname)
+client = None
 # ip = "127.0.0.1"
 # ip = '46.118.25.208'
-
+def send(data):
+    client[0].sendall(data)
 # виводимо у терміналі статус нашого сервера
 print(socket.SO_KEEPALIVE,'132123132321132132132')
 # Створення функції що буде активувати під'єднання до серверу 
 def activate():
+    global client
     #  Створення серверного сокету
     with socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM) as server:
         # Повертае ім'я компьютера(хоста)
@@ -32,7 +35,10 @@ def activate():
         for coun in range(100):
             print(client[1],"katkit")
         print("Acept_Client")
-
+        ships = "field:"
+        for ship in m_data.all_ships:
+            ships += f"{ship.name},{ship.row},{ship.cell},{ship.rotate} "
+        send(ships.encode())
         while not m_data.end:
             # Отримання данних кліенту та декодування їх
             client_data = client[0].recv(1024).decode()
@@ -143,9 +149,9 @@ def activate():
             
 
             # Якщо відбуваеться програш
-            elif data[0] == "lose":
+            if data[0] == "lose":
                 # То стан гри змінюеться на виграш
-                m_data.progression = "win"
+                m_data.progression = "lose"
             # Додаємо отримані дані від клієнта до списку даних противника
             m_data.enemy_data.append(client_data)
             print(client_data)

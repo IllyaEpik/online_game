@@ -29,8 +29,11 @@ class Button(Image):
     def button_start(self, event):
         # якщо кнопка натиснута
         if self.rect.collidepoint(event.pos):
+            if type(self.function) == type("123") and self.function.split(":")[0] == "c_s":
+                m_data.client_server = self.function.split(":")[1]
+                print(m_data.client_server)
             # якщо функція корабль то
-            if self.function == "ship":
+            elif self.function == "ship":
                 # цикл для всіх кораблів
                 for ship in m_data.all_ships:
                     # якщо корабль виділен
@@ -122,17 +125,19 @@ class Button(Image):
                     print(m_data.my_field)
                     print('good')
                     if not m_data.revenge:
-                        # активує клієнта одночасно з роботою кода
-                        threading.Thread(target = m_client.activate).start()
-                        print('asd')
-                        # активує сервер
-                        threading.Thread(target = m_server.activate,daemon=True).start()
+                        if m_data.client_server == "client" or not m_data.client_server:
+                            # активує клієнта одночасно з роботою кода
+                            threading.Thread(target = m_client.activate).start()
+                        if m_data.client_server == "server" or not m_data.client_server:
+                            # активує сервер
+                            threading.Thread(target = m_server.activate,daemon=True).start()
                     else:
                         ships = "field:"
                         for ship in m_data.all_ships:
                             ships += f"{ship.name},{ship.row},{ship.cell},{ship.rotate} "
                         # визиваємо функцію для відправки даних на сервер
-                        m_client.send(ships.encode())  
+                        m_client.send(ships.encode()) 
+                print('OOO') 
             else:
                 # записання ip
                 m_data.ip = input.TEXT.split(" ")[1]
@@ -140,10 +145,11 @@ class Button(Image):
                     m_data.ip = m_server.ip
                     
                 # перехід в пре-гру"
-                m_data.progression =  "pre-game"
+                m_data.progression = "pre-game"
                 # if event.key == pygame.K_c:
                 # for row in m_data.my_field:
                 #     print(row)
+                print('H')
     # метод відображення поверхні на головному окні
     def blit(self, screen):
         # якщо картинка задана 
@@ -311,6 +317,13 @@ rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "
 play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60)
 revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "win", fun= "win_lose")
 out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text = "", fun = "check")
+revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "lose", fun= "win_lose")
+out = Button(height = 80, width = 518, x = 0, y = 712, progression = "lose", text = "", fun = "check")
 music =Button(width = 76,height = 72,x = 42, y = 43, text = "", fun = "music", name =  "music")
+client = Button(width= 281, height= 100, name= "button_start", text= "client", x= 42, y= 600, fun= "c_s:client")  
+server = Button(width= 281, height= 100, name= "button_start", text= "server", x= 981, y= 600, fun= "c_s:server")  
+
 m_data.list_blits["lose"].extend([revenge, out])
+# m_data.list_blits["lose"].append(out)
+# print(m_data.list_blits['lose'],'kaakakakakkkkkkkkkkkkkkkkkkkkkkkk')
 # m_data.list_blits["pre-game"].append(auto)

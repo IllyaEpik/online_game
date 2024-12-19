@@ -29,6 +29,7 @@ class Screen():
         pygame.display.set_caption('online game')
     # функція запуску
     def run(self):
+        # m_data.progression = 'lose'
         # задаємо правдиве значення грі
         game = True
         # цикл поки гра активна
@@ -62,6 +63,8 @@ class Screen():
                         # вибір місця написання
                         m_buttons.input.activate(event) 
                         m_buttons.music.button_start(event)
+                        m_buttons.client.button_start(event)
+                        m_buttons.server.button_start(event)
                         # перехід в пре-гру етап
                         m_buttons.button_start.button_start(event)
                     # якщо прогресс дорівнює пре-грі то
@@ -89,6 +92,7 @@ class Screen():
                     
             # цикл відображення всього що є в списку
             for sprite in m_data.list_blits[m_data.progression]:
+                # print(sprite.name)
                 # відображення елементу
                 sprite.blit(self.screen)
             if m_data.progression == "menu" and m_audio.track.stoped:

@@ -17,7 +17,6 @@
 + pygame; модуль який дозволяе реалізувати саму гру / a module that enables game development.
 
 + pillow; модуль для роботи pygame / a module for working pygame
-=======
 + random; вбудований модуль, який потрібен для генерації випадкових чисел / a built-in which used for generating random numbers.
 + os; вбудований модуль для пошуку абсолютного шляху / a built-in module for finding absolute paths
 + threading; вбудований модуль, який обробляє потоки для одночасних завдань / handles threads for concurrent tasks.
@@ -353,7 +352,7 @@ def win_lose():
 ```
 
 
-### Online_game/modules/buttons.py: створення необхідних кнопок для застосунку / 
+### Online_game/modules/buttons.py: створення необхідних кнопок для застосунку / сreation of necessary buttons for the application 
 ```python
 # імпорт чужих модулів для роботи
 import pygame , socket
@@ -673,7 +672,7 @@ m_data.list_blits["lose"].extend([revenge, out])
 # m_data.list_blits["pre-game"].append(auto)
 ```
 
-### Online_game/modules/ships.py: створення механік кораблів, грального поля 
+### Online_game/modules/ships.py: створення механік кораблів, грального поля / development of mechanics for ships and the game field
 ```python
 # імпортуємо файли
 import modules.images as m_images
@@ -965,7 +964,7 @@ ship.place((1, 1))
 
 ```
 
-### Online_game/modules/images.py:
+### Online_game/modules/images.py: файл для роботи з зображеннями / file for working with images
 ```python
 # імпортуємо модуль pygame , os
 import pygame, os
@@ -1029,7 +1028,7 @@ lose = Image(width = 1280, height = 851, x = 0, y = 0, name = "lose", progressio
 win = Image(width = 1280, height = 851, x = 0, y = 0, name = "win", progression = "win", edit = False)
 ```
 
-### Online_game/modules/audio.py:
+### Online_game/modules/audio.py: файл для роботи зі звуком / file for working with sound 
 ```python
 # імпортуємо модулі pyagame і os
 import pygame, os 
@@ -1066,10 +1065,9 @@ class Audio():
 track = Audio('Soundtrack')
 track.play()
 # explosion = Audio('blas',0)
-
 ```
 
-### Online_game/modules/data.py:
+### Online_game/modules/data.py: файл у якому зберігається змінні / file for storing variables 
 ```python
 # створення словника у якому містяться всі картинки для кожної стадії гри
 list_blits = {
@@ -1147,7 +1145,7 @@ cells = {
 }
 ```
 
-### Online_game/modules/client.py:
+### Online_game/modules/client.py: файл який відповідає за роботу клієнту для гри по мережі / file responsible for the client functionality in a networked game 
 ```python
 import modules.data as m_data 
 import socket
@@ -1183,7 +1181,7 @@ def activate():
         
 ```
 
-### Online_game/modules/server.py:
+### Online_game/modules/server.py: файл який відповідає за роботу серверу для гри по мережі / file responsible for the server functionality in a networked game 
 ```python
 # Імпортування необхідних модулей
 import socket
@@ -1280,22 +1278,6 @@ def activate():
                 else:
                     # Позначаємо влучання на полі
                     m_data.my_field[pos[0]][pos[1]] = 6
-                    # for ship in m_data.all_ships:
-                    #     yes_no = 0
-                    #     cells = []
-                    #     if ship in m_data.enemy_ships:
-                    #         pass
-                    #     else:
-                    #         for count in range(int(ship.name[0])):
-                    #             # Перевіряємо горизонтальне або вертикальне розміщення корабля
-                    #             if ship.rotate % 180 == 0 and m_data.my_field[ship.row][ship.cell + count] != int(ship.name[0]):
-                    #                 cells.append([ship.row, ship.cell + count])
-                    #                 yes_no += 1
-                    #             elif ship.rotate % 180 != 0 and m_data.my_field[ship.row + count][ship.cell] != int(ship.name[0]):
-                    #                 cells.append([ship.row + count, ship.cell])
-                    #                 yes_no += 1
-                    #         if yes_no == int(ship.name):
-                    #             pass
                 # Створюємо обект класа картинки, власне картинку, для відображення результату атаки
                 image = m_images.Image(
                     progression = "game",

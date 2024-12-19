@@ -128,12 +128,13 @@ def attack(pos: tuple):
 def win_lose():
     yes_no = True
     print(m_data.enemy_ships, 153)
-
-    for ship in m_data.all_ships:
-        if ship in m_data.enemy_ships:
-            pass
-        elif not ship.explosion:
+    
+    for ship in m_data.enemy_ships:
+        print(ship in m_data.enemy_ships, not ship.explosion)
+        if not ship.explosion:
+        #     pass
+        # elif :
             yes_no = False
     if yes_no and m_data.enemy_ships:
-        m_data.progression = "lose"
-        m_client.send("lose:".encode())
+        m_data.progression = "win"
+        m_client.send("lose:?????".encode())
