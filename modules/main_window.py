@@ -1,11 +1,11 @@
 # імпортуємо модуль pygame
-import pygame, threading
+import pygame, threading, os
 # ініціалізуємо pygame
 pygame.init()
 # імпортуємо наші модулі 
 import modules.buttons as m_buttons
 import modules.data as m_data
-import modules.images
+import modules.images as m_images
 import modules.client as m_client
 import modules.ships as m_ships
 import modules.attack as m_attack
@@ -27,6 +27,8 @@ class Screen():
         self.screen = pygame.display.set_mode(size= (self.WIDTH, self.HEIGHT))
         # задаємо назву нашому екрану
         pygame.display.set_caption('online game')
+        icon = pygame.image.load(os.path.abspath(__file__ + "/../../images/icon_peaceful.png"))
+        pygame.display.set_icon(icon)
     # функція запуску
     def run(self):
         # m_data.progression = 'lose'
@@ -103,6 +105,13 @@ class Screen():
                 for ship in m_data.all_ships:
                     # саме відображення кораблів
                     ship.blit(self.screen)
+            if m_data.progression == "game":
+                if m_data.turn:
+                    m_images.your_turn.blit(self.screen)
+                    m_images.opponent_turn_gray.blit(self.screen)
+                else:
+                    m_images.opponent_turn.blit(self.screen)
+                    m_images.your_turn_gray.blit(self.screen)
                 # for sprite in m_data.list_blits["game"]:
                 #     if sprite.name in "miss, explosion":
                 #         sprite.blit(self.screen)

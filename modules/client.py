@@ -28,7 +28,7 @@ def activate():
         print('just')
         # підключаємо кліента до сервера
         client.connect((m_data.ip, 8800))
-        print("it is cool",m_data.ip)
+        print("it is cool", m_data.ip)
         # визиваємо функцію для відправки даних на сервер
         send(ships.encode())
         print("it's cool")

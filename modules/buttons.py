@@ -1,5 +1,5 @@
 # імпорт чужих модулів для роботи
-import pygame , socket
+import pygame , socket, os
 import threading, random
 # імпорт наших модулів
 import modules.audio as m_audio
@@ -8,10 +8,11 @@ import modules.data as m_data
 import modules.client as m_client 
 import modules.server as m_server
 from modules.ships import Ship,fill_field
+print(pygame.font.get_fonts())
 # класс з кнопками
 class Button(Image):
     # метод з створенням параметрів
-    def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65):
+    def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65, style = "OldEnglishText"):
         # задаємо параметри в класс зображень
         Image.__init__(self, width=width, height=height, x=x, y=y, name=name, progression=progression)
         # переносимо параметри в змінні
@@ -31,6 +32,9 @@ class Button(Image):
         if self.rect.collidepoint(event.pos):
             if type(self.function) == type("123") and self.function.split(":")[0] == "c_s":
                 m_data.client_server = self.function.split(":")[1]
+                server.COLOR = (0,0,0)
+                client.COLOR = (0,0,0)
+                self.COLOR =(40,2,255)
                 print(m_data.client_server)
             # якщо функція корабль то
             elif self.function == "ship":
@@ -124,6 +128,8 @@ class Button(Image):
                     m_data.progression = "game"
                     print(m_data.my_field)
                     print('good')
+                    icon = pygame.image.load(os.path.abspath(__file__ + "/../../images/icon_peaceful.png"))
+                    pygame.display.set_icon(icon)
                     if not m_data.revenge:
                         if m_data.client_server == "client" or not m_data.client_server:
                             # активує клієнта одночасно з роботою кода
@@ -163,7 +169,7 @@ class Button(Image):
         # задаємо x для тексту
         x = self.x + self.width/2-size[0]/2
         # відображення тексту на екрані
-        screen.blit(self.FONT.render(self.TEXT,True,(0,0,0)), (x, y))
+        screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
 
 # button = Button()
 class Input(Image):
@@ -178,7 +184,7 @@ class Input(Image):
         self.rect = pygame.Rect(x,y,width,height)
         self.list = "0123456789."
     def blit(self, screen):
-        Image.blit(screen=screen, self = self)
+        # Image.blit(screen=screen, self = self)
         size = self.FONT.size(self.TEXT)
         # кордината + половина высоты кнопки - половина высоты текста
         y = self.y + self.height/2 - size[1]/2
@@ -305,13 +311,13 @@ class Auto(Image):
 
 
 
-input = Input(width = 551, height = 165, x = 366 , y = 531, name = "button_start")
-button_start = Button(width = 402 , height = 120, x = 435, y = 343, name = "button_start", text= "Start Game")
+input = Input(width = 496, height = 148, x = 387 , y = 568, name = "input")
+button_start = Button(width = 402 , height = 120, x = 435, y = 343, name = "", text= "")
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
 ip = Button(x = 981, y = 59, width = 281, height = 84, name = "button_start", text = ip, size = 50)
-text_ip = Button(x = 981, y = 10, width = 281, height = 45, text = "user ip", size = 50)
-m_data.list_blits["menu"].append(text_ip)
+# text_ip = Button(x = 981, y = 10, width = 281, height = 45, text = "user ip", size = 50)
+# m_data.list_blits["menu"].append(text_ip)
 auto = Auto(width= 170, height= 58, x= 665, y= 610)
 rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "", progression= "pre-game", text= "")
 play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60)
@@ -322,6 +328,7 @@ out = Button(height = 80, width = 518, x = 0, y = 712, progression = "lose", tex
 music =Button(width = 76,height = 72,x = 42, y = 43, text = "", fun = "music", name =  "music")
 client = Button(width= 281, height= 100, name= "button_start", text= "client", x= 42, y= 600, fun= "c_s:client")  
 server = Button(width= 281, height= 100, name= "button_start", text= "server", x= 981, y= 600, fun= "c_s:server")  
+# m_data.list_blits["game"].append(your_turn)
 
 m_data.list_blits["lose"].extend([revenge, out])
 # m_data.list_blits["lose"].append(out)

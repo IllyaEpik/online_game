@@ -3,10 +3,14 @@ import socket
 import modules.data as m_data
 import modules.ships as m_ships
 import modules.images as m_images
+# import http.client
 
 # Повертае ім'я компьютера(хоста)
 hostname = socket.gethostname()
 # Повертає IP адрессу по імені хосту
+# conn = http.client.HTTPConnection('ifconfig.me')
+# conn.request('GET','/ip')
+# print(conn)
 ip = socket.gethostbyname(hostname)
 client = None
 # ip = "127.0.0.1"

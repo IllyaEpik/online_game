@@ -50,11 +50,13 @@ class Image():
 background = Image(width = 1280, height = 851, x = 0, y = 0, name = "background")
 # создаємо фон для етапу розсташування кораблів
 playing_field = Image(width = 1280, height = 832, x = 0, y = 0, name = "playing_field", progression = "pre-game")
-
-right_ship = Image(width = 388, height = 318, x = 903, y = 243, name = "right_ship")
-left_ship = Image(width = 381, height = 316, x = 10, y = 260, name = "left_ship")
-hat = Image(width = 187, height = 150, x= 370, y = 252, name = "hat")
 # создаємо фон для самої гри
 play_field = Image(width = 1280, height = 851, x = 0, y = 0, name = "play_field", progression = "game", edit = False)
 lose = Image(width = 1280, height = 851, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
 win = Image(width = 1280, height = 851, x = 0, y = 0, name = "win", progression = "win", edit = False)
+
+your_turn = Image(width= 272, height= 66, x= 133, y= 712, name= "your_step", progression= "", edit= False)
+opponent_turn = Image(width= 350, height= 66, x= 772, y= 712, name= "opponent_step", progression= "", edit= False)
+
+your_turn_gray = Image(width= 272, height= 66, x= 133, y= 712, name= "your_step_gray", progression= "", edit= False)
+opponent_turn_gray = Image(width= 350, height= 66, x= 772, y= 712, name= "opponent_step_gray", progression= "", edit= False)
