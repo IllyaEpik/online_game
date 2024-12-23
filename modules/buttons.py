@@ -1,6 +1,7 @@
 # імпорт чужих модулів для роботи
 import pygame , socket, os
 import threading, random
+import getpass
 # імпорт наших модулів
 import modules.audio as m_audio
 from modules.images import Image
@@ -24,7 +25,7 @@ class Button(Image):
         self.TEXT = text  
         # створюємо параметри
         self.COLOR = (0, 0, 0)
-        self.FONT = pygame.font.SysFont("OldEnglishText", size)
+        self.FONT = pygame.font.SysFont("algerian", size)
         self.rect = pygame.Rect(x,y,width,height)
     # метод з кнопкою старт
     def button_start(self, event):
@@ -173,18 +174,21 @@ class Button(Image):
 
 # button = Button()
 class Input(Image):
-    def __init__(self, width: int, height: int,x = 0,y = 0, name = "", progression = "menu", color = (0,0,0), text = "ip: "):
+    def __init__(self, width: int, height: int,x = 0,y = 0, name = "", progression = "menu", color = (0,0,0), text = "ip: ", list = "0123456789."):
+        self.start_width = width 
+        self.start_height = height 
         Image.__init__(self, width=width, height=height, x=x, y=y, name=name, progression=progression)
         self.COLOR = color
-        self.FONT = pygame.font.SysFont("OldEnglishText", 65)
+        self.FONT = pygame.font.SysFont("algerian", 65)
         self.TEXT = text 
         self.RENDER_TEXT = None
         self.enter = False
         self.edit("ok")
         self.rect = pygame.Rect(x,y,width,height)
-        self.list = "0123456789."
+        self.list = list
     def blit(self, screen):
-        # Image.blit(screen=screen, self = self)
+        if self.name:
+            Image.blit(screen=screen, self = self)
         size = self.FONT.size(self.TEXT)
         # кордината + половина высоты кнопки - половина высоты текста
         y = self.y + self.height/2 - size[1]/2
@@ -204,7 +208,7 @@ class Input(Image):
                 
                 # Убирает последний символ текста 
                 self.TEXT = self.TEXT[:-1]
-            elif key in self.list:
+            elif key in self.list or self.list != "0123456789." and len(key) == 1:
                 # Добавляет символ который был нажат пользователем
                 self.TEXT += key
 
@@ -311,13 +315,23 @@ class Auto(Image):
 
 
 
-input = Input(width = 496, height = 148, x = 387 , y = 568, name = "input")
-button_start = Button(width = 402 , height = 120, x = 435, y = 343, name = "", text= "")
+button_start = Button(width = 402 , height = 120, x = 435, y = 343, name = "", text= "start")
+m_data.list_blits["menu"].append(button_start)
+
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
+input = Input(width = 496, height = 148, x = 387 , y = 568, name = "input")
+nickname = Input(x= 42, y= 43, width= 281, height= 84, name = "button_start", text = getpass.getuser(), list = "any")
 ip = Button(x = 981, y = 59, width = 281, height = 84, name = "button_start", text = ip, size = 50)
-# text_ip = Button(x = 981, y = 10, width = 281, height = 45, text = "user ip", size = 50)
-# m_data.list_blits["menu"].append(text_ip)
+for object in [input, nickname, ip]:
+    size = object.FONT.size(object.TEXT)
+    if object.width - size[0] - 10 < 0:
+        width = -(object.width - size[0] - 10)
+        object.x -= width
+        object.width += width
+        object.update_image()
+text_ip = Button(x = ip.x, y = 10, width = ip.width, height = 45, text = "user ip", size = 50)
+m_data.list_blits["menu"].append(text_ip)
 auto = Auto(width= 170, height= 58, x= 665, y= 610)
 rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "", progression= "pre-game", text= "")
 play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60)
@@ -325,9 +339,11 @@ revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progressi
 out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text = "", fun = "check")
 revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "lose", fun= "win_lose")
 out = Button(height = 80, width = 518, x = 0, y = 712, progression = "lose", text = "", fun = "check")
-music =Button(width = 76,height = 72,x = 42, y = 43, text = "", fun = "music", name =  "music")
+music =Button(width = 76,height = 72,x = nickname.width + 50, y = 45, text = "", fun = "music", name =  "music")
 client = Button(width= 281, height= 100, name= "button_start", text= "client", x= 42, y= 600, fun= "c_s:client")  
 server = Button(width= 281, height= 100, name= "button_start", text= "server", x= 981, y= 600, fun= "c_s:server")  
+wait = Button(width= 1280, x = 0, y = 712, height= 59, text = "wait", progression= "game")
+
 # m_data.list_blits["game"].append(your_turn)
 
 m_data.list_blits["lose"].extend([revenge, out])

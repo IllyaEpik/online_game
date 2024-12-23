@@ -35,7 +35,8 @@ def activate():
         server.listen()
         # Підтверджуємо з'єднання від клієнту
         client = server.accept()
-        
+        m_data.connected = True 
+        print('GOO')
         for coun in range(100):
             print(client[1],"katkit")
         print("Acept_Client")

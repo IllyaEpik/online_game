@@ -31,6 +31,7 @@ def activate():
         print("it is cool", m_data.ip)
         # визиваємо функцію для відправки даних на сервер
         send(ships.encode())
+        m_data.connected = True 
         print("it's cool")
         m_data.revenge = True
         while not m_data.end:

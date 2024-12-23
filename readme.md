@@ -8,24 +8,26 @@
 
 ## Назва проекту: Онлайн гра морський бій/ name project: Online game sea battles
 
-#### опис:
+### опис:
 * Ця гра дозволяє грати у морський бій удвох на різних комп'ютерах.
-##### description:
+#### description:
 * This game allows two players to play the sea battles on different computers
 
 #### модулі/modules:
 + pygame; модуль який дозволяе реалізувати саму гру / a module that enables game development.
-
 + pillow; модуль для роботи pygame / a module for working pygame
 + random; вбудований модуль, який потрібен для генерації випадкових чисел / a built-in which used for generating random numbers.
 + os; вбудований модуль для пошуку абсолютного шляху / a built-in module for finding absolute paths
 + threading; вбудований модуль, який обробляє потоки для одночасних завдань / handles threads for concurrent tasks.
 + socket; вбудований модуль, який дозволяе реалізувати онлайн підключення / a built-in module for enabling online connections.
 
-# інструкція для запуску:
+## інструкція для запуску:
 1. Для початку потрібно встановити:
 * Python останньої версії
 - https://www.python.org/downloads/
+* Застосунок для підключення по сеті
+- https://www.radmin-vpn.com/
+
 2. Зайти на Git Hub
 3. У репозиторії проекту натиснути зелену кнопку "Code"
 ![alt text](images/readme/github_image.png)
@@ -34,30 +36,61 @@
 * Для Windows
 5. Перейти до завантаженого архіву та розархівувати його(Права кнопка миші -> "Витягнути до поточної папки".)
 6. Зайти до розархівованої папки і скопіювати шлях:
-- фото
-7. Натиснути комбінацію Wind + R
+- ![alt text](images/readme/path_to_folder.png)
+7. Натиснути комбінацію **Wind + R**
 8. Вписати у віконці:
 - cmd
 9. У терміналі прописати команду для переходу до файлу:
 - cd <шлях>
-10. Активувати гру зо допомогою команди:
+10. Вести команду для завантаження необхідного модуля:
+- pip install pygame
+11. Активувати гру за допомогою команди:
 - python main.py
 
 * Для macOS
 5. Перейти до завантаженого архіву та розархівувати його(двічі клацніть по архіву, щоб розпакувати його автоматично.)
 6. Зайти до розпакованої папки і скопіювати її шлях:
-![alt text](images/readme/path_to_folder.png)
 7. Правою кнопкою миші на папку -> Оберіть "Get Info" -> Скопіюйте шлях у полі "Where".
 8. Натисніть Command + Пробіл, введіть "Terminal" і натисніть Enter.
 9. У терміналі прописати команду для переходу до файлу:
 - cd <шлях>
-10. Активувати гру зо допомогою команди:
+10. Вести команду для завантаження необхідного модуля:
+- pip3 install pygame
+11. Активувати гру за допомогою команди:
 - python3 main.py
 
-## instructions for launch
+* Для того щоб підєднатися по сеті:
+12. Заходимо в гру
+
+* Перший способ:
+13. У грі сервер(один з гравців) повідомляє іншому свій IP та обирає роль сервера
+14. Запускає другий етап(обов'язково перший!)
+15. Другий гравець вводить IP сервера
+16. Вдалої гри!
+
+* Другий способ:
+13. Запускаємо застосунок Radmin VPN:
+14. Натискаємо на кнопку:
+- ![alt text](images/readme/activate_radmin.png)
+15. 1) Після цього один з гравців натискає:
+- ![alt text](images/readme/server_radmin.png)
+15. 1) Він має задати нобхідні данні і надати їх другому гравцю:
+- ![alt text](images/readme/create_server_radmin.png)
+15. 2) Другий має натиснути:
+- ![alt text](images/readme/connect_radmin.png)
+15. 2) Та ввести данні які були передані першим гравцем
+16. Сервер(один з гравців) повідомляє іншому свій IP з Radmin VPN та обирає роль сервера
+17. Другий гравець вводить IP
+18. Вдалої гри!
+
+### instructions for launch
 1. First, you need to install:  
-   * The latest version of Python  
-   - [https://www.python.org/downloads/](https://www.python.org/downloads/)  
+* The latest version of Python  
+- https://www.python.org/downloads/
+* Application for connecting over the network
+- https://www.radmin-vpn.com/
+
+
 2. Go to GitHub.  
 3. In the project repository, click the green "Code" button.  
    ![alt text](image.png)  
@@ -69,32 +102,376 @@
    ![alt text](images/readme/path_to_folder.png) 
 7. Press the **Win + R** key combination.  
 8. In the dialog box, enter:  
-   **cmd**  
+- cmd  
 9. In the terminal, type the command:  
-   **cd <path>** 
-10. Then, type the command:  
-   **python main.py** 
+- cd <path> 
+10. Run a command to download the required module:
+- pip install pygame
+11. Launch the game using the command:  
+- python main.py 
 
 * For macOS  
 5. Navigate to the downloaded archive and extract it (double-click the archive to unpack it automatically).  
 6. Open the extracted folder and copy its path:  
    ![alt text](images/readme/path_to_folder.png)
 7. Right-click on the folder -> Select "Get Info"-> Copy the path in the "Where" field.  
-8. Press **Command + Space**, type "Terminal", and hit Enter.  
+8. Press Command + Space, type "Terminal", and hit Enter.  
 9. In the terminal, enter the command to navigate to the file:  
-   **cd <path>**  
-10. Launch the game using the command:  
-   **python3 main.py**
-   - ![alt text](images/readme/path_to_folder.png)
+- cd <path> 
+10. Run a command to download the required module:
+- pip3 install pygame 
+11. Launch the game using the command:  
+- python3 main.py
 
-# структура проекту / project structure:
+* To connect over the network:
+12. Let's get into the game
+
+First Method:
+13. In the game, the server (one of the players) shares their IP and selects the server role
+14. Start the second stage (the first stage must be completed!)
+15. The second player selects the player role and enters the server's IP
+16. Enjoy the game!  
+
+Second Method:  
+13. Launch the Radmin VPN application
+14. Click the button:  
+   - ![alt text](images/readme/activate_radmin.png)  
+15. 1) After that, one of the players clicks:  
+   - ![alt text](images/readme/server_radmin.png)  
+15. 1) They need to set the necessary details and provide them to the second player:  
+   - ![alt text](images/readme/create_server_radmin.png)  
+15. 2) The second player clicks:  
+   - ![alt text](images/readme/connect_radmin.png)  
+15. 2) Then enters the details shared by the first player  
+16. The server (one of the players) shares their Radmin VPN IP and selects the server role
+* if it seems too difficult to you, look at this picture and relax
+- ![alt text](images/readme/relax_picture.jpg)
+17. The second player selects the player role and enters the IP.  
+18. Enjoy the game!
+
+## 启动指南:  
+
+1. 首先需要安装：  
+   - 最新版本的 Python  
+     [下载链接](https://www.python.org/downloads/)  
+   - 网络连接应用程序  
+     [下载链接](https://www.radmin-vpn.com/)  
+
+2. 打开 GitHub。  
+3. 在项目的代码库页面，点击绿色按钮“Code”。  
+   ![alt text](images/readme/github_image.png)  
+4. 选择“下载 ZIP”。  
+
+**Windows 用户**  
+5. 前往下载的压缩文件并解压（右键单击 -> “提取到当前文件夹”）。  
+6. 进入解压后的文件夹并复制文件路径：  
+   ![alt text](images/readme/path_to_folder.png)  
+7. 按下 **Windows + R** 组合键。  
+8. 在弹出的窗口中输入：  
+   - cmd  
+9. 在终端中输入以下命令切换到文件目录：  
+   - cd <路径>  
+10. 输入以下命令安装所需模块：  
+    - pip install pygame  
+11. 输入以下命令启动游戏：  
+    - python main.py  
+
+**macOS 用户**  
+5. 前往下载的压缩文件并解压（双击压缩文件自动解压）。  
+6. 进入解压后的文件夹并复制文件路径：  
+   - 右键单击文件夹 -> 选择“获取信息” -> 复制“位置”字段中的路径。  
+7. 按下 Command + 空格键，输入“Terminal”并按 Enter。  
+8. 在终端中输入以下命令切换到文件目录：  
+   - cd <路径>  
+9. 输入以下命令安装所需模块：  
+   - pip3 install pygame  
+10. 输入以下命令启动游戏：  
+    - python3 main.py  
+
+**连接网络游戏：**  
+12. 打开游戏。  
+
+**第一种方法：**  
+13. 在游戏中，服务器端玩家（其中一位玩家）告诉另一位玩家自己的 IP，并选择服务器角色。  
+14. 启动第二阶段（第一阶段必须完成！）。  
+15. 第二位玩家输入服务器的 IP。  
+16. 祝您游戏愉快！  
+
+**第二种方法：**  
+13. 启动 Radmin VPN 应用程序：  
+14. 点击按钮：  
+    - ![alt text](images/readme/activate_radmin.png)  
+15. (1) 接着，其中一位玩家点击：  
+    - ![alt text](images/readme/server_radmin.png)  
+      - 他需要输入必要的详细信息并将其提供给另一位玩家：  
+      - ![alt text](images/readme/create_server_radmin.png)  
+15. (2) 另一位玩家点击：  
+    - ![alt text](images/readme/connect_radmin.png)  
+      - 然后输入第一位玩家提供的信息。  
+16. 服务器端玩家通过 Radmin VPN 告诉另一位玩家自己的 IP，并选择服务器角色。  
+17. 第二位玩家输入 IP。  
+18. 祝您游戏愉快！  
+
+## Instrukcja uruchomienia:  
+
+1. Najpierw należy zainstalować:  
+   - Najnowszą wersję Pythona  
+     [Link do pobrania](https://www.python.org/downloads/)  
+   - Aplikację do połączeń sieciowych  
+     [Link do pobrania](https://www.radmin-vpn.com/)  
+
+2. Otwórz GitHub.  
+3. W repozytorium projektu kliknij zielony przycisk „Code”.  
+   ![alt text](images/readme/github_image.png)  
+4. Wybierz „Pobierz ZIP”.  
+
+**Dla użytkowników Windows**  
+5. Przejdź do pobranego archiwum i rozpakuj je (Prawy przycisk myszy -> „Wypakuj tutaj”).  
+6. Wejdź do rozpakowanego folderu i skopiuj jego ścieżkę:  
+   ![alt text](images/readme/path_to_folder.png)  
+7. Naciśnij kombinację **Windows + R**.  
+8. W wyświetlonym oknie wpisz:  
+   - cmd  
+9. W terminalu wpisz polecenie przejścia do folderu:  
+   - cd <ścieżka>  
+10. Wpisz polecenie instalacji wymaganego modułu:  
+    - pip install pygame  
+11. Uruchom grę za pomocą polecenia:  
+    - python main.py  
+
+**Dla użytkowników macOS**  
+5. Przejdź do pobranego archiwum i rozpakuj je (Kliknij dwukrotnie, aby automatycznie rozpakować).  
+6. Wejdź do rozpakowanego folderu i skopiuj jego ścieżkę:  
+   - Kliknij prawym przyciskiem myszy na folder -> Wybierz „Informacje” -> Skopiuj ścieżkę z pola „Gdzie”.  
+7. Naciśnij Command + Spacja, wpisz „Terminal” i naciśnij Enter.  
+8. W terminalu wpisz polecenie przejścia do folderu:  
+   - cd <ścieżka>  
+9. Wpisz polecenie instalacji wymaganego modułu:  
+   - pip3 install pygame  
+10. Uruchom grę za pomocą polecenia:  
+    - python3 main.py  
+
+**Aby połączyć się przez sieć:**  
+12. Otwórz grę.  
+
+**Pierwsza metoda:**  
+13. W grze serwer (jeden z graczy) podaje swój adres IP drugiemu graczowi i wybiera rolę serwera.  
+14. Uruchom drugi etap (pierwszy etap musi być ukończony!).  
+15. Drugi gracz wprowadza adres IP serwera.  
+16. Miłej gry!  
+
+**Druga metoda:**  
+13. Uruchom aplikację Radmin VPN.  
+14. Kliknij przycisk:  
+    - ![alt text](images/readme/activate_radmin.png)  
+15. (1) Następnie jeden z graczy klika:  
+    - ![alt text](images/readme/server_radmin.png)  
+      - Ustawia wymagane dane i przekazuje je drugiemu graczowi:  
+      - ![alt text](images/readme/create_server_radmin.png)  
+15. (2) Drugi gracz klika:  
+    - ![alt text](images/readme/connect_radmin.png)  
+      - Wprowadza dane przekazane przez pierwszego gracza.  
+16. Serwer (jeden z graczy) przekazuje swój adres IP z Radmin VPN i wybiera rolę serwera.  
+17. Drugi gracz wprowadza adres IP.  
+18. Miłej gry!  
+
+## Aratohu mō te whakarewatanga:  
+
+1. Tuatahi, me tāuta:  
+   - Ko te putanga hou o Python  
+     [Hononga Tikiake](https://www.python.org/downloads/)  
+   - He taupānga mō ngā hononga whatunga  
+     [Hononga Tikiake](https://www.radmin-vpn.com/)  
+
+2. Whakatuwherahia te GitHub.  
+3. I roto i te kōpaki kaupapa, pāwhiritia te pātene kākāriki "Code".  
+   ![alt text](images/readme/github_image.png)  
+4. Kōwhiria "Tikiake ZIP".  
+
+**Mō ngā kaiwhakamahi Windows**  
+5. Haere ki te kōnae kua tikiakehia, wetewetehia te kōnae (Pāwhiri Matau -> "Unuhia ki te kōpaki onāianei").  
+6. Tomo ki te kōpaki kua wetewetahia, tāruatia te ara:  
+   ![alt text](images/readme/path_to_folder.png)  
+7. Patohia te **Windows + R**.  
+8. I te matapihi kua puta, whakauruhia:  
+   - cmd  
+9. I te kāpeka, pato i te whakahau ki te huri ki te ara kōnae:  
+   - cd <ara>  
+10. Pato i te whakahau ki te tāuta i te kōwae e tika ana:  
+    - pip install pygame  
+11. Whakarewaina te kēmu mā te whakahau:  
+    - python main.py  
+
+**Mō ngā kaiwhakamahi macOS**  
+5. Haere ki te kōnae kua tikiakehia, wetewetehia (Pāwhiritia te kōnae kia tīmata ai te wetewete aunoa).  
+6. Tomo ki te kōpaki kua wetewetahia, tāruatia te ara:  
+   - Pāwhiri Matau ki te kōpaki -> Kōwhiria "Tiki Kōrero" -> Tāruatia te ara i te pouaka "Kei hea".  
+7. Patohia **Command + Mokowā**, whakauruhia "Terminal", pēhia Enter.  
+8. I te kāpeka, pato i te whakahau ki te huri ki te ara kōnae:  
+   - cd <ara>  
+9. Pato i te whakahau ki te tāuta i te kōwae e tika ana:  
+   - pip3 install pygame  
+10. Whakarewaina te kēmu mā te whakahau:  
+    - python3 main.py  
+
+**Hei hono mā te whatunga:**  
+12. Whakatuwheratia te kēmu.  
+
+**Tikanga Tuatahi:**  
+13. I roto i te kēmu, ka tuku te tūmau (tētahi o ngā kaitākaro) i tōna IP ki tētahi atu, ka kōwhiri i te tūranga tūmau.  
+14. Whakarewaina te wāhanga tuarua (me oti te wāhanga tuatahi!).  
+15. Ka whakauru te kaitākaro tuarua i te IP o te tūmau.  
+16. Kia pai te kēmu!  
+
+**Tikanga Tuarua:**  
+13. Whakarewaina te taupānga Radmin VPN.  
+14. Pāwhiria te pātene:  
+    - ![alt text](images/readme/activate_radmin.png)  
+15. (1) Ā muri iho, ka pāwhiri tētahi o ngā kaitākaro ki:  
+    - ![alt text](images/readme/server_radmin.png)  
+      - Whakaritea ngā taipitopito, tuku atu ki tētahi atu kaitākaro:  
+      - ![alt text](images/readme/create_server_radmin.png)  
+15. (2) Ka pāwhiri te kaitākaro tuarua ki:  
+    - ![alt text](images/readme/connect_radmin.png)  
+      - Whakauruhia ngā taipitopito i tukuna mai e te kaitākaro tuatahi.  
+16. Ka tuku te tūmau (tētahi o ngā kaitākaro) i tōna IP mai i Radmin VPN, ka kōwhiri i te tūranga tūmau.  
+17. Ka whakauru te kaitākaro tuarua i te IP.  
+18. Kia pai te kēmu!  
+
+## Instructio pro Ludo Incipiendo:  
+
+1. Primo necesse est installare:  
+   - Novissimam versionem Python  
+     [Link ad Download](https://www.python.org/downloads/)  
+   - Applicationem ad conexionem retis  
+     [Link ad Download](https://www.radmin-vpn.com/)  
+
+2. Aperi GitHub.  
+3. In repositorio propositi, preme viridem puga "Code".  
+   ![alt text](images/readme/github_image.png)  
+4. Elige "Download ZIP".  
+
+**Pro Fenestra (Windows)**  
+5. Adi ad archivum downloadatum et illud extrahe (Click dexter -> "Extrahe hic").  
+6. Ingredere folder extractum et copia eius viam:  
+   ![alt text](images/readme/path_to_folder.png)  
+7. Preme **Windows + R**.  
+8. In fenestra quae apparet, scribe:  
+   - cmd  
+9. In terminali, scribe mandatum ad iter faciendum ad folder:  
+   - cd <via>  
+10. Scribe mandatum ad modulum necessarium installandum:  
+    - pip install pygame  
+11. Incipe ludum hoc mandato:  
+    - python main.py  
+
+**Pro macOS**  
+5. Adi ad archivum downloadatum et illud extrahe (bis preme ut automatice extrahatur).  
+6. Ingredere folder extractum et copia eius viam:  
+   - Click dexter in folder -> Elige "Get Info" -> Copia viam e campo "Where".  
+7. Preme **Command + Spatium**, scribe "Terminal" et preme Enter.  
+8. In terminali, scribe mandatum ad iter faciendum ad folder:  
+   - cd <via>  
+9. Scribe mandatum ad modulum necessarium installandum:  
+   - pip3 install pygame  
+10. Incipe ludum hoc mandato:  
+    - python3 main.py  
+
+**Ad conexionem retis ludendi:**  
+12. Aperi ludum.  
+
+**Prima Methodus:**  
+13. In ludo, servus (unus lusorum) alteri lusori suum IP communicat et munus servi eligit.  
+14. Secundum gradum incipe (primus gradus peragendus est!).  
+15. Alter lusor IP servi inserit.  
+16. Ludum felix!  
+
+**Secunda Methodus:**  
+13. Aperi applicationem Radmin VPN.  
+14. Preme puga:  
+    - ![alt text](images/readme/activate_radmin.png)  
+15. 1) Tum unus lusorum premit:  
+    - ![alt text](images/readme/server_radmin.png)  
+15. 1) Configurat informationes necessarias et eas alteri lusori tradit:  
+      - ![alt text](images/readme/create_server_radmin.png)  
+15. 2) Alter lusor premit:  
+    - ![alt text](images/readme/connect_radmin.png)  
+15. 2) - Inserit informationes ab primo lusore traditas.  
+16. Servus (unus lusorum) suum IP ex Radmin VPN alteri communicat et munus servi eligit.  
+17. Alter lusor IP inserit.  
+18. Ludum felix!  
+
+## Тоглоомыг Эхлүүлэх Заавар:  
+
+1. Эхлээд дараах зүйлсийг суулгах хэрэгтэй:  
+   - Python-ий хамгийн сүүлийн хувилбар  
+     [Татах холбоос](https://www.python.org/downloads/)  
+   - Сүлжээнд холбогдох програм  
+     [Татах холбоос](https://www.radmin-vpn.com/)  
+
+2. GitHub руу ор.  
+3. Төслийн репозиторид ногоон товч "Code"-г дар.  
+   ![alt text](images/readme/github_image.png)  
+4. "Download ZIP"-г сонго.  
+
+**Windows-д зориулсан:**  
+5. Татсан ZIP файлаа задлаарай (Баруун товч -> "Extract here").  
+6. Задалсан хавтсанд орж, замыг нь хуул:  
+   ![alt text](images/readme/path_to_folder.png)  
+7. **Windows + R** товчийг дар.  
+8. Гарах цонхонд дараахийг бич:  
+   - cmd  
+9. Терминалд файл руу шилжих команд бич:  
+   - cd <зам>  
+10. Шаардлагатай модулийг суулгах команд бич:  
+    - pip install pygame  
+11. Тоглоомыг дараах командаар эхлүүл:  
+    - python main.py  
+
+**macOS-д зориулсан:**  
+5. Татсан ZIP файлаа задлаарай (ZIP дээр хоёр дарснаар автоматаар задлагдана).  
+6. Задалсан хавтсанд орж, замыг нь хуул:  
+   - Хавтсан дээр баруун товч дар -> "Get Info"-г сонгоод "Where" талбарт байгаа замыг хуул.  
+7. **Command + Space** товчийг дарж, "Terminal" гэж бичээд Enter дар.  
+8. Терминалд файл руу шилжих команд бич:  
+   - cd <зам>  
+9. Шаардлагатай модулийг суулгах команд бич:  
+   - pip3 install pygame  
+10. Тоглоомыг дараах командаар эхлүүл:  
+    - python3 main.py  
+
+**Сүлжээгээр холбогдож тоглохын тулд:**  
+12. Тоглоомыг нээ.  
+
+**Эхний Арга:**  
+13. Тоглоом дотор серверийн үүрэг (тоглогчдын нэг) өөрийн IP-г нөгөө тоглогчид өгч, серверийн үүрэг сонгоно.  
+14. Хоёрдугаар үе шатыг эхлүүл (эхний үе шат заавал дууссан байх ёстой!).  
+15. Нөгөө тоглогч серверийн IP-г оруулна.  
+16. Амжилттай тоглоорой!  
+
+**Хоёрдугаар Арга:**  
+13. Radmin VPN програмыг нээ.  
+14. Дараах товчийг дар:  
+    - ![alt text](images/readme/activate_radmin.png)  
+15. (1) Нэг тоглогч дараах товчийг дарна:  
+    - ![alt text](images/readme/server_radmin.png)  
+      - Шаардлагатай мэдээллийг оруулж, нөгөө тоглогчид өгнө:  
+      - ![alt text](images/readme/create_server_radmin.png)  
+15. (2) Нөгөө тоглогч дараах товчийг дарна:  
+    - ![alt text](images/readme/connect_radmin.png)  
+      - Эхний тоглогчоос авсан мэдээллийг оруулна.  
+16. Сервер үүрэг гүйцэтгэж буй тоглогч өөрийн Radmin VPN IP-г өгч, серверийн үүрэг сонгоно.  
+17. Нөгөө тоглогч серверийн IP-г оруулна.  
+18. Амжилттай тоглоорой!  
+
+## структура проекту / project structure:
 * Перше вікно: введення IP-адреси/First window: IP address input
 * Друге вікно: етап розташування кораблів/Second window: ship placement stage
 * Третє вікно: етап битви/Third window: battle stage
 * Четверте вікно: результат гри (програш чи перемога)/Fourth window: game result (lose or victory)
 
-## повний опис файлів / a full description of files:
-### Online_game/modules/main_window.py: створення головну екрану гри / create a main screen of game
+### повний опис файлів / a full description of files:
+#### Online_game/modules/main_window.py: створення головну екрану гри / create a main screen of game
 
 ```python
 # імпортуємо модуль pygame
@@ -208,7 +585,7 @@ screen = Screen()
 ```
 
 
-### Online_game/modules/attack.py: створення механіки атаки кораблів / 
+#### Online_game/modules/attack.py: створення механіки атаки кораблів / 
 ```python
 # імпортуємо необхідні модулі
 import pygame 
@@ -352,7 +729,7 @@ def win_lose():
 ```
 
 
-### Online_game/modules/buttons.py: створення необхідних кнопок для застосунку / сreation of necessary buttons for the application 
+#### Online_game/modules/buttons.py: створення необхідних кнопок для застосунку / сreation of necessary buttons for the application 
 ```python
 # імпорт чужих модулів для роботи
 import pygame , socket
@@ -672,7 +1049,7 @@ m_data.list_blits["lose"].extend([revenge, out])
 # m_data.list_blits["pre-game"].append(auto)
 ```
 
-### Online_game/modules/ships.py: створення механік кораблів, грального поля / development of mechanics for ships and the game field
+#### Online_game/modules/ships.py: створення механік кораблів, грального поля / development of mechanics for ships and the game field
 ```python
 # імпортуємо файли
 import modules.images as m_images
@@ -964,7 +1341,7 @@ ship.place((1, 1))
 
 ```
 
-### Online_game/modules/images.py: файл для роботи з зображеннями / file for working with images
+#### Online_game/modules/images.py: файл для роботи з зображеннями / file for working with images
 ```python
 # імпортуємо модуль pygame , os
 import pygame, os
@@ -1028,7 +1405,7 @@ lose = Image(width = 1280, height = 851, x = 0, y = 0, name = "lose", progressio
 win = Image(width = 1280, height = 851, x = 0, y = 0, name = "win", progression = "win", edit = False)
 ```
 
-### Online_game/modules/audio.py: файл для роботи зі звуком / file for working with sound 
+#### Online_game/modules/audio.py: файл для роботи зі звуком / file for working with sound 
 ```python
 # імпортуємо модулі pyagame і os
 import pygame, os 
@@ -1067,7 +1444,7 @@ track.play()
 # explosion = Audio('blas',0)
 ```
 
-### Online_game/modules/data.py: файл у якому зберігається змінні / file for storing variables 
+#### Online_game/modules/data.py: файл у якому зберігається змінні / file for storing variables 
 ```python
 # створення словника у якому містяться всі картинки для кожної стадії гри
 list_blits = {
@@ -1145,7 +1522,7 @@ cells = {
 }
 ```
 
-### Online_game/modules/client.py: файл який відповідає за роботу клієнту для гри по мережі / file responsible for the client functionality in a networked game 
+#### Online_game/modules/client.py: файл який відповідає за роботу клієнту для гри по мережі / file responsible for the client functionality in a networked game 
 ```python
 import modules.data as m_data 
 import socket
@@ -1181,7 +1558,7 @@ def activate():
         
 ```
 
-### Online_game/modules/server.py: файл який відповідає за роботу серверу для гри по мережі / file responsible for the server functionality in a networked game 
+#### Online_game/modules/server.py: файл який відповідає за роботу серверу для гри по мережі / file responsible for the server functionality in a networked game 
 ```python
 # Імпортування необхідних модулей
 import socket

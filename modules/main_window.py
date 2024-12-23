@@ -64,6 +64,7 @@ class Screen():
                     if m_data.progression == "menu":
                         # вибір місця написання
                         m_buttons.input.activate(event) 
+                        m_buttons.nickname.activate(event)
                         m_buttons.music.button_start(event)
                         m_buttons.client.button_start(event)
                         m_buttons.server.button_start(event)
@@ -86,11 +87,22 @@ class Screen():
                         # вибір місця атаки
                         m_attack.attack(event.pos)
                 # якщо будь-яка клавіша натиснута то
-                if event.type == pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN and m_data.progression == "menu":
                     # додає символи до input
                     m_buttons.input.edit(event)
-                    
-                    
+                    m_buttons.nickname.edit(event)
+                    for object in [m_buttons.nickname, ]:
+                        size = object.FONT.size(object.TEXT)
+                        # if object.width < size[0] - 10:
+                        width = -(object.start_width - size[0] - 10)
+                        object.width = width + object.start_width
+                        if object.width < object.start_width:
+                            object.width = object.start_width
+                        object.update_image()
+                        m_buttons.music.x = m_buttons.nickname.width + 50
+                        # else:
+                            # object.width = object.start_width
+                            # object.update_image()
                     
             # цикл відображення всього що є в списку
             for sprite in m_data.list_blits[m_data.progression]:
@@ -98,7 +110,9 @@ class Screen():
                 # відображення елементу
                 sprite.blit(self.screen)
             if m_data.progression == "menu" and m_audio.track.stoped:
-                pygame.draw.line(self.screen,(255,50,50),(42,115,),(120,43),10)
+                pygame.draw.line(self.screen,(255,50,50),
+                                 (m_buttons.music.x,m_buttons.music.y,),
+                                 (m_buttons.music.x + 76,m_buttons.music.y + 72),10)
             # якщо знаходимось не в меню то
             if m_data.progression in "pre-game":
                 # цикл для відображення всіх кораблів
@@ -106,12 +120,15 @@ class Screen():
                     # саме відображення кораблів
                     ship.blit(self.screen)
             if m_data.progression == "game":
-                if m_data.turn:
-                    m_images.your_turn.blit(self.screen)
-                    m_images.opponent_turn_gray.blit(self.screen)
+                if m_data.connected:
+                    if m_data.turn:
+                        m_images.your_turn.blit(self.screen)
+                        m_images.opponent_turn_gray.blit(self.screen)
+                    else:
+                        m_images.opponent_turn.blit(self.screen)
+                        m_images.your_turn_gray.blit(self.screen)
                 else:
-                    m_images.opponent_turn.blit(self.screen)
-                    m_images.your_turn_gray.blit(self.screen)
+                    m_buttons.wait.blit(self.screen)
                 # for sprite in m_data.list_blits["game"]:
                 #     if sprite.name in "miss, explosion":
                 #         sprite.blit(self.screen)
