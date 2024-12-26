@@ -1,7 +1,7 @@
 # імпортуємо файли
 import modules.images as m_images
 import modules.data as m_data
-import modules.client as m_client
+import modules.clients_server as m_client
 
 # імпортуємо модуль pygame
 import pygame 
@@ -12,6 +12,7 @@ class Ship(m_images.Image):
     def __init__(self, x: int, y: int, name='1', row=0, cell=0, field_cor=[59, 115], rotate=0, add=True):
         # Розміри корабля залежать від його імені (перший символ - це кількість клітин корабля)
         self.width = int(name[0]) * 50
+        print(self.width)
         self.height = 50
         self.explosion = False
         # print(self.height)
@@ -82,13 +83,13 @@ class Ship(m_images.Image):
                     check(field=field, row=row, cell=cell - 1, values=[5, 7])
 
     # Метод активації корабля при натисканні
-    def activate(self, event):
+    def activate(self, event, multiplier_x=1, multiplier_y=1):
         if self.rect.collidepoint(event.pos):
             self.select = True
             self.name = self.name[0] + "_select"
             # print('eqw')
         else:
-            self.place(event.pos)
+            self.place(event.pos, multiplier_x, multiplier_y)
             self.select = False
             self.name = self.name[0]
             #int(self.name[0]) => int(self.name[0])
@@ -134,7 +135,7 @@ class Ship(m_images.Image):
                 m_data.my_field[self.row + count][self.cell] = int(self.name[0])
 
     # Метод для зміщення корабля на нову позицію
-    def place(self, pos):
+    def place(self, pos, multiplier_x=1, multiplier_y=1):
         if self.select:
             # print(self.field.collidepoint(pos))
             for row in range(10):
@@ -173,12 +174,12 @@ class Ship(m_images.Image):
                                 yes_no = True
                             fill_field(m_data.my_field)
                     except:
-                        print('errrrrrrrrrrrrrrrrrrrrrrrror')
+                        pass
                         # print("капибара")
                     if yes_no:
                         rect = pygame.Rect(
-                            self.field_cor[0] + cell * 55.7,
-                            self.field_cor[1] + row * 55.7,
+                            self.field_cor[0] + cell * 55.7*multiplier_x,
+                            self.field_cor[1] + row * 55.7*multiplier_y,
                             55.7, 55.7)
                         if rect.collidepoint(pos):
                             print(m_data.cells,self.celled)

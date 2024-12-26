@@ -36,10 +36,6 @@ def activate():
         # Підтверджуємо з'єднання від клієнту
         client = server.accept()
         m_data.connected = True 
-        print('GOO')
-        for coun in range(100):
-            print(client[1],"katkit")
-        print("Acept_Client")
         ships = "field:"
         for ship in m_data.all_ships:
             ships += f"{ship.name},{ship.row},{ship.cell},{ship.rotate} "

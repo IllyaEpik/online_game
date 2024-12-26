@@ -6,10 +6,10 @@ pygame.init()
 import modules.buttons as m_buttons
 import modules.data as m_data
 import modules.images as m_images
-import modules.client as m_client
+import modules.clients_server as m_client
 import modules.ships as m_ships
 import modules.attack as m_attack
-import modules.server as m_server
+# import modules.server as m_server
 import modules.audio as m_audio
 
 
@@ -17,16 +17,20 @@ import modules.audio as m_audio
 class Screen():
     # ініціалізуємо screen
     def __init__(self):
+        size = pygame.display.Info()
         # создаємо таймер
         self.clock = pygame.time.Clock()
         # вказуємо ширину
-        self.WIDTH= 1280
+        self.WIDTH= size.current_w * 0.75
         # вказуємо висоту
-        self.HEIGHT = 832
+        self.HEIGHT = size.current_h * 0.75
         # создаємо екран
-        self.screen = pygame.display.set_mode(size= (self.WIDTH, self.HEIGHT))
+        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT),pygame.RESIZABLE)
+        
+
         # задаємо назву нашому екрану
         pygame.display.set_caption('online game')
+        
         icon = pygame.image.load(os.path.abspath(__file__ + "/../../images/icon_peaceful.png"))
         pygame.display.set_icon(icon)
     # функція запуску
@@ -35,7 +39,15 @@ class Screen():
         # задаємо правдиве значення грі
         game = True
         # цикл поки гра активна
+        size = pygame.display.Info()
         while game:
+            size1 = self.screen.get_size()
+            WIDTH = size1[0]
+            HEIGHT= size1[1]
+            multiplier_x = (WIDTH / 100) / (1280 / 100)
+            multiplier_y = (HEIGHT / 100) / (832 / 100)
+            # print(width2)
+            # print(size,size1)
             # цикл всіх подій
             for event in pygame.event.get():
                 # якщо вікно зачинено то 
@@ -81,7 +93,7 @@ class Screen():
                         # цикл всіх кораблів
                         for ship in m_data.all_ships:
                             # виділення кораблів
-                            ship.activate(event)
+                            ship.activate(event, multiplier_x, multiplier_y)
                     # якщо прогресс дорівнює грі то
                     if m_data.progression == "game":
                         # вибір місця атаки
@@ -91,7 +103,7 @@ class Screen():
                     # додає символи до input
                     m_buttons.input.edit(event)
                     m_buttons.nickname.edit(event)
-                    for object in [m_buttons.nickname, ]:
+                    for object in [m_buttons.nickname]:
                         size = object.FONT.size(object.TEXT)
                         # if object.width < size[0] - 10:
                         width = -(object.start_width - size[0] - 10)
@@ -99,6 +111,8 @@ class Screen():
                         if object.width < object.start_width:
                             object.width = object.start_width
                         object.update_image()
+                        
+                        m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
                         m_buttons.music.x = m_buttons.nickname.width + 50
                         # else:
                             # object.width = object.start_width
@@ -108,27 +122,36 @@ class Screen():
             for sprite in m_data.list_blits[m_data.progression]:
                 # print(sprite.name)
                 # відображення елементу
-                sprite.blit(self.screen)
+                # print(sprite)
+                sprite.blit(self.screen,
+                                 sprite.x*multiplier_x,
+                                 sprite.y*multiplier_y,
+                                 sprite.width*multiplier_x,
+                                 sprite.height*multiplier_y,
+                                 multiplier_x,multiplier_y)
             if m_data.progression == "menu" and m_audio.track.stoped:
                 pygame.draw.line(self.screen,(255,50,50),
-                                 (m_buttons.music.x,m_buttons.music.y,),
-                                 (m_buttons.music.x + 76,m_buttons.music.y + 72),10)
+                                 (m_buttons.music.x*multiplier_x,m_buttons.music.y*multiplier_y,),
+                                 (m_buttons.music.x*multiplier_x + m_buttons.music.width*multiplier_x,m_buttons.music.y*multiplier_y + m_buttons.music.height*multiplier_y),10)
             # якщо знаходимось не в меню то
+            
             if m_data.progression in "pre-game":
                 # цикл для відображення всіх кораблів
                 for ship in m_data.all_ships:
                     # саме відображення кораблів
-                    ship.blit(self.screen)
+                    # print(sprite.x,sprite.y,sprite.width,sprite.height,multiplier_x,multiplier_y,ship.name)
+                    # print(sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y,ship.name)
+                    ship.blit(self.screen,ship.x*multiplier_x,ship.y*multiplier_y,ship.width*multiplier_x,ship.height*multiplier_y,multiplier_x,multiplier_y)
             if m_data.progression == "game":
                 if m_data.connected:
                     if m_data.turn:
-                        m_images.your_turn.blit(self.screen)
-                        m_images.opponent_turn_gray.blit(self.screen)
+                        m_images.your_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                        m_images.opponent_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     else:
-                        m_images.opponent_turn.blit(self.screen)
-                        m_images.your_turn_gray.blit(self.screen)
+                        m_images.opponent_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                        m_images.your_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                 else:
-                    m_buttons.wait.blit(self.screen)
+                    m_buttons.wait.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                 # for sprite in m_data.list_blits["game"]:
                 #     if sprite.name in "miss, explosion":
                 #         sprite.blit(self.screen)

@@ -21,6 +21,7 @@ enemy_ships = []
 list_explosions = []
 end = False
 connected = False
+enemy_nickname = ""
 # Створення списку, у якому зберігаеться усе поле гравця
 my_field = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

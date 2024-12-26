@@ -2,22 +2,24 @@
 import pygame, os
 #імпртуємо модуль modules.data як m_data
 import modules.data as m_data
+import modules.main_window as main_window
 # клас для роботи з зображенням
 class Image():
     # ініціалізуємо зображення
     def __init__(self, width: int, height: int, x: int, y: int, name = '', progression: str = "menu", rotate = 0, edit = True): 
         # переносимо параметри в змінні
+        
         self.width = width
         self.height = height
         self.x = x
-        self.y = y 
+        self.y = y
         self.name = name 
         self.progression = progression
         self.rotate = rotate
         # создаємо змінну self.image
         self.image = None 
         # вказуємо чи можемо ми редагувати зображення
-        self.edit_image = edit
+        self.edit_image = True
         # оновлюємо наше зображення
         self.update_image()
     # создаємо метод який оновлює наше зображення
@@ -26,11 +28,10 @@ class Image():
             # завантажуємо зображення з вказаного нам шляху
             self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
             
+            
             if self.edit_image:
-                # змінюємо розмір зображення  
+                # змінюємо розмір зображення 
                 self.image = pygame.transform.scale(self.image, (self.width, self.height))
-                # повертаємо наше зображення 
-                self.image = pygame.transform.rotate(self.image, self.rotate) 
             
             # пепевіряємо чи є наше зораження в  списку в якому все відображаться на екрані
             if self in m_data.list_blits[self.progression]:
@@ -38,14 +39,21 @@ class Image():
             else:
                 # ми додаємо в цей список наше зображення
                 m_data.list_blits[self.progression].append(self)
-        except:
+        except :
             # якщо сталась помилка при завантаженні зображення - ми пишемемо її
             print("Error: image",self.name)
     # создаємо метод який відображє наше зображення
-    def blit(self, screen):
-        # відображаємо наше зображення
-        screen.blit(self.image, (self.x, self.y))
-    
+    # def blit(self, screen):
+        
+    #     # відображаємо наше зображення
+    #     screen.blit(self.image, (self.x, self.y))
+    def blit(self,screen,x,y,width,height,multiplier_x,multiplier_y):
+        if self.image.get_width() != width or self.image.get_height() != height:
+            self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
+            self.image = pygame.transform.scale(self.image, (width, height))
+            self.rect = pygame.Rect(x,y,width,height)
+            # self.update_image()
+        screen.blit(self.image, (x, y))
 # создаємо задній фон за меню
 background = Image(width = 1280, height = 851, x = 0, y = 0, name = "background")
 # создаємо фон для етапу розсташування кораблів

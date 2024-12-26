@@ -2,37 +2,50 @@ import modules.data as m_data
 import modules.server as m_server
 import modules.ships as m_ships
 import modules.images as m_images
+import modules.buttons as m_buttons
 import socket
 
 # создамо функцію для відправкм даних на сервер
 def send(data):
     # відправляємо дані серверу
-    if m_data.client_server == "server":
-        m_server.send(data)
-    else:
-        client.sendall(data)
+    # if m_data.client_server == "server":
+        # server1[0].sendall(data)
+        # m_server.send(data)
+    # else:
+    client.sendall(data)
 
-
-client = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
+hostname = socket.gethostname()
+# Повертає IP адрессу по імені хосту
+ip = socket.gethostbyname(hostname)
+client_server = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
+# socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
 def activate():
     global client
     print('lod')
     if not m_data.revenge:
-        # создаємо клієнта
-        print('hello')
-        print('hi')
         # шифруємо поле гри
         ships = "field:"
         for ship in m_data.all_ships:
             ships += f"{ship.name},{ship.row},{ship.cell},{ship.rotate} "
-        print('just')
-        # підключаємо кліента до сервера
-        client.connect((m_data.ip, 8800))
-        print("it is cool", m_data.ip)
+        if m_data.client_server == "server":
+            client_server.bind(("0.0.0.0", 8800))
+            # Функція listen активує очікування підключення користувача
+            client_server.listen()
+            # Підтверджуємо з'єднання від клієнту
+            client = client_server.accept()[0]
+            m_data.connected = True 
+        if m_data.client_server == "client":
+            # підключаємо кліента до сервера
+            client = client_server
+            client.connect((m_data.ip, 8800))
+            
+            print("it is cool", m_data.ip)
         # визиваємо функцію для відправки даних на сервер
         send(ships.encode())
+        send(f"nickname:{m_buttons.nickname.TEXT}".encode())
+        print('good')
         m_data.connected = True 
-        print("it's cool")
+        # print("it's cool")
         m_data.revenge = True
         while not m_data.end:
             # Отримання данних кліенту та декодування їх
@@ -119,6 +132,12 @@ def activate():
                     width= 55.7,
                     height=55.7
                 )
+            elif data[0] == "nickname":
+                m_buttons.your_nickname.TEXT = m_buttons.nickname.TEXT
+                print(m_buttons.enemy_nickname.TEXT, data[1])
+                m_buttons.enemy_nickname.TEXT = data[1]
+                print(m_buttons.enemy_nickname.TEXT, data[1])
+
             # Перевірка, чи відбувся вибух
             elif data[0] == "explosion":
                 # Отримуємо позицію вибуху

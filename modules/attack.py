@@ -2,7 +2,7 @@
 import pygame 
 import modules.data as m_data
 import modules.images as m_images
-import modules.client as m_client
+import modules.clients_server as m_client
 import modules.audio as m_audio
 # список клітинок без кораблів
 list_miss = "05"
