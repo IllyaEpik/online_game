@@ -114,7 +114,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                     if name: 
                         m_client.send(f"attack:{row},{cell} {name}".encode())
                         #
-                        
+                        m_audio.explosion.play()
                         #
                         # if name == 'explosion':
                         #     #

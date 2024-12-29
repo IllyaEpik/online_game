@@ -61,6 +61,7 @@ class Image():
         screen.blit(self.image, (x, y))
 # создаємо задній фон за меню
 background = Image(width = 1280, height = 851, x = 0, y = 0, name = "background")
+background_shop = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_shop",progression='shop')
 # создаємо фон для етапу розсташування кораблів
 playing_field = Image(width = 1280, height = 832, x = 0, y = 0, name = "playing_field", progression = "pre-game")
 # создаємо фон для самої гри

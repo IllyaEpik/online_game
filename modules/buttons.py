@@ -111,6 +111,13 @@ class Button(Image):
                         size_ship = "4"
             elif self.function == "check":
                 return True
+            elif self.function == 'shop':
+                print(m_data.progression)
+                if m_data.progression == 'shop':
+                    m_data.progression = "menu"
+                else:
+                    m_data.progression = 'shop'
+
             # інакше функція гра
             elif self.function == "play":
 
@@ -158,8 +165,8 @@ class Button(Image):
                     m_data.ip = ip
                     if m_data.ip == "":
                         m_data.ip = m_client.ip
-                    with open(m_data.path, "w") as file:
-                        file.write(f"{nickname.TEXT}\n{m_data.ip}")
+                    with open(m_data.path+m_data.type+'data.txt', "w") as file:
+                        file.write(f"{nickname.TEXT}\n{m_data.ip}\n{not m_audio.track.stoped}\n{m_data.client_server}")
                     # перехід в пре-гру"
                     m_data.progression = "pre-game"
                     # if event.key == pygame.K_c:
@@ -380,11 +387,16 @@ m_data.list_blits["pre-game"].extend([rotate,play])
 # out = Button(height = 80, width = 518, x = 0, y = 712, progression = "lose", text = "", fun = "check")
 music =Button(width = 76,height = 72,x = nickname.width + 50, y = 45, text = "", fun = "music", name =  "music")
 client = Button(width= 281, height= 100, name= "button_start", text= "client", x= 42, y= 600, fun= "c_s:client")  
+shop = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+110, y= 725, fun= "shop")
+shop_ = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+110, y= 725, fun= "shop",progression='shop')
 server = Button(width= 281, height= 100, name= "button_start", text= "server", x= 981, y= 600, fun= "c_s:server")  
 wait = Button(width= 1280, x = 0, y = 712, height= 59, text = "wait", progression= "game")
 enemy_nickname = Button(y = 10, x = 1000, width= 200, height= 40, size = 40)
 your_nickname = Button(y = 10, x = 20, width= 200, height= 40, size = 40)
-
+if m_data.client_server == "server":
+    server.COLOR =(40,2,255)
+if m_data.client_server == "client":
+    client.COLOR =(40,2,255)
 your_turn = Button(width= 272, height= 66, x= 133, y= 712, text= "your step", progression= "", color=(0, 0, 255))
 opponent_turn = Button(width= 350, height= 66, x= 772, y= 712, text= "opponent`s step", progression= "", color = (255, 0, 0))
 

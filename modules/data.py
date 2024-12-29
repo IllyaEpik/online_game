@@ -5,30 +5,61 @@ if len(path) == 1:
     type = "\\"
 del path[-1]
 del path[-1]
-path.append("data.txt")
+path.append("data")
+# path.append("data.txt")
 path = type.join(path)
 read_data = {"nickname": "",
-             "ip": ""
+             "ip": "",
+             "sound": True,
+             "client_server": None,
+             'wins':0,
+             'loses':0
 }
-try:
-    with open(path, "r") as file:
-        data = file.read().split("\n")
-        if not "." in data[1] or data[1] == "" or data[0] == "":
-            0 / 0
-        read_data["nickname"] = data[0]
-        read_data["ip"] = data[1]
-
-except:
-    with open(path, "w") as file:
-        file.write("\n")
-
+shop_data = {"coins":0,
+             
+             }
+achievements_data = [
+    {
+        'name':'',
+        'description':'',
+        'has':False
+    }
+]
+def reading_data(dict,filename):
+    try:
+        with open(path+type+filename, "r") as file:
+            data = file.read().split("\n")
+            # if not "." in data[1] or data[1] == "" or data[0] == "":
+            #     0 / 0
+            count = 0
+            for name in dict:
+                if data[count] != '':
+                    dict[name] = data[count]
+                count+=1
+    except Exception as error:
+        print(error)
+        text = ''
+        count = 0
+        for name in dict:
+            if count:
+                text+='\n'
+            count +=1
+        with open(path+type+filename, "w") as file:
+            file.write(text)
+    return dict 
+read_data = reading_data(read_data,'data.txt')
+print(read_data)
+# server.COLOR = (0,0,0)
+# client.COLOR = (0,0,0)
+# self.COLOR =(40,2,255)
 # створення словника у якому містяться всі картинки для кожної стадії гри
 list_blits = {
     "menu": [],
     "pre-game": [],
     "game": [],
     "lose": [],
-    "win": []
+    "win": [],
+    "shop": []
 }
 # http://127.0.0.1/
 # Створення змінної, у якій ми будемо задавати потрібний єтап ігри
@@ -47,36 +78,15 @@ end = False
 connected = False
 enemy_nickname = ""
 # Створення списку, у якому зберігаеться усе поле гравця
-my_field = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-]
-
+my_field = []
 # Створення списку, у якому зберігаеться усе поле ворога
-enemy_field = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-]
-
+enemy_field = []
+for count in range(10):
+    enemy_field.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    my_field.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 # Створеня змінної, у якій ми говоримо треба чи ні повернути корабель
 turn = True
-client_server = None
+client_server = read_data["client_server"]
 revenge = False
 # Створеня словника, у якому міститься стандартне розташування всіх кораблів
 cells = {

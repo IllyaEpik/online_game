@@ -80,9 +80,12 @@ class Screen():
                         m_buttons.music.button_start(event)
                         m_buttons.client.button_start(event)
                         m_buttons.server.button_start(event)
+                        m_buttons.shop.button_start(event)
                         # перехід в пре-гру етап
                         m_buttons.button_start.button_start(event)
                     # якщо прогресс дорівнює пре-грі то
+                    elif m_data.progression == 'shop':
+                        m_buttons.shop_.button_start(event)
                     if m_data.progression == "pre-game":
                         # преходить в гру
                         m_buttons.play.button_start(event)
