@@ -3,8 +3,8 @@ import pygame, threading, os
 # ініціалізуємо pygame
 pygame.init()
 # імпортуємо наші модулі 
-import modules.buttons as m_buttons
 import modules.data as m_data
+import modules.buttons as m_buttons
 import modules.images as m_images
 import modules.clients_server as m_client
 import modules.ships as m_ships
@@ -97,7 +97,7 @@ class Screen():
                     # якщо прогресс дорівнює грі то
                     if m_data.progression == "game":
                         # вибір місця атаки
-                        m_attack.attack(event.pos)
+                        m_attack.attack(event.pos,multiplier_x,multiplier_y)
                 # якщо будь-яка клавіша натиснута то
                 if event.type == pygame.KEYDOWN and m_data.progression == "menu":
                     # додає символи до input
@@ -143,18 +143,33 @@ class Screen():
                     # print(sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y,ship.name)
                     ship.blit(self.screen,ship.x*multiplier_x,ship.y*multiplier_y,ship.width*multiplier_x,ship.height*multiplier_y,multiplier_x,multiplier_y)
             if m_data.progression == "game":
+                for sprite in m_data.list_blits["game"]:
+                    if sprite.name in "miss, explosion":
+                        sprite.blit(self.screen,
+                                 sprite.x*multiplier_x,
+                                 sprite.y*multiplier_y,
+                                 sprite.width*multiplier_x,
+                                 sprite.height*multiplier_y,
+                                 multiplier_x,multiplier_y)
                 if m_data.connected:
                     if m_data.turn:
-                        m_images.your_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
-                        m_images.opponent_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                        m_buttons.opponent_turn.COLOR = (140, 140, 140)
+                        m_buttons.your_turn.COLOR = (0, 0, 255)
+                        # sprite = m_buttons.opponent_turn_gray
+                        # m_buttons.opponent_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     else:
-                        m_images.opponent_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
-                        m_images.your_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                        m_buttons.opponent_turn.COLOR = (255, 0, 0)
+                        m_buttons.your_turn.COLOR = (140, 140, 140)
+                        # sprite = m_buttons.your_turn_gray
+                        # m_buttons.your_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                    
+                    sprite = m_buttons.your_turn
+                    m_buttons.your_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                    sprite = m_buttons.opponent_turn
+                    m_buttons.opponent_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                 else:
-                    m_buttons.wait.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
-                # for sprite in m_data.list_blits["game"]:
-                #     if sprite.name in "miss, explosion":
-                #         sprite.blit(self.screen)
+                    wait = m_buttons.wait
+                    wait.blit(self.screen,wait.x*multiplier_x,wait.y*multiplier_y,wait.width*multiplier_x,wait.height*multiplier_y,multiplier_x,multiplier_y)
             # оновлення екрану 
             pygame.display.flip()
             # фпс

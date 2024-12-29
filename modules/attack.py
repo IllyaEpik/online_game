@@ -9,7 +9,7 @@ list_miss = "05"
 # список клітинок з кораблями
 list_explosion = "1234"
 # метод з атакою
-def attack(pos: tuple):
+def attack(pos: tuple,multiplier_x,multiplier_y):
     # створення глобальних змінних
     global list_miss, list_explosion
     # умова для повора кораблів
@@ -20,17 +20,17 @@ def attack(pos: tuple):
             # цикл для клітинки
             for cell in range(10):
                 # створюємо хіт-бокс
-                rect = pygame.Rect(725+55.7*cell, 
-                                115+55.7*row,
-                                55.7,
-                                55.7)
+                rect = pygame.Rect((725+55.7*cell) * multiplier_x, 
+                                (115+55.7*row) * multiplier_y,
+                                55.7 * multiplier_x,
+                                55.7 * multiplier_y)
                 # перевірка на колізію
                 if rect.collidepoint(pos):
                     image = m_images.Image(
                             progression = "game",
                             name = "",
                             x = 725+55.7*cell,
-                            y = 115+55.7*row,
+                            y = 115+55.7*row ,
                             width= 55.7,
                             height=55.7
                     )

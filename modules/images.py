@@ -27,7 +27,7 @@ class Image():
         try:
             # завантажуємо зображення з вказаного нам шляху
             self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
-            
+            self.image = pygame.transform.rotate(self.image, self.rotate)
             
             if self.edit_image:
                 # змінюємо розмір зображення 
@@ -44,14 +44,19 @@ class Image():
             print("Error: image",self.name)
     # создаємо метод який відображє наше зображення
     # def blit(self, screen):
-        
+
     #     # відображаємо наше зображення
     #     screen.blit(self.image, (self.x, self.y))
     def blit(self,screen,x,y,width,height,multiplier_x,multiplier_y):
         if self.image.get_width() != width or self.image.get_height() != height:
             self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
-            self.image = pygame.transform.scale(self.image, (width, height))
-            self.rect = pygame.Rect(x,y,width,height)
+            self.image = pygame.transform.rotate(self.image, self.rotate)
+            if self.rotate % 180 == 0:
+                self.image = pygame.transform.scale(self.image, (width, height))
+                self.rect = pygame.Rect(x,y,width,height)
+            else:
+                self.image = pygame.transform.scale(self.image, (self.height * multiplier_x, self.width * multiplier_y))
+                self.rect = pygame.Rect(x,y,self.height * multiplier_x, self.width * multiplier_y)
             # self.update_image()
         screen.blit(self.image, (x, y))
 # создаємо задній фон за меню
@@ -63,8 +68,3 @@ play_field = Image(width = 1280, height = 851, x = 0, y = 0, name = "play_field"
 lose = Image(width = 1280, height = 851, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
 win = Image(width = 1280, height = 851, x = 0, y = 0, name = "win", progression = "win", edit = False)
 
-your_turn = Image(width= 272, height= 66, x= 133, y= 712, name= "your_step", progression= "", edit= False)
-opponent_turn = Image(width= 350, height= 66, x= 772, y= 712, name= "opponent_step", progression= "", edit= False)
-
-your_turn_gray = Image(width= 272, height= 66, x= 133, y= 712, name= "your_step_gray", progression= "", edit= False)
-opponent_turn_gray = Image(width= 350, height= 66, x= 772, y= 712, name= "opponent_step_gray", progression= "", edit= False)

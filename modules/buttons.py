@@ -13,7 +13,7 @@ print(pygame.font.get_fonts())
 # класс з кнопками
 class Button(Image):
     # метод з створенням параметрів
-    def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65, style = "OldEnglishText"):
+    def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65, color = (0, 0, 0)):
         # задаємо параметри в класс зображень
         Image.__init__(self, width=width, height=height, x=x, y=y, name=name, progression=progression)
         # переносимо параметри в змінні
@@ -24,7 +24,7 @@ class Button(Image):
         self.function = fun
         self.TEXT = text  
         # створюємо параметри
-        self.COLOR = (0, 0, 0)
+        self.COLOR = color
         self.FONT = pygame.font.SysFont("algerian", size)
         self.rect = pygame.Rect(x,y,width,height)
         self.size = size 
@@ -148,14 +148,18 @@ class Button(Image):
                         m_client.send(ships.encode()) 
                 print('OOO') 
             else:
-                if m_data.client_server:
+                if m_data.client_server and nickname.TEXT:
                     # for sprite in m_data.all_ships:
                     #     print(sprite.x,sprite.y,sprite.width,sprite.height,multiplier_x,multiplier_y,ship.name)
                     # записання ip
-                    m_data.ip = input.TEXT.split(" ")[1]
+                    ip = input.TEXT.split(": ")
+                    del ip[0]
+                    ip = ": ".join(ip)
+                    m_data.ip = ip
                     if m_data.ip == "":
                         m_data.ip = m_client.ip
-                        
+                    with open(m_data.path, "w") as file:
+                        file.write(f"{nickname.TEXT}\n{m_data.ip}")
                     # перехід в пре-гру"
                     m_data.progression = "pre-game"
                     # if event.key == pygame.K_c:
@@ -207,6 +211,8 @@ class Input(Image):
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
         # задання розміру для тексту
         self.rect = pygame.Rect(x,y,width,height)
+        if self.list == 'any':
+            self.x = 42
         if multiplier_x > multiplier_y:
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
         else:
@@ -230,7 +236,6 @@ class Input(Image):
             key = pygame.key.name(event.key)
             print(self.TEXT)
             if event.key == pygame.K_BACKSPACE and self.TEXT != "ip: ":
-                
                 # Убирает последний символ текста 
                 self.TEXT = self.TEXT[:-1]
             elif key in self.list or self.list != "0123456789." and len(key) == 1:
@@ -242,8 +247,11 @@ class Auto(Image):
     def __init__(self, width: int, height: int, x: int, y: int, name='', progression: str = "pre-game"):
         super().__init__(width, height, x, y, name, progression)
         self.rect = pygame.Rect(x,y,width,height)
+        m_data.list_blits["pre-game"].append(self)
+    def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
+        self.rect = pygame.Rect(x,y,width,height)
+        # pygame.draw.rect(screen,(255,25,25),self.rect)
     def randomship(self, cor):
-        # print("Hello")
         if self.rect.collidepoint(cor):
             count = 0
             count_ships = 0  
@@ -339,14 +347,19 @@ class Auto(Image):
                 self.randomship(cor)
 
 
-
+hostname = socket.gethostname()
+ip = socket.gethostbyname(hostname)
+ip1 = ""
+nick = getpass.getuser()
+if m_data.read_data["nickname"] != "":
+    nick = m_data.read_data["nickname"]
+if "." in m_data.read_data["ip"]:
+    ip1 = m_data.read_data["ip"]
 button_start = Button(width = 402 , height = 120, x = 435, y = 343, name = "", text= "start")
 m_data.list_blits["menu"].append(button_start)
 
-hostname = socket.gethostname()
-ip = socket.gethostbyname(hostname)
-input = Input(width = 496, height = 148, x = 387 , y = 568, name = "input")
-nickname = Input(x= 42, y= 43, width= 281, height= 84, name = "button_start", text = getpass.getuser(), list = "any")
+input = Input(width = 496, height = 148, x = 387 , y = 568, name = "input", text = f"ip: {ip1}")
+nickname = Input(x= 42, y= 43, width= 281, height= 84, name = "button_start", text = nick, list = "any")
 ip = Button(x = 981, y = 59, width = 281, height = 84, name = "button_start", text = ip, size = 50)
 for object in [input, nickname, ip]:
     size = object.FONT.size(object.TEXT)
@@ -359,9 +372,10 @@ text_ip = Button(x = ip.x, y = 10, width = ip.width, height = 45, text = "user i
 m_data.list_blits["menu"].append(text_ip)
 auto = Auto(width= 170, height= 58, x= 665, y= 610)
 rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "", progression= "pre-game", text= "")
-play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60)
+play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60, text = "")
 revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "win", fun= "win_lose")
 out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text = "", fun = "check")
+m_data.list_blits["pre-game"].extend([rotate,play])
 # revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "lose", fun= "win_lose")
 # out = Button(height = 80, width = 518, x = 0, y = 712, progression = "lose", text = "", fun = "check")
 music =Button(width = 76,height = 72,x = nickname.width + 50, y = 45, text = "", fun = "music", name =  "music")
@@ -370,6 +384,13 @@ server = Button(width= 281, height= 100, name= "button_start", text= "server", x
 wait = Button(width= 1280, x = 0, y = 712, height= 59, text = "wait", progression= "game")
 enemy_nickname = Button(y = 10, x = 1000, width= 200, height= 40, size = 40)
 your_nickname = Button(y = 10, x = 20, width= 200, height= 40, size = 40)
+
+your_turn = Button(width= 272, height= 66, x= 133, y= 712, text= "your step", progression= "", color=(0, 0, 255))
+opponent_turn = Button(width= 350, height= 66, x= 772, y= 712, text= "opponent`s step", progression= "", color = (255, 0, 0))
+
+# your_turn_gray = Button(width= 272, height= 66, x= 133, y= 712, name= "your_step_gray", progression= "", edit= False)
+# opponent_turn_gray = Button(width= 350, height= 66, x= 772, y= 712, name= "opponent_step_gray", progression= "", edit= False)
+
 m_data.list_blits["game"].append(your_nickname)
 m_data.list_blits["game"].append(enemy_nickname)
 

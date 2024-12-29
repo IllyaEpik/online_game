@@ -1,3 +1,27 @@
+type = "/"
+path = __file__.split("/")
+if len(path) == 1:
+    path = __file__.split("\\")
+    type = "\\"
+del path[-1]
+del path[-1]
+path.append("data.txt")
+path = type.join(path)
+read_data = {"nickname": "",
+             "ip": ""
+}
+try:
+    with open(path, "r") as file:
+        data = file.read().split("\n")
+        if not "." in data[1] or data[1] == "" or data[0] == "":
+            0 / 0
+        read_data["nickname"] = data[0]
+        read_data["ip"] = data[1]
+
+except:
+    with open(path, "w") as file:
+        file.write("\n")
+
 # створення словника у якому містяться всі картинки для кожної стадії гри
 list_blits = {
     "menu": [],
