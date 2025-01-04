@@ -50,8 +50,8 @@ def activate():
         m_data.connected = True 
         # print("it's cool")
         m_data.revenge = True
-        for c in range(50):
-            print(c)
+        # for c in range(50):
+        #     print(c)
         send(ships.encode())
         while not m_data.end:
             # Отримання данних кліенту та декодування їх

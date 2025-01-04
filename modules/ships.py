@@ -4,7 +4,7 @@ import modules.data as m_data
 import modules.clients_server as m_client
 
 # імпортуємо модуль pygame
-import pygame 
+import pygame,random
 
 # создаемо з Кораблями
 class Ship(m_images.Image):
@@ -12,7 +12,7 @@ class Ship(m_images.Image):
     def __init__(self, x: int, y: int, name='1', row=0, cell=0, field_cor=[59, 115], rotate=0, add=True):
         # Розміри корабля залежать від його імені (перший символ - це кількість клітин корабля)
         self.width = int(name[0]) * 50
-        print(self.width)
+        # print(self.width)
         self.height = 50
         self.explosion = False
         # print(self.height)
@@ -29,6 +29,7 @@ class Ship(m_images.Image):
         self.select = False  # Перевірка, чи вибрано корабель
         self.row = row
         self.cell = cell
+        self.jump_cor = [10,20,False,False]
         # Оновлюємо ігрове поле (записуємо розміри корабля)
         for count in range(int(name[0])):
             if rotate % 180 == 0:
@@ -40,7 +41,8 @@ class Ship(m_images.Image):
         self.field = pygame.Rect(field_cor, (10 * 55.7, 10 * 55.7))
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.celled = None
-
+    # def jump(self, x = 5,y = 100):
+    #     self.x 
     # Метод для перевірки, чи можна поставити корабель
     def check_enemy(self):
         yes_no = 0
@@ -86,6 +88,15 @@ class Ship(m_images.Image):
     def activate(self, event, multiplier_x=1, multiplier_y=1):
         if self.rect.collidepoint(event.pos):
             self.select = True
+            if random.randint(0,50) == 0 and ship.name[0] == '4':
+                self.jump_cor = [10,20,False,False]
+                self.jump_cor[2] = True
+                m_data.cells[0]=True
+                
+                for row in m_data.my_field:
+                    for cell in row:
+                        if cell == 4:
+                            cell = 0
             self.name = self.name[0] + "_select"
             # print('eqw')
         else:
@@ -182,8 +193,8 @@ class Ship(m_images.Image):
                             self.field_cor[1] + row * 55.7*multiplier_y,
                             55.7, 55.7)
                         if rect.collidepoint(pos):
-                            print(m_data.cells,self.celled)
-                            print()
+                            # print(m_data.cells,self.celled)
+                            # print()
                             for count in range(int(self.name[0])):
                                 if self.rotate % 180 == 0:
                                     m_data.my_field[self.row][self.cell + count] = 0
@@ -204,7 +215,7 @@ class Ship(m_images.Image):
                                     m_data.my_field[row + count][cell] = int(self.name[0])
                             self.select = False
                             fill_field(m_data.my_field)
-                            print(m_data.cells,self.celled)
+                            # print(m_data.cells,self.celled)
                             return True
             count = 0
             for cell1 in m_data.cells[self.name[0]]:
@@ -221,15 +232,15 @@ class Ship(m_images.Image):
                     # m_data.my_field[self.row][self.cell] = 0 
                     self.celled = count
                     self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-                    for row in m_data.my_field:
-                        print(row)      
+                    # for row in m_data.my_field:
+                    #     print(row)      
                     break
                 count += 1 
         fill_field(m_data.my_field)
         # print(m_data.cells)
 
-        for row in m_data.my_field:
-            print(row)
+        # for row in m_data.my_field:
+        #     print(row)
 # Функція перевірки на полі для кожної клітинки
 def check(field, row, cell, values=[0, 5]):
     if row != -1 and -1 != cell:

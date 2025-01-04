@@ -4,6 +4,7 @@ import modules.data as m_data
 import modules.images as m_images
 import modules.clients_server as m_client
 import modules.audio as m_audio
+import modules.achievements as m_achievements
 # список клітинок без кораблів
 list_miss = "05"
 # список клітинок з кораблями
@@ -48,7 +49,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                         image.name = 'explosion'
                         image.update_image()
                         m_data.list_explosions.append([image, row, cell])
-                       
+                        m_achievements.achievement('It’s a Hit!')
                         # import time
                         # time.sleep(0.1)
                         # відповідає за те яка клітинка створиться

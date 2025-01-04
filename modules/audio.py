@@ -22,6 +22,7 @@ class Audio():
             # завантаження музику по вказаному шляху
             
             self.stoped = False
+            
             # відтворюємо музику
             self.audio.play(loops= self.loops)
         except:

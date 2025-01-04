@@ -15,16 +15,127 @@ read_data = {"nickname": "",
              'wins':0,
              'loses':0
 }
-shop_data = {"coins":0,
+shop_data = {"tier":0,
              
              }
-achievements_data = [
-    {
-        'name':'',
-        'description':'',
-        'has':False
-    }
-]
+list_achievements = []
+# achievements_data = [
+#     {
+#         'name':'',
+#         'description':'',
+#         'has':False,
+#         'tier':0
+#     }
+# ]
+achievements_data = {
+    "Total Domination":{
+        'description':'Destroy 4 ships in one turn',
+        'has':False,
+        'tier':1
+    },
+    "It’s a Hit!":{
+        'description':'Hit a ship for the first time',
+        'has':False,
+        'tier':1
+    },
+    "Missed Shot":{
+        'description':'First missed shot',
+        'has':False,
+        'tier':1
+    },
+    "Pants on Fire":{
+        'description':'First defeat',
+        'has':False,
+        'tier':1
+    },
+    "Minted Coin":{
+        'description':'Earn money for the first time',
+        'has':False,
+        'tier':1
+    },
+    "Need More Gold!":{
+        'description':'Accumulate 1000 tier',
+        'has':False,
+        'tier':1
+    },
+    "Like a Clap of Hands":{
+        'description':'First victory',
+        'has':False,
+        'tier':1
+    },
+    "New Opportunities":{
+        'description':'Enter the shop for the first time',
+        'has':False,
+        'tier':1
+    },
+    "Glory to Air Defense":{
+        'description':'Destroy an "Oreshnik" using AA defense',
+        'has':False,
+        'tier':1
+    },
+    "Hooked":{
+        'description':'Buy your first weapon in the shop',
+        'has':False,
+        'tier':1
+    },
+    "Smells Like Victory":{
+        'description':'Get a streak of three wins',
+        'has':False,
+        'tier':1
+    },
+    "Closed Skies":{
+        'description':'Shoot down the first missile using air defense',
+        'has':False,
+        'tier':1
+    },
+    "Titanic":{
+        'description':'Sink the first four-deck ship',
+        'has':False,
+        'tier':1
+    },
+    "Launched Oreshnik":{
+        'description':'Launch an Oreshnik',
+        'has':False,
+        'tier':1
+    },
+    "Into the Sunset... ":{
+        'description':'Unlock all achievements',
+        'has':False,
+        'tier':1
+    },
+    "Extrovert":{
+        'description':'Play with 10 friends',
+        'has':False,
+        'tier':1
+    },
+    "Losing Streak":{
+        'description':'Lose three times in a row',
+        'has':False,
+        'tier':1
+    },
+    "Big Spender":{
+        'description':'Spend 1000 tier',
+        'has':False,
+        'tier':1
+    },
+    "Shopaholic":{
+        'description':'Buy everything in the shop',
+        'has':False,
+        'tier':1
+    },
+    "the bug":{
+        'description':'Secret',
+        'has':False,
+        'tier':1
+    },
+    "True Cossack":{
+        'description':'Get 50 victories',
+        'has':False,
+        'tier':1
+    },
+    # tier
+}
+
 def reading_data(dict,filename):
     try:
         with open(path+type+filename, "r") as file:
@@ -48,6 +159,16 @@ def reading_data(dict,filename):
             file.write(text)
     return dict 
 read_data = reading_data(read_data,'data.txt')
+for achievement in achievements_data:
+    # name = achievement['name']
+    name = achievement
+    try:
+        with open(path+type+'achievements'+type+name+'.txt', "r") as file:
+            achievements_data[achievement]['has'] = file.read()
+            print(achievements_data[achievement]['has'])
+    except:
+        with open(path+type+'achievements'+type+name+'.txt', "w") as file:
+            file.write('False')
 print(read_data)
 # server.COLOR = (0,0,0)
 # client.COLOR = (0,0,0)
@@ -109,3 +230,4 @@ cells = {
         [False, [805, 120]]
     ]
 }
+

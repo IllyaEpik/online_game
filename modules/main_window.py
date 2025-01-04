@@ -11,8 +11,10 @@ import modules.ships as m_ships
 import modules.attack as m_attack
 # import modules.server as m_server
 import modules.audio as m_audio
-
-
+import modules.achievements as m_achievements
+m_achievements.achievement('Glory to Air Defense')
+m_achievements.achievement('Big Spender')
+m_achievements.achievement('Pants on Fire')
 # 
 class Screen():
     # ініціалізуємо screen
@@ -137,10 +139,32 @@ class Screen():
                                  (m_buttons.music.x*multiplier_x,m_buttons.music.y*multiplier_y,),
                                  (m_buttons.music.x*multiplier_x + m_buttons.music.width*multiplier_x,m_buttons.music.y*multiplier_y + m_buttons.music.height*multiplier_y),10)
             # якщо знаходимось не в меню то
-            
+            if m_data.list_achievements != []:
+            # for achievement in m_data.list_achievements:
+                achievement = m_data.list_achievements[0]
+                achievement.move()
+                achievement.blit(self.screen,multiplier_x,multiplier_y)
             if m_data.progression in "pre-game":
                 # цикл для відображення всіх кораблів
                 for ship in m_data.all_ships:
+                    if ship.jump_cor[2]:
+                        ship.x += ship.jump_cor[0]
+                        ship.y -= ship.jump_cor[1]
+                        if not ship.jump_cor[3]:
+                            ship.jump_cor[0] /= 1.1
+                            ship.jump_cor[1] -= 2.5
+                        elif ship.y == 120:
+                            ship.jump_cor[3] = False
+                            ship.jump_cor[-2] = False
+                            
+                            m_achievements.achievement('the bug')
+                    if ship.y > self.screen.get_size()[1]+1000:
+                        ship.y = -100
+                        ship.jump_cor[0] =0
+                        ship.jump_cor[1] = -20
+                        ship.jump_cor[3] = True
+                        ship.x = 805
+                        print('hoho')
                     # саме відображення кораблів
                     # print(sprite.x,sprite.y,sprite.width,sprite.height,multiplier_x,multiplier_y,ship.name)
                     # print(sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y,ship.name)

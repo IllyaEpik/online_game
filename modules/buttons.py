@@ -7,9 +7,23 @@ import modules.audio as m_audio
 from modules.images import Image
 import modules.data as m_data
 import modules.clients_server as m_client 
+import modules.achievements as m_achievements
 # import modules.server as m_server
 from modules.ships import Ship,fill_field
 print(pygame.font.get_fonts())
+def smoke(screen,rect,color = (0,0,0)):
+    pygame.draw.line(screen,color,
+                     (rect.x,rect.y),
+                     (rect.x+rect.width,rect.y))
+    pygame.draw.line(screen,color,
+                     (rect.x,rect.y),
+                     (rect.x+rect.width,rect.y))
+    pygame.draw.line(screen,color,
+                     (rect.x,rect.y),
+                     (rect.x+rect.width,rect.y))
+    pygame.draw.line(screen,color,
+                     (rect.x,rect.y),
+                     (rect.x+rect.width,rect.y))
 # класс з кнопками
 class Button(Image):
     # метод з створенням параметрів
@@ -117,6 +131,7 @@ class Button(Image):
                     m_data.progression = "menu"
                 else:
                     m_data.progression = 'shop'
+                    m_achievements.achievement("New Opportunities")
 
             # інакше функція гра
             elif self.function == "play":
