@@ -12,9 +12,9 @@ import modules.attack as m_attack
 # import modules.server as m_server
 import modules.audio as m_audio
 import modules.achievements as m_achievements
-m_achievements.achievement('Glory to Air Defense')
-m_achievements.achievement('Big Spender')
-m_achievements.achievement('Pants on Fire')
+# m_achievements.achievement('Glory to Air Defense')
+# m_achievements.achievement('Big Spender')
+# m_achievements.achievement('Pants on Fire')
 # 
 class Screen():
     # ініціалізуємо screen
@@ -42,6 +42,7 @@ class Screen():
         game = True
         # цикл поки гра активна
         size = pygame.display.Info()
+        # m_data.progression = 'shop'
         while game:
             size1 = self.screen.get_size()
             WIDTH = size1[0]
@@ -82,7 +83,7 @@ class Screen():
                         m_buttons.music.button_start(event)
                         m_buttons.client.button_start(event)
                         m_buttons.server.button_start(event)
-                        m_buttons.shop.button_start(event)
+                        
                         # перехід в пре-гру етап
                         m_buttons.button_start.button_start(event)
                     # якщо прогресс дорівнює пре-грі то
@@ -103,6 +104,7 @@ class Screen():
                     if m_data.progression == "game":
                         # вибір місця атаки
                         m_attack.attack(event.pos,multiplier_x,multiplier_y)
+                        m_buttons.shop.button_start(event)
                 # якщо будь-яка клавіша натиснута то
                 if event.type == pygame.KEYDOWN and m_data.progression == "menu":
                     # додає символи до input
@@ -128,6 +130,8 @@ class Screen():
                 # print(sprite.name)
                 # відображення елементу
                 # print(sprite)
+                if m_data.progression == 'shop':
+                    print(sprite.x,sprite.y,sprite.name)
                 sprite.blit(self.screen,
                                  sprite.x*multiplier_x,
                                  sprite.y*multiplier_y,
@@ -178,6 +182,7 @@ class Screen():
                                  sprite.width*multiplier_x,
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
+            
                 if m_data.connected:
                     if m_data.turn:
                         m_buttons.opponent_turn.COLOR = (140, 140, 140)
@@ -197,6 +202,8 @@ class Screen():
                 else:
                     wait = m_buttons.wait
                     wait.blit(self.screen,wait.x*multiplier_x,wait.y*multiplier_y,wait.width*multiplier_x,wait.height*multiplier_y,multiplier_x,multiplier_y)
+            elif m_data.progression == 'shop':
+                    m_buttons.stroke(self.screen,m_buttons.description.rect,(0,0,0),5,multiplier_x=multiplier_x,multiplier_y=multiplier_y)
             # оновлення екрану 
             pygame.display.flip()
             # фпс

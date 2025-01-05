@@ -15,7 +15,7 @@ read_data = {"nickname": "",
              'wins':0,
              'loses':0
 }
-shop_data = {"tier":0,
+weapon_data = {"",
              
              }
 list_achievements = []
@@ -132,8 +132,7 @@ achievements_data = {
         'description':'Get 50 victories',
         'has':False,
         'tier':1
-    },
-    # tier
+    }
 }
 
 def reading_data(dict,filename):

@@ -32,7 +32,7 @@ class Image():
             if self.edit_image:
                 # змінюємо розмір зображення 
                 self.image = pygame.transform.scale(self.image, (self.width, self.height))
-            
+                self.image = pygame.transform.rotate(self.image, self.rotate)
             # пепевіряємо чи є наше зораження в  списку в якому все відображаться на екрані
             if self in m_data.list_blits[self.progression]:
                 pass
@@ -68,4 +68,4 @@ playing_field = Image(width = 1280, height = 832, x = 0, y = 0, name = "playing_
 play_field = Image(width = 1280, height = 851, x = 0, y = 0, name = "play_field", progression = "game", edit = False)
 lose = Image(width = 1280, height = 851, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
 win = Image(width = 1280, height = 851, x = 0, y = 0, name = "win", progression = "win", edit = False)
-
+rockets_icon = Image(width = 130, height = 130, x = 50, y = 180, name = "weapons/rockets_icon", progression = "shop")

@@ -10,7 +10,7 @@ x = 1280
 class achievement():
     def __init__(self,name):
         global x,y,width,height
-        if m_data.achievements_data[name]['has'] == "False" or 1:
+        if m_data.achievements_data[name]['has'] == "False":
             self.FONT = pygame.font.SysFont("algerian", 40)
             self.rect = pygame.Rect(x,y,width,height)
             m_data.list_achievements.append(self)

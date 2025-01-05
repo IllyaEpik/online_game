@@ -11,25 +11,28 @@ import modules.achievements as m_achievements
 # import modules.server as m_server
 from modules.ships import Ship,fill_field
 print(pygame.font.get_fonts())
-def smoke(screen,rect,color = (0,0,0)):
+def stroke(screen,rect:pygame.Rect,color = (0,0,0),width = 5,multiplier_x = 1,multiplier_y = 1):
+    print(screen,color,
+                     (int(rect.x*multiplier_x),int(rect.y*multiplier_y)),
+                     (int((rect.x+rect.width)*multiplier_x),int(rect.y*multiplier_y)),width*multiplier_x)
     pygame.draw.line(screen,color,
-                     (rect.x,rect.y),
-                     (rect.x+rect.width,rect.y))
+                     (int(rect.x*multiplier_x),int(rect.y*multiplier_y)),
+                     (int((rect.x+rect.width)*multiplier_x),int(rect.y*multiplier_y)),int(width*multiplier_x))
     pygame.draw.line(screen,color,
-                     (rect.x,rect.y),
-                     (rect.x+rect.width,rect.y))
+                     (int((rect.x+rect.width)*multiplier_x),int(rect.y*multiplier_y)),
+                     (int((rect.x+rect.width)*multiplier_x),int((rect.y+rect.height)*multiplier_y)),int(width*multiplier_x))
     pygame.draw.line(screen,color,
-                     (rect.x,rect.y),
-                     (rect.x+rect.width,rect.y))
+                     (int((rect.x+rect.width)*multiplier_x),int(rect.y+rect.height)*multiplier_y),
+                     (int(rect.x*multiplier_x),int((rect.y+rect.height)*multiplier_y)),int(width*multiplier_x))
     pygame.draw.line(screen,color,
-                     (rect.x,rect.y),
-                     (rect.x+rect.width,rect.y))
+                     (int((rect.x)*multiplier_x),int((rect.y+rect.height)*multiplier_y)),
+                     (int(rect.x*multiplier_x),int(rect.y*multiplier_y)),int(width*multiplier_x))
 # класс з кнопками
 class Button(Image):
     # метод з створенням параметрів
-    def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65, color = (0, 0, 0)):
+    def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65, color = (0, 0, 0),rotate = 0):
         # задаємо параметри в класс зображень
-        Image.__init__(self, width=width, height=height, x=x, y=y, name=name, progression=progression)
+        Image.__init__(self, width=width, height=height, x=x, y=y, name=name, progression=progression,rotate=rotate)
         # переносимо параметри в змінні
         self.WIDTH_BUT = width
         self.HEIGHT_BUT = height
@@ -128,7 +131,7 @@ class Button(Image):
             elif self.function == 'shop':
                 print(m_data.progression)
                 if m_data.progression == 'shop':
-                    m_data.progression = "menu"
+                    m_data.progression = "game"
                 else:
                     m_data.progression = 'shop'
                     m_achievements.achievement("New Opportunities")
@@ -402,12 +405,20 @@ m_data.list_blits["pre-game"].extend([rotate,play])
 # out = Button(height = 80, width = 518, x = 0, y = 712, progression = "lose", text = "", fun = "check")
 music =Button(width = 76,height = 72,x = nickname.width + 50, y = 45, text = "", fun = "music", name =  "music")
 client = Button(width= 281, height= 100, name= "button_start", text= "client", x= 42, y= 600, fun= "c_s:client")  
-shop = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+110, y= 725, fun= "shop")
-shop_ = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+110, y= 725, fun= "shop",progression='shop')
+shop = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+110, y= 725, fun= "shop",progression="game")
+shop_ = Button(width= 281, height= 90, name= "button_start", text= "back to game", x= 15, y= 15, fun= "shop",progression='shop', size = 40)
 server = Button(width= 281, height= 100, name= "button_start", text= "server", x= 981, y= 600, fun= "c_s:server")  
 wait = Button(width= 1280, x = 0, y = 712, height= 59, text = "wait", progression= "game")
 enemy_nickname = Button(y = 10, x = 1000, width= 200, height= 40, size = 40)
 your_nickname = Button(y = 10, x = 20, width= 200, height= 40, size = 40)
+coins = Button(y = 30, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "0", name = "button_start")
+description = Button(y = 150, x = 950, width= 300, height= 533, size = 40, progression= "shop", text = "select item")
+buy = Button(y = 533+150+25, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "buy", name = "button_start")
+
+homing_rocket = Button(y = 103, x = 343, width= 88, height= 179, progression= "shop", text = "", name = "weapons/homing_rocket")
+idk_rocket= Button(y = 110, x = 513, width= 79, height= 180, progression= "shop", text = "", name = "weapons/idk_rocket")
+rocket_3x3 = Button(y = 110, x = 712, width= 84, height= 180, progression= "shop", text = "", name = "weapons/rocket_3x3")
+fire_rocket = Button(y = 110, x = 875, width= 63, height= 215, progression= "shop", text = "", name = "weapons/fire_rocket")
 if m_data.client_server == "server":
     server.COLOR =(40,2,255)
 if m_data.client_server == "client":
