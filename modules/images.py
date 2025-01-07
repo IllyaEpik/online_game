@@ -8,7 +8,7 @@ class Image():
     # ініціалізуємо зображення
     def __init__(self, width: int, height: int, x: int, y: int, name = '', progression: str = "menu", rotate = 0, edit = True): 
         # переносимо параметри в змінні
-        
+        self.opasity = 255
         self.width = width
         self.height = height
         self.x = x
@@ -54,9 +54,11 @@ class Image():
             if self.rotate % 180 == 0:
                 self.image = pygame.transform.scale(self.image, (width, height))
                 self.rect = pygame.Rect(x,y,width,height)
+                self.image.set_alpha(self.opasity)
             else:
                 self.image = pygame.transform.scale(self.image, (self.height * multiplier_x, self.width * multiplier_y))
                 self.rect = pygame.Rect(x,y,self.height * multiplier_x, self.width * multiplier_y)
+                self.image.set_alpha(self.opasity)
             # self.update_image()
         screen.blit(self.image, (x, y))
 # создаємо задній фон за меню
@@ -69,3 +71,5 @@ play_field = Image(width = 1280, height = 851, x = 0, y = 0, name = "play_field"
 lose = Image(width = 1280, height = 851, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
 win = Image(width = 1280, height = 851, x = 0, y = 0, name = "win", progression = "win", edit = False)
 rockets_icon = Image(width = 130, height = 130, x = 50, y = 180, name = "weapons/rockets_icon", progression = "shop")
+hearts = Image(width = 130, height = 130, x = 50, y = 410, name = "weapons/hearts", progression = "shop")
+background_achievements = Image(width = 1280, height = 851, x = 0, y = 0, name = "achievements", progression = "achievements")

@@ -5,16 +5,13 @@ import getpass
 # імпорт наших модулів
 import modules.audio as m_audio
 from modules.images import Image
+import modules.transform as m_transform
 import modules.data as m_data
 import modules.clients_server as m_client 
 import modules.achievements as m_achievements
 # import modules.server as m_server
 from modules.ships import Ship,fill_field
-print(pygame.font.get_fonts())
 def stroke(screen,rect:pygame.Rect,color = (0,0,0),width = 5,multiplier_x = 1,multiplier_y = 1):
-    print(screen,color,
-                     (int(rect.x*multiplier_x),int(rect.y*multiplier_y)),
-                     (int((rect.x+rect.width)*multiplier_x),int(rect.y*multiplier_y)),width*multiplier_x)
     pygame.draw.line(screen,color,
                      (int(rect.x*multiplier_x),int(rect.y*multiplier_y)),
                      (int((rect.x+rect.width)*multiplier_x),int(rect.y*multiplier_y)),int(width*multiplier_x))
@@ -40,6 +37,7 @@ class Button(Image):
         self.Y = y
         self.function = fun
         self.TEXT = text  
+        self.activate = 0
         # створюємо параметри
         self.COLOR = color
         self.FONT = pygame.font.SysFont("algerian", size)
@@ -47,14 +45,18 @@ class Button(Image):
         self.size = size 
     # метод з кнопкою старт
     def button_start(self, event):
+        if type(event) == pygame.event.Event:
+
+            pos = event.pos
+        else:
+            pos = event
         # якщо кнопка натиснута
-        if self.rect.collidepoint(event.pos):
+        if self.rect.collidepoint(pos):
             if type(self.function) == type("123") and self.function.split(":")[0] == "c_s":
                 m_data.client_server = self.function.split(":")[1]
                 server.COLOR = (0,0,0)
                 client.COLOR = (0,0,0)
                 self.COLOR =(40,2,255)
-                print(m_data.client_server)
             # якщо функція корабль то
             elif self.function == "ship":
                 # цикл для всіх кораблів
@@ -75,7 +77,9 @@ class Button(Image):
                 # self.update_image()
             elif self.function == "win_lose":
                 m_data.revenge = True
+                m_transform.type_transform = random.randint(0,m_transform.count_types)
                 m_data.progression = "pre-game"
+                
                 size_ship = "1"
                 m_data.enemy_ships = []
                 m_data.all_ships = []
@@ -128,10 +132,19 @@ class Button(Image):
                         size_ship = "4"
             elif self.function == "check":
                 return True
+            elif self.function == "buy":
+                if not m_data.attack:
+                    if m_data.cost_data[m_data.select_weapon] <= m_data.coins:
+                        m_data.attack = m_data.select_weapon
+                        m_data.coins -= m_data.cost_data[m_data.select_weapon]
+                        m_transform.type_transform = random.randint(0,m_transform.count_types)
+                        m_data.progression = "game"
+
             elif self.function == 'shop':
-                print(m_data.progression)
+                m_transform.type_transform = random.randint(0,m_transform.count_types)
                 if m_data.progression == 'shop':
                     m_data.progression = "game"
+                    m_data.select_weapon = None
                 else:
                     m_data.progression = 'shop'
                     m_achievements.achievement("New Opportunities")
@@ -152,15 +165,14 @@ class Button(Image):
                 # якщо всі кораблі розставлені
                 if yes_no:
                     # переходимо в гру
+                    m_transform.type_transform = random.randint(0,m_transform.count_types)
                     m_data.progression = "game"
-                    print(m_data.my_field)
-                    print('good')
                     icon = pygame.image.load(os.path.abspath(__file__ + "/../../images/icon_peaceful.png"))
                     pygame.display.set_icon(icon)
                     if not m_data.revenge:
                         # if m_data.client_server == "client" or not m_data.client_server:
                             # активує клієнта одночасно з роботою кода
-                        threading.Thread(target = m_client.activate).start()
+                        threading.Thread(target = m_client.activate,daemon=True).start()
                         # if m_data.client_server == "server" or not m_data.client_server:
                             # активує сервер
                             # threading.Thread(target = m_server.activate,daemon=True).start()
@@ -171,7 +183,44 @@ class Button(Image):
                             ships += f"{ship.name},{ship.row},{ship.cell},{ship.rotate} "
                         # визиваємо функцію для відправки даних на сервер
                         m_client.send(ships.encode()) 
-                print('OOO') 
+            elif self.function and 'weapons' in self.function:
+                # buff
+                description.TEXT = m_data.weapon_data[self.function.split('/')[1]][self.name.split('/')[1]].split(' ') +['                ', '           ']
+                m_data.select_weapon = self.name.split('/')[1]
+                print(description.TEXT)
+                size = description.FONT.size(" ".join(description.TEXT))
+                if size[0] < description.rect.width:
+                    description.TEXT = [" ".join(description.TEXT)]
+                elif len(description.TEXT)-2:
+                    list_text = []
+                    text = ''
+                    
+                    for text_for in description.TEXT:
+                        print(description.rect.width)
+                        size = description.FONT.size(text+text_for)
+                        if size[0] < description.rect.width:
+                            text += text_for + ' '
+                        elif size[0] > description.rect.width:
+                            list_text.append(text)
+                            text = text_for + ' '
+                        elif description.TEXT[-1] == text_for + ' ':
+                            list_text.append(text)
+                    if text_for in list_text[-1]:
+                        pass
+                    else:
+                        size = description.FONT.size(text+text_for)
+                        if size[0] < description.rect.width:
+                            text += text_for
+                        elif size[0] > description.rect.width:
+                            list_text.append(text)
+                            list_text.append(text_for)
+                        elif description.TEXT[-1] == text_for:
+                            list_text.append(text)
+                    # if text:
+                    #     list_text.append(text)
+                    description.TEXT = [self.name.split('/')[1]+': '] +  list_text
+                    print(description.TEXT)
+                    # print(description.TEXT)
             else:
                 if m_data.client_server and nickname.TEXT:
                     # for sprite in m_data.all_ships:
@@ -186,33 +235,61 @@ class Button(Image):
                     with open(m_data.path+m_data.type+'data.txt', "w") as file:
                         file.write(f"{nickname.TEXT}\n{m_data.ip}\n{not m_audio.track.stoped}\n{m_data.client_server}")
                     # перехід в пре-гру"
+                    m_transform.type_transform = random.randint(0,m_transform.count_types)
                     m_data.progression = "pre-game"
                     # if event.key == pygame.K_c:
                     # for row in m_data.my_field:
                     #     print(row)
-                    print('H')
     # метод відображення поверхні на головному окні
     def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
         # якщо картинка задана 
         self.rect = pygame.Rect(x,y,width,height)
         if self.name != "":
-            # відображення картинки
+            # відображення картинки 
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
-        # задання розміру для тексту
+        # задання розміру для тексту 
         if multiplier_x > multiplier_y:
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
         else:
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_x)))
-        size = self.FONT.size(self.TEXT)
+        if type(self.TEXT) == type(""):
+            size = self.FONT.size(self.TEXT) 
+            # задаємо y для тексту
+            y = y + height/2-size[1]/2
+            # задаємо x для тексту
+            x = x + width/2-size[0]/2
+            # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
+            render = self.FONT.render(self.TEXT,True,self.COLOR)
+            render.set_alpha(self.opasity)
+            screen.blit(render, (x, y))
+            # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
+        elif type(self.TEXT) == type([]):
+            count = 0
+            for text in self.TEXT:
+                if multiplier_x > multiplier_y:
+                    self.FONT = pygame.font.SysFont("algerian", int((40*multiplier_y)))
+                else:
+                    self.FONT = pygame.font.SysFont("algerian", int((40*multiplier_x)))
+                height = self.FONT.size(text)[1]
+                size = self.FONT.size(text) 
+                y = (self.rect.y+10+height*count) * multiplier_y
+                # задаємо x для тексту
+                x = (self.rect.x)*multiplier_x
+                # відображення тексту на екрані
+                # print((self.rect.x+10))
+                render = self.FONT.render(text,True,(0,0,0))
+                render.set_alpha(self.opasity)
+                screen.blit(render, (self.rect.x, y))
+                count += 1
+        # y = y + height/2-size[1]/2
+        # # задаємо x для тексту 
+        # x = x + width/2-size[0]/2
+        # # відображення тексту на екрані
+        # size = self.FONT.size(self.TEXT)
+
         # size[0] = multiplier_x * size[0]
         # size[1] = multiplier_y * size[1]
         # задаємо y для тексту
-        y = y + height/2-size[1]/2
-        # задаємо x для тексту
-        x = x + width/2-size[0]/2
-        # відображення тексту на екрані
-
-        screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
 
 # button = Button()
 class Input(Image):
@@ -247,9 +324,11 @@ class Input(Image):
         y = y + height/2-size[1]/2
         # задаємо x для тексту
         x = x + width/2-size[0]/2
+        render = self.FONT.render(self.TEXT,True,self.COLOR)
+        render.set_alpha(self.opasity)
+        screen.blit(render, (x, y))
         self.rect = pygame.Rect(x,y,width,height)
         # відображення тексту на екрані
-        screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
     def activate(self, event):
         if self.rect.collidepoint(event.pos):
             self.enter = True
@@ -259,7 +338,6 @@ class Input(Image):
     def edit(self,event):
         if self.enter:
             key = pygame.key.name(event.key)
-            print(self.TEXT)
             if event.key == pygame.K_BACKSPACE and self.TEXT != "ip: ":
                 # Убирает последний символ текста 
                 self.TEXT = self.TEXT[:-1]
@@ -412,13 +490,20 @@ wait = Button(width= 1280, x = 0, y = 712, height= 59, text = "wait", progressio
 enemy_nickname = Button(y = 10, x = 1000, width= 200, height= 40, size = 40)
 your_nickname = Button(y = 10, x = 20, width= 200, height= 40, size = 40)
 coins = Button(y = 30, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "0", name = "button_start")
-description = Button(y = 150, x = 950, width= 300, height= 533, size = 40, progression= "shop", text = "select item")
-buy = Button(y = 533+150+25, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "buy", name = "button_start")
+description = Button(y = 150, x = 950, width= 300, height= 533, size = 20, progression= "shop", text = "select item")
+buy = Button(y = 533+150+25, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "buy", name = "button_start",fun='buy')
+# m_data.list_blits["shop"].append(description)
+homing_rocket = Button(y = 103, x = 267, width= 88, height= 179, progression= "shop", text = "", name = "weapons/homing_rocket", fun = "weapons/rockets")
+line_rocket= Button(y = 110, x = 423, width= 79, height= 180, progression= "shop", text = "", name = "weapons/line_rocket", fun = "weapons/rockets")
+rocket_3x3 = Button(y = 110, x = 577, width= 84, height= 180, progression= "shop", text = "", name = "weapons/rocket_3x3", fun = "weapons/rockets")
+fire_rocket = Button(y = 110, x = 767, width= 63, height= 215, progression= "shop", text = "", name = "weapons/fire_rocket", fun = "weapons/rockets")
 
-homing_rocket = Button(y = 103, x = 343, width= 88, height= 179, progression= "shop", text = "", name = "weapons/homing_rocket")
-idk_rocket= Button(y = 110, x = 513, width= 79, height= 180, progression= "shop", text = "", name = "weapons/idk_rocket")
-rocket_3x3 = Button(y = 110, x = 712, width= 84, height= 180, progression= "shop", text = "", name = "weapons/rocket_3x3")
-fire_rocket = Button(y = 110, x = 875, width= 63, height= 215, progression= "shop", text = "", name = "weapons/fire_rocket")
+Energetic = Button(y = 415, x = 267, width= 65, height= 128, progression= "shop", text = "", name = "weapons/Energetic", fun = "weapons/buff")
+radar = Button(y = 413, x = 423, width= 131, height= 132, progression= "shop", text = "", name = "weapons/radar", fun = "weapons/buff")
+Air_Defence = Button(y = 391, x = 577, width= 186, height= 176, progression= "shop", text = "", name = "weapons/Air_Defence", fun = "weapons/buff")
+Anti_fire = Button(y = 391, x = 767, width= 184, height= 185, progression= "shop", text = "", name = "weapons/Anti_fire", fun = "weapons/buff")
+
+list_weapons = [homing_rocket,rocket_3x3,line_rocket,fire_rocket,Energetic,radar,Air_Defence,Anti_fire]
 if m_data.client_server == "server":
     server.COLOR =(40,2,255)
 if m_data.client_server == "client":

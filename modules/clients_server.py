@@ -3,7 +3,8 @@ import modules.server as m_server
 import modules.ships as m_ships
 import modules.images as m_images
 import modules.buttons as m_buttons
-import socket
+import modules.transform as m_transform
+import socket,random
 
 # создамо функцію для відправкм даних на сервер
 def send(data):
@@ -113,46 +114,36 @@ def activate():
             # Перевірка, чи отримана команда "attack"
             
             elif "attack" in data[0]:
-                print("attack_get")
-                # Отримуємо позицію атаки
-                pos = data[1].split(" ")[0].split(",")
-                pos = [int(pos[0]), int(pos[1])]
-                # Перевірка, чи атака була промахом
-                if data[1].split(" ")[-1] == "miss":
-                    # Передаємо хід гравцю
-                    m_data.turn = True
-                    # Позначаємо промах на полі
-                    m_data.my_field[pos[0]][pos[1]] = 7
-                # Інакше
-                else:
-                    # Позначаємо влучання на полі
-                    m_data.my_field[pos[0]][pos[1]] = 6
-                    # for ship in m_data.all_ships:
-                    #     yes_no = 0
-                    #     cells = []
-                    #     if ship in m_data.enemy_ships:
-                    #         pass
-                    #     else:
-                    #         for count in range(int(ship.name[0])):
-                    #             # Перевіряємо горизонтальне або вертикальне розміщення корабля
-                    #             if ship.rotate % 180 == 0 and m_data.my_field[ship.row][ship.cell + count] != int(ship.name[0]):
-                    #                 cells.append([ship.row, ship.cell + count])
-                    #                 yes_no += 1
-                    #             elif ship.rotate % 180 != 0 and m_data.my_field[ship.row + count][ship.cell] != int(ship.name[0]):
-                    #                 cells.append([ship.row + count, ship.cell])
-                    #                 yes_no += 1
-                    #         if yes_no == int(ship.name):
-                    #             pass
-                # Створюємо обект класа картинки, власне картинку, для відображення результату атаки
-                image = m_images.Image(
-                    progression = "game",
-                    name = data[1].split(" ")[-1],
-                    x = 59+55.7*pos[1],
-                    y = 115+55.7*pos[0],
-                    width= 55.7,
-                    height=55.7
-                )
-                del data[0]
+                list_attacks = data[1].split(" ")
+                for attack in list_attacks:
+                    try:
+                        pos = attack.split(",")
+                        pos = [int(pos[0]), int(pos[1]),pos[2]]
+                        print("attack_get")
+                        # Отримуємо позицію атаки
+                        # Перевірка, чи атака була промахом
+                        if pos[2] == "miss":
+                            # Передаємо хід гравцю
+                            m_data.turn = True
+                            # Позначаємо промах на полі
+                            m_data.my_field[pos[0]][pos[1]] = 7
+                            print("MISS")
+                        # Інакше
+                        else:
+                            # Позначаємо влучання на полі
+                            m_data.my_field[pos[0]][pos[1]] = 6
+                        # Створюємо обект класа картинки, власне картинку, для відображення результату атаки
+                        image = m_images.Image(
+                            progression = "game",
+                            name = pos[2],
+                            x = 59+55.7*pos[1],
+                            y = 115+55.7*pos[0],
+                            width= 55.7,
+                            height=55.7
+                        )
+                    except Exception as error:
+                        print(error)
+            
             # Перевірка, чи відбувся вибух
             elif "explosion" in data[0]:
                 # Отримуємо позицію вибуху
@@ -180,6 +171,8 @@ def activate():
             # Якщо відбуваеться програш
             elif "lose" in data[0]:
                 # То стан гри змінюеться на виграш
+                m_transform.color = (255,25,25)
+                m_transform.type_transform = 0
                 m_data.progression = "lose"
                 del data[0]
             # Додаємо отримані дані від клієнта до списку даних противника

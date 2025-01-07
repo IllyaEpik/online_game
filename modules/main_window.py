@@ -9,7 +9,7 @@ import modules.images as m_images
 import modules.clients_server as m_client
 import modules.ships as m_ships
 import modules.attack as m_attack
-# import modules.server as m_server
+import modules.transform as m_transform
 import modules.audio as m_audio
 import modules.achievements as m_achievements
 # m_achievements.achievement('Glory to Air Defense')
@@ -65,73 +65,85 @@ class Screen():
                         pass 
                 # коли кнопка миші натиснута
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if m_data.progression in "winlose":
-                        m_buttons.revenge.button_start(event)
-                        if m_buttons.out.button_start(event):
-                            game = False
-                            m_data.end=True
-                            try:
-                                # відключаємо клієнта
-                                m_client.client.close()
-                            except:
-                                pass 
-                    # якщо прогресс дорівнює меню то
-                    if m_data.progression == "menu":
-                        # вибір місця написання
-                        m_buttons.input.activate(event) 
-                        m_buttons.nickname.activate(event)
-                        m_buttons.music.button_start(event)
-                        m_buttons.client.button_start(event)
-                        m_buttons.server.button_start(event)
-                        
-                        # перехід в пре-гру етап
-                        m_buttons.button_start.button_start(event)
-                    # якщо прогресс дорівнює пре-грі то
-                    elif m_data.progression == 'shop':
-                        m_buttons.shop_.button_start(event)
-                    if m_data.progression == "pre-game":
-                        # преходить в гру
-                        m_buttons.play.button_start(event)
-                        # автоматична розтановка кораблів
-                        m_buttons.auto.randomship(event.pos)
-                        # поворот кораблів
-                        m_buttons.rotate.button_start(event)
-                        # цикл всіх кораблів
-                        for ship in m_data.all_ships:
-                            # виділення кораблів
-                            ship.activate(event, multiplier_x, multiplier_y)
-                    # якщо прогресс дорівнює грі то
-                    if m_data.progression == "game":
-                        # вибір місця атаки
-                        m_attack.attack(event.pos,multiplier_x,multiplier_y)
-                        m_buttons.shop.button_start(event)
-                # якщо будь-яка клавіша натиснута то
-                if event.type == pygame.KEYDOWN and m_data.progression == "menu":
-                    # додає символи до input
-                    m_buttons.input.edit(event)
-                    m_buttons.nickname.edit(event)
-                    for object in [m_buttons.nickname]:
-                        size = object.FONT.size(object.TEXT)
-                        # if object.width < size[0] - 10:
-                        width = -(object.start_width - size[0] - 10)
-                        object.width = width + object.start_width
-                        if object.width < object.start_width:
-                            object.width = object.start_width
-                        object.update_image()
-                        
-                        m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
-                        m_buttons.music.x = m_buttons.nickname.width + 50
-                        # else:
-                            # object.width = object.start_width
-                            # object.update_image()
-                    
+                    print(m_transform.type_transform )
+                    print(m_transform.type_transform == None, (m_transform.opasity, m_transform.size))
+                    print(m_transform.type_transform == None or (m_transform.opasity > 200 and m_transform.size < 10))
+                    if m_transform.type_transform == None:
+                        if m_data.progression in "winlose":
+                            m_buttons.revenge.button_start(event)
+                            if m_buttons.out.button_start(event):
+                                game = False
+                                m_data.end=True
+                                try:
+                                    # відключаємо клієнта
+                                    m_client.client.close()
+                                except:
+                                    pass 
+                        # якщо прогресс дорівнює меню то
+                        if m_data.progression == "menu":
+                            # вибір місця написання
+                            m_buttons.input.activate(event) 
+                            m_buttons.nickname.activate(event)
+                            m_buttons.music.button_start(event)
+                            m_buttons.client.button_start(event)
+                            m_buttons.server.button_start(event)
+                            
+                            # перехід в пре-гру етап
+                            m_buttons.button_start.button_start(event)
+                        # якщо прогресс дорівнює пре-грі то
+                        if m_data.progression == "pre-game":
+                            # преходить в гру
+                            m_buttons.play.button_start(event)
+                            # автоматична розтановка кораблів
+                            m_buttons.auto.randomship(event.pos)
+                            # поворот кораблів
+                            m_buttons.rotate.button_start(event)
+                            # цикл всіх кораблів
+                            for ship in m_data.all_ships:
+                                # виділення кораблів
+                                ship.activate(event, multiplier_x, multiplier_y)
+                        # якщо прогресс дорівнює грі то
+                        if m_data.progression == "game":
+                            # вибір місця атаки
+                            m_attack.attack(event.pos,multiplier_x,multiplier_y)
+                            m_buttons.shop.button_start(event)
+                        elif m_data.progression == 'shop':
+                            m_buttons.shop_.button_start(event)
+                            m_buttons.buy.button_start(event)
+                            
+                            for weapon in m_buttons.list_weapons:
+                                weapon.button_start(event=event)
+                    # якщо будь-яка клавіша натиснута то
+                        if event.type == pygame.KEYDOWN and m_data.progression == "menu":
+                            # додає символи до input
+                            m_buttons.input.edit(event)
+                            m_buttons.nickname.edit(event)
+                            for object in [m_buttons.nickname]:
+                                size = object.FONT.size(object.TEXT)
+                                # if object.width < size[0] - 10:
+                                width = -(object.start_width - size[0] - 10)
+                                object.width = width + object.start_width
+                                if object.width < object.start_width:
+                                    object.width = object.start_width
+                                object.update_image()
+                                
+                                m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
+                                m_buttons.music.x = m_buttons.nickname.width + 50
+                                # else:
+                                    # object.width = object.start_width
+                                    # object.update_image()
+                    else:
+                        m_transform.type_transform = None
+                        m_transform.opasity = 255
+                        m_transform.size = 0
+            m_buttons.coins.TEXT = f"{m_data.coins}"
             # цикл відображення всього що є в списку
             for sprite in m_data.list_blits[m_data.progression]:
                 # print(sprite.name)
                 # відображення елементу
                 # print(sprite)
-                if m_data.progression == 'shop':
-                    print(sprite.x,sprite.y,sprite.name)
+                # if m_data.progression == 'shop':
+                #     print(sprite.x,sprite.y,sprite.name)
                 sprite.blit(self.screen,
                                  sprite.x*multiplier_x,
                                  sprite.y*multiplier_y,
@@ -168,7 +180,7 @@ class Screen():
                         ship.jump_cor[1] = -20
                         ship.jump_cor[3] = True
                         ship.x = 805
-                        print('hoho')
+                        # print('hoho')
                     # саме відображення кораблів
                     # print(sprite.x,sprite.y,sprite.width,sprite.height,multiplier_x,multiplier_y,ship.name)
                     # print(sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y,ship.name)
@@ -203,9 +215,20 @@ class Screen():
                     wait = m_buttons.wait
                     wait.blit(self.screen,wait.x*multiplier_x,wait.y*multiplier_y,wait.width*multiplier_x,wait.height*multiplier_y,multiplier_x,multiplier_y)
             elif m_data.progression == 'shop':
-                    m_buttons.stroke(self.screen,m_buttons.description.rect,(0,0,0),5,multiplier_x=multiplier_x,multiplier_y=multiplier_y)
+                square = pygame.Surface((m_buttons.description.rect.width,m_buttons.description.rect.height))
+                square.fill((255, 255, 255))
+                square.set_alpha(200)
+                self.screen.blit(square,m_buttons.description.rect)
+                m_buttons.stroke(self.screen,m_buttons.description.rect,(0,0,0),5)
+                sprite = m_buttons.description
+                m_buttons.description.blit(self.screen,
+                                 sprite.x*multiplier_x,
+                                 sprite.y*multiplier_y,
+                                 sprite.width*multiplier_x,
+                                 sprite.height*multiplier_y,
+                                 multiplier_x,multiplier_y)
             # оновлення екрану 
-            pygame.display.flip()
+            m_transform.transform(self,multiplier_x,multiplier_y)
             # фпс
             self.clock.tick(60)
 # створення екземпляру классу

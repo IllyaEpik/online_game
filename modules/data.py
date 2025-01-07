@@ -1,8 +1,7 @@
 type = "/"
 path = __file__.split("/")
 if len(path) == 1:
-    path = __file__.split("\\")
-    type = "\\"
+    path = __file__.split("\\");type = "\\"
 del path[-1]
 del path[-1]
 path.append("data")
@@ -15,9 +14,33 @@ read_data = {"nickname": "",
              'wins':0,
              'loses':0
 }
-weapon_data = {"",
-             
-             }
+weapon_data = {
+    "rockets":{
+        "homing_rocket":"This rocket can hit one of the ships on the field, but it can be deflected.",
+        "rocket_3x3":"This rocket can target any location within a 3x3 square of cells.",
+        "line_rocket":"This rocket can move along a horizontal row of cells until it collides with a ship or the edge of the map.",
+        "fire_rocket":"This rocket can strike a single cell, leaving behind fire that will spread after the opponent's turn, destroying the ship."
+    },
+    "buff":{
+        "radar":"This buff grants the ability to see all enemy ships within a 5x5 cell radius.",
+        "Air_Defence":"This buff spreads in a 5x5 cell radius and can deflect a homing missile, but it only activates once.",
+        "Energetic":"This buff allows the player to perform two actions during their current turn (this item is not counted as an action).",
+        "Anti_fire":"This buff enables the player to extinguish a ship after it has been hit by a fire missile."
+    }
+}
+cost_data = {
+    "radar":100,
+    "Air_Defence":20,
+    "Energetic":20,
+    "Anti_fire":10,
+    "fire_rocket":2,
+    "line_rocket":30,
+    "rocket_3x3":30,
+    "homing_rocket":30
+}
+select_weapon = None
+attack = None
+coins = 0
 list_achievements = []
 # achievements_data = [
 #     {
@@ -179,7 +202,8 @@ list_blits = {
     "game": [],
     "lose": [],
     "win": [],
-    "shop": []
+    "shop": [],
+    "achievements":[]
 }
 # http://127.0.0.1/
 # Створення змінної, у якій ми будемо задавати потрібний єтап ігри
