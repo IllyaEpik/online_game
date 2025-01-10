@@ -38,10 +38,18 @@ cost_data = {
     "rocket_3x3":30,
     "homing_rocket":30
 }
+#     "Energetic":20,
+#     "line_rocket":30
+#     "Air_Defence":20,
+#     "fire_rocket":2,
+#     "Anti_fire":10,
 select_weapon = None
 attack = None
+time_for_radar = 0
+rect_for_radar = None
 coins = 0
 list_achievements = []
+list_for_radar = []
 # achievements_data = [
 #     {
 #         'name':'',
@@ -187,7 +195,6 @@ for achievement in achievements_data:
     try:
         with open(path+type+'achievements'+type+name+'.txt', "r") as file:
             achievements_data[achievement]['has'] = file.read()
-            print(achievements_data[achievement]['has'])
     except:
         with open(path+type+'achievements'+type+name+'.txt', "w") as file:
             file.write('False')

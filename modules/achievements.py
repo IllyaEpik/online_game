@@ -1,5 +1,6 @@
 import pygame, os, time, threading
 import modules.data as m_data
+import modules.audio as m_audio
 width = 400
 height = 120
 y = 0
@@ -46,6 +47,8 @@ class achievement():
                     elif self.text[-1] == text_for:
                         list_text.append(text)
                 self.text = list_text
+                
+            m_audio.achievement.play()
             self.time = 5
             self.activate_timer = False
             self.deactivate_timer = False

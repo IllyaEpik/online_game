@@ -7,13 +7,16 @@ import modules.transform as m_transform
 import socket,random
 
 # создамо функцію для відправкм даних на сервер
-def send(data):
+def send(data:bytes):
     # відправляємо дані серверу
     # if m_data.client_server == "server":
         # server1[0].sendall(data)
         # m_server.send(data)
     # else:
-    client.sendall(data)
+    try:
+        client.sendall(data)
+    except:
+        client.sendall(data.encode())
 
 hostname = socket.gethostname()
 # Повертає IP адрессу по імені хосту
@@ -47,7 +50,8 @@ def activate():
             print("it is cool", m_data.ip)
         # визиваємо функцію для відправки даних на сервер
         # send(f"".encode())
-        print('good')
+        for count in range(1000):
+            print('good')
         m_data.connected = True 
         # print("it's cool")
         m_data.revenge = True
@@ -143,7 +147,8 @@ def activate():
                         )
                     except Exception as error:
                         print(error)
-            
+            elif "pass" in data[0]:
+                m_data.turn = True
             # Перевірка, чи відбувся вибух
             elif "explosion" in data[0]:
                 # Отримуємо позицію вибуху
