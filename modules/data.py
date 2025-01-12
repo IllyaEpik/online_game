@@ -14,33 +14,31 @@ read_data = {"nickname": "",
              'wins':0,
              'loses':0
 }
-weapon_data = {
-    "rockets":{
-        "homing_rocket":"This rocket can hit one of the ships on the field, but it can be deflected.",
-        "rocket_3x3":"This rocket can target any location within a 3x3 square of cells.",
-        "line_rocket":"This rocket can move along a horizontal row of cells until it collides with a ship or the edge of the map.",
-        "fire_rocket":"This rocket can strike a single cell, leaving behind fire that will spread after the opponent's turn, destroying the ship."
-    },
-    "buff":{
-        "radar":"This buff grants the ability to see all enemy ships within a 5x5 cell radius.",
-        "Air_Defence":"This buff spreads in a 5x5 cell radius and can deflect a homing missile, but it only activates once.",
-        "Energetic":"This buff allows the player to perform two actions during their current turn (this item is not counted as an action).",
-        "Anti_fire":"This buff enables the player to extinguish a ship after it has been hit by a fire missile."
-    }
-}
 cost_data = {
-    "radar":100,
-    "Air_Defence":20,
-    "Energetic":20,
-    "Anti_fire":10,
-    "fire_rocket":2,
+    "homing_rocket":30,
     "line_rocket":30,
     "rocket_3x3":30,
-    "homing_rocket":30
+    "fire_rocket":2,
+
+    "Energetic":20,
+    "radar":100,
+    "Air_Defence":20,
+    "Anti_fire":10,
 }
-#     "Energetic":20,
-#     "line_rocket":30
-#     "Air_Defence":20,
+weapon_data = {
+    "rockets":{
+        "homing_rocket":f"This rocket cost:{cost_data['homing_rocket']} and can hit one of the ships on the field, but it can be deflected.",
+        "rocket_3x3":f"This rocket cost:{cost_data['rocket_3x3']} and can target any location within a 3x3 square of cells.",
+        "line_rocket":f"This rocket cost:{cost_data['line_rocket']} and can move along a horizontal row of cells until it collides with a ship or the edge of the map.",
+        "fire_rocket":f"This rocket cost:{cost_data['fire_rocket']} and can strike a single cell, leaving behind fire that will spread after the opponent's turn, destroying the ship."
+    },
+    "buff":{
+        "radar":f"This buff cost:{cost_data['radar']} and grants the ability to see all enemy ships within a 5x5 cell radius.",
+        "Air_Defence":f"This buff cost:{cost_data['Air_Defence']} and spreads in a 5x5 cell radius and can deflect a homing missile, but it only activates once.",
+        "Energetic":f"This buff cost:{cost_data['Energetic']} and allows the player to perform two actions during their current turn (this item is not counted as an action).",
+        "Anti_fire":f"This buff cost:{cost_data['Anti_fire']} and enables the player to extinguish a ship after it has been hit by a fire missile."
+    }
+}
 #     "fire_rocket":2,
 #     "Anti_fire":10,
 select_weapon = None
@@ -50,6 +48,8 @@ rect_for_radar = None
 coins = 0
 list_achievements = []
 list_for_radar = []
+buffs = []
+my_buffs = []
 # achievements_data = [
 #     {
 #         'name':'',
@@ -100,7 +100,7 @@ achievements_data = {
         'tier':1
     },
     "Glory to Air Defense":{
-        'description':'Destroy an "Oreshnik" using AA defense',
+        'description':'Destroy an "homing rocket" using Air defense',
         'has':False,
         'tier':1
     },
@@ -124,8 +124,8 @@ achievements_data = {
         'has':False,
         'tier':1
     },
-    "Launched Oreshnik":{
-        'description':'Launch an Oreshnik',
+    "used radar":{
+        'description':'use an radar',
         'has':False,
         'tier':1
     },

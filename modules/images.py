@@ -73,3 +73,4 @@ win = Image(width = 1280, height = 852, x = 0, y = 0, name = "win", progression 
 rockets_icon = Image(width = 130, height = 130, x = 50, y = 180, name = "weapons/rockets_icon", progression = "shop")
 hearts = Image(width = 130, height = 130, x = 50, y = 410, name = "weapons/hearts", progression = "shop")
 background_achievements = Image(width = 1280, height = 851, x = 0, y = 0, name = "achievements", progression = "achievements")
+air_defence = Image(55.7,55.7,-999,-99,'weapons/Air_Defence',progression='None')

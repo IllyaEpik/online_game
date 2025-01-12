@@ -187,8 +187,26 @@ class Screen():
                     # print(sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y,ship.name)
                     ship.blit(self.screen,ship.x*multiplier_x,ship.y*multiplier_y,ship.width*multiplier_x,ship.height*multiplier_y,multiplier_x,multiplier_y)
             if m_data.progression == "game":
+                count = 0
+                list_to_delete = []
+                for buff in m_data.my_buffs:
+                    # 59, 115
+                    # try:
+                    if buff[0] == 'Air_Defence':
+                        if str(m_data.my_field[buff[1]][buff[2]]) in '05':
+                            m_images.air_defence.blit(self.screen,
+                                                    (59+buff[2]*55.7)*multiplier_x,
+                                                    (115+buff[1]*55.7)*multiplier_y,m_images.air_defence.width*multiplier_x,m_images.air_defence.height*multiplier_y,multiplier_x,multiplier_y
+                                                    )
+                        else:
+                            list_to_delete.append(count)
+                    count +=1
+                for delete in list_to_delete:
+                    del m_data.my_buffs[delete]
+                    # except:
+                    #     pass
                 for sprite in m_data.list_blits["game"]:
-                    if sprite.name in "miss, explosion":
+                    if sprite.name in "miss, explosion, fire":
                         sprite.blit(self.screen,
                                  sprite.x*multiplier_x,
                                  sprite.y*multiplier_y,

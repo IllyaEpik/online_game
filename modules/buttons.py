@@ -133,13 +133,30 @@ class Button(Image):
             elif self.function == "check":
                 return True
             elif self.function == "buy":
-                if not m_data.attack:
-                    if m_data.cost_data[m_data.select_weapon] <= m_data.coins:
-                        m_data.attack = m_data.select_weapon
-                        m_data.coins -= m_data.cost_data[m_data.select_weapon]
-                        m_transform.type_transform = random.randint(0,m_transform.count_types)
-                        m_data.progression = "game"
-
+                try:
+                    if not m_data.attack:
+                        if m_data.cost_data[m_data.select_weapon] <= m_data.coins:
+                            m_data.coins -= m_data.cost_data[m_data.select_weapon]
+                            m_achievements.achievement('Hooked')
+                            if 'Energetic' == m_data.select_weapon:
+                                m_data.buffs.append(['Energetic'])
+                                # m_client.send('buff:Energetic')
+                            elif "Anti_fire"== m_data.select_weapon:
+                                m_client.send('Anti_fire:')
+                                for row in range(10):
+                                    if 8 in m_data.my_field[row]:
+                                        for cell in range(10):
+                                            if m_data.my_field[row][cell] == 8:
+                                                m_data.my_field[row][cell] = 6
+                                                for explosion in m_data.list_explosions:
+                                                    if explosion[0].name == 'fire' and explosion[0].x > 724:
+                                                        explosion[0].name = 'explosion'
+                            else:
+                                m_data.attack = m_data.select_weapon
+                                m_transform.type_transform = random.randint(0,m_transform.count_types)
+                                m_data.progression = "game"
+                except:
+                    print('hhhhhhhhhhhhhhhhhhhho')
             elif self.function == 'shop':
                 m_transform.type_transform = random.randint(0,m_transform.count_types)
                 if m_data.progression == 'shop':

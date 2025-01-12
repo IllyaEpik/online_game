@@ -24,6 +24,11 @@ class Ship(m_images.Image):
         # Якщо корабель треба додати, додаємо його до загального списку кораблів
         if add:
             m_data.all_ships.append(self)
+            for count in range(int(name[0])):
+                if rotate % 180 == 0:
+                    m_data.my_field[row][cell + count] = int(name[0])
+                else:
+                    m_data.my_field[row + count][cell] = int(name[0])
         # print(self.y)
         # Ініціалізація деяких змінних
         self.select = False  # Перевірка, чи вибрано корабель
@@ -31,11 +36,6 @@ class Ship(m_images.Image):
         self.cell = cell
         self.jump_cor = [10,20,False,False]
         # Оновлюємо ігрове поле (записуємо розміри корабля)
-        for count in range(int(name[0])):
-            if rotate % 180 == 0:
-                m_data.my_field[row][cell + count] = int(name[0])
-            else:
-                m_data.my_field[row + count][cell] = int(name[0])
         # Встановлюємо кордони корабля на полі
         self.field_cor = field_cor
         self.field = pygame.Rect(field_cor, (10 * 55.7, 10 * 55.7))
