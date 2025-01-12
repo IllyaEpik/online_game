@@ -22,7 +22,6 @@ class achievement():
         # перевіряємо чи не має досягнення
         if m_data.achievements_data[name]['has'] == "False":
             # задаємо наявність досягнення
-            m_data.achievements_data[name]['has'] = "True"
             if name != "Into the Sunset...":
                 yes_no = True
                 for achievement_code in m_data.achievements_data:
@@ -30,6 +29,7 @@ class achievement():
                         yes_no = False
                 if yes_no:
                     achievement("Into the Sunset...")
+            m_data.achievements_data[name]['has'] = "True"
             # задаємо шрифт
             self.FONT = pygame.font.SysFont("algerian", 40)
             # задаємо розмір квадрату

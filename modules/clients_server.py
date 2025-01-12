@@ -1,5 +1,4 @@
 import modules.data as m_data 
-import modules.server as m_server
 import modules.ships as m_ships
 import modules.images as m_images
 import modules.buttons as m_buttons
@@ -129,8 +128,9 @@ def activate():
                                     if m_data.enemy_field[row][cell] == 8:
                                         m_data.enemy_field[row][cell] = 6
                         for explosion in m_data.list_explosions:
-                            if explosion[0].name == 'fire' and explosion[0].x < 724:
+                            if explosion[0].name == 'fire' and explosion[0].x > 724:
                                 explosion[0].name = 'explosion'
+                                explosion[0].update_image()
                     elif "attack" in data[0]:
                         list_attacks = data[1].split(" ")
                         for attack in list_attacks:
@@ -160,6 +160,7 @@ def activate():
                                     width= 55.7,
                                     height=55.7
                                 )
+                                m_data.list_explosions.append([image,pos[0],pos[1]])
                             except Exception as error:
                                 print(error)
                     elif "pass" in data[0]:
@@ -214,8 +215,7 @@ def activate():
                             elif ship.row == pos[0] and ship.cell == pos[1]:
                                 # то відбуваеться вибух
                                 ship.explosion = True
-                                if str(ship.name) == '4':
-                                    m_achievements.achievement('Titanic')
+                                
                                 
                     
                         del data[0]

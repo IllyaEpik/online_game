@@ -215,12 +215,6 @@ class Screen():
                                  multiplier_x,multiplier_y)
                 if m_data.time_for_radar:
                     for sprite in m_data.list_for_radar:
-                        # sprite.blit(self.screen,
-                        #          sprite.x*multiplier_x,
-                        #          sprite.y*multiplier_y,
-                        #          sprite.width*multiplier_x,
-                        #          sprite.height*multiplier_y,
-                        #          multiplier_x,multiplier_y)
                         pygame.draw.circle(self.screen,(50,255,50),((sprite.x+sprite.width/2)*multiplier_x,(sprite.y+sprite.height/2)*multiplier_y),10,25)
             
                 if m_data.connected:

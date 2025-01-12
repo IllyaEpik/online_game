@@ -1,7 +1,7 @@
 # імпорт чужих модулів для роботи
 import pygame , socket, os
 import threading, random
-import getpass
+import getpass,pyperclip
 # імпорт наших модулів
 import modules.audio as m_audio
 from modules.images import Image
@@ -156,7 +156,7 @@ class Button(Image):
                                             if m_data.my_field[row][cell] == 8:
                                                 m_data.my_field[row][cell] = 6
                                 for explosion in m_data.list_explosions:
-                                    if explosion[0].name == 'fire' and explosion[0].x > 724:
+                                    if explosion[0].name == 'fire' and explosion[0].x < 725:
                                         explosion[0].name = 'explosion'
                                         explosion[0].update_image()
                                 m_transform.type_transform = random.randint(0,m_transform.count_types)
@@ -407,6 +407,12 @@ class Input(Image):
     def edit(self,event):
         if self.enter:
             key = pygame.key.name(event.key)
+            if event.key == pygame.K_v and pygame.key == pygame.K_LCTRL: # Ctrl+V
+                try:
+                    self.TEXT = pyperclip.paste()
+                    print("Text pasted from clipboard:", self.TEXT)
+                except pyperclip.PyperclipException:
+                    print("Error pasting from clipboard. Maybe no clipboard available?")
             if event.key == pygame.K_BACKSPACE and self.TEXT != "ip: ":
                 # Убирает последний символ текста 
                 self.TEXT = self.TEXT[:-1]

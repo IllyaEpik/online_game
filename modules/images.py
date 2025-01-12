@@ -50,28 +50,31 @@ class Image():
     # метод для відображення на екрані
     def blit(self,screen,x,y,width,height,multiplier_x,multiplier_y):
         # перевіряємо отриману ширину і висоту
-        if self.image.get_width() != width or self.image.get_height() != height:
-            # завантажуємо картинку
-            self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
-            # перевертаємо картинку
-            self.image = pygame.transform.rotate(self.image, self.rotate)
-            # перевіряємо оберт екрану
-            if self.rotate % 180 == 0:
-                # змінює масштаб
-                self.image = pygame.transform.scale(self.image, (width, height))
-                # задаємо розмір квадрату 
-                self.rect = pygame.Rect(x,y,width,height)
-                # малює прозорість зображення
-                self.image.set_alpha(self.opasity)
-            else:
-                # задаємо інший масштаб картинки
-                self.image = pygame.transform.scale(self.image, (self.height * multiplier_x, self.width * multiplier_y))
-                # задаємо інший розмір квадрату
-                self.rect = pygame.Rect(x,y,self.height * multiplier_x, self.width * multiplier_y)
-                # малює прозорість зображення
-                self.image.set_alpha(self.opasity)
-        # відображення зображення на екрані
-        screen.blit(self.image, (x, y))
+        try:
+            if self.image.get_width() != width or self.image.get_height() != height:
+                # завантажуємо картинку
+                self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
+                # перевертаємо картинку
+                self.image = pygame.transform.rotate(self.image, self.rotate)
+                # перевіряємо оберт екрану
+                if self.rotate % 180 == 0:
+                    # змінює масштаб
+                    self.image = pygame.transform.scale(self.image, (width, height))
+                    # задаємо розмір квадрату 
+                    self.rect = pygame.Rect(x,y,width,height)
+                    # малює прозорість зображення
+                    self.image.set_alpha(self.opasity)
+                else:
+                    # задаємо інший масштаб картинки
+                    self.image = pygame.transform.scale(self.image, (self.height * multiplier_x, self.width * multiplier_y))
+                    # задаємо інший розмір квадрату
+                    self.rect = pygame.Rect(x,y,self.height * multiplier_x, self.width * multiplier_y)
+                    # малює прозорість зображення
+                    self.image.set_alpha(self.opasity)
+            # відображення зображення на екрані
+            screen.blit(self.image, (x, y))
+        except:
+            print('hhaaa')
 # задаємо параметри для фону 
 background = Image(width = 1280, height = 851, x = 0, y = 0, name = "background")
 # задаємо параметри для фону магазину
