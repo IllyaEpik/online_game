@@ -397,6 +397,7 @@ class Input(Image):
         self.rect = pygame.Rect(x,y,width,height)
         # відображення тексту на екрані
     def activate(self, event):
+        # rect = pygame.Rect(self.x,self.y,self.width,self.height)
         if self.rect.collidepoint(event.pos):
             self.enter = True
             print('hallok')
@@ -529,7 +530,7 @@ if "." in m_data.read_data["ip"]:
 button_start = Button(width = 402 , height = 120, x = 435, y = 343, name = "", text= "start")
 m_data.list_blits["menu"].append(button_start)
 
-input = Input(width = 496, height = 148, x = 387 , y = 568, name = "input", text = f"ip: {ip1}")
+input = Input(width = 496, height = 148, x = 387 , y = 568, name = "button_start", text = f"ip: {ip1}")
 nickname = Input(x= 42, y= 43, width= 281, height= 84, name = "button_start", text = nick, list = "any")
 ip = Button(x = 981, y = 59, width = 281, height = 84, name = "button_start", text = ip, size = 50)
 for object in [input, nickname, ip]:

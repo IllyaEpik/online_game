@@ -37,7 +37,6 @@ class Screen():
         pygame.display.set_icon(icon)
     # функція запуску
     def run(self):
-        m_achievements.achievement('Big Spender')
         # m_data.progression = 'lose'
         # задаємо правдиве значення грі
         game = True
