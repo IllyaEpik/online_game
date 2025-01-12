@@ -2,7 +2,7 @@
 import modules.images as m_images
 import modules.data as m_data
 import modules.clients_server as m_client
-
+import modules.attack as m_attack
 # імпортуємо модуль pygame
 import pygame,random
 
@@ -65,8 +65,8 @@ class Ship(m_images.Image):
                 self.explosion = True
 
                 m_data.all_ships.append(self)
-                
-                m_client.send(f"explosion:{self.row},{self.cell}".encode())
+                m_attack.need_to_send.append(f"explosion:{self.row},{self.cell}")
+                # m_client.send()
                 
 
                 # print(cells)

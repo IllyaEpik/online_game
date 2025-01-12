@@ -58,9 +58,10 @@ my_buffs = []
 #         'tier':0
 #     }
 # ]
+list_achievements_view = {}
 achievements_data = {
     "Total Domination":{
-        'description':'Destroy 4 ships in one turn',
+        'description':'win without a single hits',
         'has':False,
         'tier':1
     },
@@ -79,11 +80,7 @@ achievements_data = {
         'has':False,
         'tier':1
     },
-    "Minted Coin":{
-        'description':'Earn money for the first time',
-        'has':False,
-        'tier':1
-    },
+
     "Need More Gold!":{
         'description':'Accumulate 1000 tier',
         'has':False,
@@ -129,13 +126,8 @@ achievements_data = {
         'has':False,
         'tier':1
     },
-    "Into the Sunset... ":{
+    "Into the Sunset...":{
         'description':'Unlock all achievements',
-        'has':False,
-        'tier':1
-    },
-    "Extrovert":{
-        'description':'Play with 10 friends',
         'has':False,
         'tier':1
     },
@@ -145,7 +137,7 @@ achievements_data = {
         'tier':1
     },
     "Big Spender":{
-        'description':'Spend 1000 tier',
+        'description':'Spend 190 coins',
         'has':False,
         'tier':1
     },

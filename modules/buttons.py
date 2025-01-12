@@ -9,6 +9,7 @@ import modules.transform as m_transform
 import modules.data as m_data
 import modules.clients_server as m_client 
 import modules.achievements as m_achievements
+import modules.attack as m_attack
 # import modules.server as m_server
 from modules.ships import Ship,fill_field
 def stroke(screen,rect:pygame.Rect,color = (0,0,0),width = 5,multiplier_x = 1,multiplier_y = 1):
@@ -142,15 +143,26 @@ class Button(Image):
                                 m_data.buffs.append(['Energetic'])
                                 # m_client.send('buff:Energetic')
                             elif "Anti_fire"== m_data.select_weapon:
-                                m_client.send('Anti_fire:')
+                                add = ';pass'
+                                for buff in m_data.buffs:
+                                    if buff[0] == 'Energetic':
+                                        add = ''
+                                m_client.send('Anti_fire:'+add)
+                                if add:
+                                    m_data.turn = False
                                 for row in range(10):
                                     if 8 in m_data.my_field[row]:
                                         for cell in range(10):
                                             if m_data.my_field[row][cell] == 8:
                                                 m_data.my_field[row][cell] = 6
-                                                for explosion in m_data.list_explosions:
-                                                    if explosion[0].name == 'fire' and explosion[0].x > 724:
-                                                        explosion[0].name = 'explosion'
+                                for explosion in m_data.list_explosions:
+                                    if explosion[0].name == 'fire' and explosion[0].x > 724:
+                                        explosion[0].name = 'explosion'
+                                        explosion[0].update_image()
+                                m_transform.type_transform = random.randint(0,m_transform.count_types)
+                                m_data.progression = "game"
+                                                        # m_attack.need_to_send.append('Anti_fire:')
+                                                        
                             else:
                                 m_data.attack = m_data.select_weapon
                                 m_transform.type_transform = random.randint(0,m_transform.count_types)
@@ -165,7 +177,12 @@ class Button(Image):
                 else:
                     m_data.progression = 'shop'
                     m_achievements.achievement("New Opportunities")
-
+            elif self.function == 'achievements':
+                m_transform.type_transform = random.randint(0,m_transform.count_types)
+                if m_data.progression == 'achievements':
+                    m_data.progression = "menu"
+                else:
+                    m_data.progression = 'achievements'
             # інакше функція гра
             elif self.function == "play":
 
@@ -200,6 +217,41 @@ class Button(Image):
                             ships += f"{ship.name},{ship.row},{ship.cell},{ship.rotate} "
                         # визиваємо функцію для відправки даних на сервер
                         m_client.send(ships.encode()) 
+
+            elif self.function and 'set_achievement' in self.function:
+                description_.TEXT = (self.name.split('/')[1]+': '+m_data.achievements_data[self.function.split('/')[1]]['description']).split(' ') +['                ', '           ']
+                m_data.select_weapon = self.name.split('/')[1]
+                print(description_.TEXT)
+                size = description_.FONT.size(" ".join(description_.TEXT))
+                if size[0] < description_.rect.width:
+                    description_.TEXT = [" ".join(description_.TEXT)]
+                elif len(description_.TEXT)-2:
+                    list_text = []
+                    text = ''
+                    
+                    for text_for in description_.TEXT:
+                        print(description_.rect.width)
+                        size = description_.FONT.size(text+text_for)
+                        if size[0] < description_.rect.width:
+                            text += text_for + ' '
+                        elif size[0] > description_.rect.width:
+                            list_text.append(text)
+                            text = text_for + ' '
+                        elif description_.TEXT[-1] == text_for + ' ':
+                            list_text.append(text)
+                    if text_for in list_text[-1]:
+                        pass
+                    else:
+                        size = description_.FONT.size(text+text_for)
+                        if size[0] < description_.rect.width:
+                            text += text_for
+                        elif size[0] > description_.rect.width:
+                            list_text.append(text)
+                            list_text.append(text_for)
+                        elif description_.TEXT[-1] == text_for:
+                            list_text.append(text)
+                    description_.TEXT =  list_text
+                    print(description_.TEXT)
             elif self.function and 'weapons' in self.function:
                 # buff
                 description.TEXT = m_data.weapon_data[self.function.split('/')[1]][self.name.split('/')[1]].split(' ') +['                ', '           ']
@@ -233,8 +285,6 @@ class Button(Image):
                             list_text.append(text_for)
                         elif description.TEXT[-1] == text_for:
                             list_text.append(text)
-                    # if text:
-                    #     list_text.append(text)
                     description.TEXT = [self.name.split('/')[1]+': '] +  list_text
                     print(description.TEXT)
                     # print(description.TEXT)
@@ -349,6 +399,7 @@ class Input(Image):
     def activate(self, event):
         if self.rect.collidepoint(event.pos):
             self.enter = True
+            print('hallok')
         else:
             self.enter = False
         # print(self.enter)
@@ -502,12 +553,15 @@ music =Button(width = 76,height = 72,x = nickname.width + 50, y = 45, text = "",
 client = Button(width= 281, height= 100, name= "button_start", text= "client", x= 42, y= 600, fun= "c_s:client")  
 shop = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+110, y= 725, fun= "shop",progression="game")
 shop_ = Button(width= 281, height= 90, name= "button_start", text= "back to game", x= 15, y= 15, fun= "shop",progression='shop', size = 40)
+achievements = Button(width= 500, height= 90, name= "button_start", text= "achievements", x= 387, y= 725, fun= "achievements",progression="menu")
+achievements_ = Button(width= 281, height= 90, name= "button_start", text= "back to menu", x= 960, y= 15, fun= "achievements",progression='achievements', size = 40)
 server = Button(width= 281, height= 100, name= "button_start", text= "server", x= 981, y= 600, fun= "c_s:server")  
 wait = Button(width= 1280, x = 0, y = 712, height= 59, text = "wait", progression= "game")
 enemy_nickname = Button(y = 10, x = 1000, width= 200, height= 40, size = 40)
 your_nickname = Button(y = 10, x = 20, width= 200, height= 40, size = 40)
 coins = Button(y = 30, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "0", name = "button_start")
 description = Button(y = 150, x = 950, width= 300, height= 533, size = 20, progression= "shop", text = "select item")
+description_ = Button(y = 150, x = 950, width= 300, height= 533, size = 20, progression= "achievements", text = "select achievement")
 buy = Button(y = 533+150+25, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "buy", name = "button_start",fun='buy')
 # m_data.list_blits["shop"].append(description)
 homing_rocket = Button(y = 103, x = 267, width= 88, height= 179, progression= "shop", text = "", name = "weapons/homing_rocket", fun = "weapons/rockets")
@@ -528,13 +582,13 @@ if m_data.client_server == "client":
 your_turn = Button(width= 272, height= 66, x= 133, y= 712, text= "your step", progression= "", color=(0, 0, 255))
 opponent_turn = Button(width= 350, height= 66, x= 772, y= 712, text= "opponent`s step", progression= "", color = (255, 0, 0))
 
-# your_turn_gray = Button(width= 272, height= 66, x= 133, y= 712, name= "your_step_gray", progression= "", edit= False)
-# opponent_turn_gray = Button(width= 350, height= 66, x= 772, y= 712, name= "opponent_step_gray", progression= "", edit= False)
-
 m_data.list_blits["game"].append(your_nickname)
 m_data.list_blits["game"].append(enemy_nickname)
 
 m_data.list_blits["lose"].extend([revenge, out])
-# m_data.list_blits["lose"].append(out)
-# print(m_data.list_blits['lose'],'kaakakakakkkkkkkkkkkkkkkkkkkkkkkk')
-# m_data.list_blits["pre-game"].append(auto)
+for achievement_code in m_data.achievements_data:
+    m_data.list_achievements_view[achievement_code] = Button(fun=f"set_achievements/{achievement_code}",width=50,height=50,x=0,y=0,name=f"achievements/{achievement_code}",progression='NONE',text='')
+# for achievement in m_data.list_achievements_view:
+#     pass
+ 
+# achievements

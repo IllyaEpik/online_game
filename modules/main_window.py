@@ -66,9 +66,6 @@ class Screen():
                         pass 
                 # коли кнопка миші натиснута
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print(m_transform.type_transform )
-                    print(m_transform.type_transform == None, (m_transform.opasity, m_transform.size))
-                    print(m_transform.type_transform == None or (m_transform.opasity > 200 and m_transform.size < 10))
                     if m_transform.type_transform == None:
                         if m_data.progression in "winlose":
                             m_buttons.revenge.button_start(event)
@@ -88,10 +85,14 @@ class Screen():
                             m_buttons.music.button_start(event)
                             m_buttons.client.button_start(event)
                             m_buttons.server.button_start(event)
-                            
+                            m_buttons.achievements.button_start(event)
                             # перехід в пре-гру етап
                             m_buttons.button_start.button_start(event)
                         # якщо прогресс дорівнює пре-грі то
+                        elif m_data.progression == 'achievements':
+                            m_buttons.achievements_.button_start(event)
+                            for achievement in m_data.list_achievements_view:
+                                m_data.list_achievements_view[achievement].button_start(event)
                         if m_data.progression == "pre-game":
                             # преходить в гру
                             m_buttons.play.button_start(event)
@@ -99,6 +100,7 @@ class Screen():
                             m_buttons.auto.randomship(event.pos)
                             # поворот кораблів
                             m_buttons.rotate.button_start(event)
+
                             # цикл всіх кораблів
                             for ship in m_data.all_ships:
                                 # виділення кораблів
@@ -115,28 +117,27 @@ class Screen():
                             for weapon in m_buttons.list_weapons:
                                 weapon.button_start(event=event)
                     # якщо будь-яка клавіша натиснута то
-                        if event.type == pygame.KEYDOWN and m_data.progression == "menu":
-                            # додає символи до input
-                            m_buttons.input.edit(event)
-                            m_buttons.nickname.edit(event)
-                            for object in [m_buttons.nickname]:
-                                size = object.FONT.size(object.TEXT)
-                                # if object.width < size[0] - 10:
-                                width = -(object.start_width - size[0] - 10)
-                                object.width = width + object.start_width
-                                if object.width < object.start_width:
-                                    object.width = object.start_width
-                                object.update_image()
-                                
-                                m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
-                                m_buttons.music.x = m_buttons.nickname.width + 50
-                                # else:
-                                    # object.width = object.start_width
-                                    # object.update_image()
                     else:
                         m_transform.type_transform = None
-                        m_transform.opasity = 255
                         m_transform.size = 0
+                if event.type == pygame.KEYDOWN and m_data.progression == "menu":
+                    # додає символи до input
+                    m_buttons.input.edit(event)
+                    m_buttons.nickname.edit(event)
+                    for object in [m_buttons.nickname]:
+                        size = object.FONT.size(object.TEXT)
+                        # if object.width < size[0] - 10:
+                        width = -(object.start_width - size[0] - 10)
+                        object.width = width + object.start_width
+                        if object.width < object.start_width:
+                            object.width = object.start_width
+                        object.update_image()
+                        
+                        m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
+                        m_buttons.music.x = m_buttons.nickname.width + 50
+                        # else:
+                            # object.width = object.start_width
+                            # object.update_image()
             m_buttons.coins.TEXT = f"{m_data.coins}"
             # цикл відображення всього що є в списку
             for sprite in m_data.list_blits[m_data.progression]:
@@ -255,6 +256,34 @@ class Screen():
                                  sprite.width*multiplier_x,
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
+            elif m_data.progression == 'achievements':
+                square = pygame.Surface((m_buttons.description_.rect.width,m_buttons.description_.rect.height))
+                square.fill((255, 255, 255))
+                square.set_alpha(200)
+                self.screen.blit(square,m_buttons.description_.rect)
+                m_buttons.stroke(self.screen,m_buttons.description_.rect,(0,0,0),5)
+                sprite = m_buttons.description_
+                m_buttons.description_.blit(self.screen,
+                                 sprite.x*multiplier_x,
+                                 sprite.y*multiplier_y,
+                                 sprite.width*multiplier_x,
+                                 sprite.height*multiplier_y,
+                                 multiplier_x,multiplier_y)
+                x,y =50,50
+                for achievement_code in m_data.achievements_data:
+                    achievement = m_data.achievements_data[achievement_code]
+                    
+                    if achievement['has'] == 'True':
+                        m_data.list_achievements_view[achievement_code].blit(self.screen,
+                                 x*multiplier_x,
+                                 y*multiplier_y,
+                                 150*multiplier_x,
+                                 150*multiplier_y,
+                                 multiplier_x,multiplier_y)
+                        x += 200
+                        if x == 850:
+                            x = 50
+                            y += 200
             # оновлення екрану 
             m_transform.transform(self,multiplier_x,multiplier_y)
             # фпс

@@ -19,7 +19,6 @@ def attack_for_cell(row,cell):
             y = 115+55.7*row ,
             width= 55.7,
             height=55.7,
-            
     )
     if str(m_data.enemy_field[row][cell]) in list_explosion:
         m_data.enemy_field[row][cell] = 6
@@ -57,7 +56,6 @@ def attack_for_cell(row,cell):
             # 
             if int(ship.name) == len(cells):
                 # 
-                # blits = False
                 for explosion in m_data.list_explosions:
                     #
                     for celll in cells:
@@ -69,12 +67,11 @@ def attack_for_cell(row,cell):
         for ex in explosions:
             try:
                 #
-                # del m_data.list_blits['game'][ex]
                 m_data.list_blits['game'].remove(ex)
                 
             except:
+                # 
                 print('reoeroreoreoreooeroeroreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-                # pass
     #
     elif str(m_data.enemy_field[row][cell]) in list_miss:
         #
@@ -97,6 +94,7 @@ def timer_for_radar():
         time.sleep(1)
     if not m_data.turn:
         m_client.send("pass:")
+need_to_send = []
 # метод з атакою
 def attack(pos: tuple,multiplier_x,multiplier_y):
     # створення глобальних змінних
@@ -109,6 +107,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
         
         # цикл для ряду
         if m_data.attack == 'homing_rocket':
+            fire()
             list_ships = []
             for ship in m_data.enemy_ships:
                 if not ship in m_data.all_ships:
@@ -156,6 +155,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
             ## 59, 115
             m_audio.explosion.play()
         elif m_data.attack == 'Air_Defence':
+            fire()
             for row in range(10):
                 # цикл для клітинки
                 for cell in range(10):
@@ -178,6 +178,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
             for row in range(10):
                 # цикл для клітинки
                 for cell in range(10):
+                    
                     # створюємо хіт-бокс
                     rect = pygame.Rect((725+55.7*cell) * multiplier_x, 
                                     (115+55.7*row) * multiplier_y,
@@ -200,8 +201,10 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                         text += f'{row+row_3x3-1},{cell+cell_3x3-1},{name} '
                             text_for_send+= text + ';'
                             m_data.attack = None
+                            fire()
                             
                         elif m_data.attack == 'line_rocket':
+                            fire()
                             text = 'attack:'
                             for cell in range(10):
                                 ship = str(m_data.enemy_field[row][cell])
@@ -215,6 +218,9 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                             m_data.attack = None
                                 # elif str(m_data.enemy_field[row][cell]) in '05':
                         elif m_data.attack == 'radar':
+
+                            fire()
+                            m_achievements.achievement('used radar')
                             width = 55.7 * multiplier_x
                             height = 55.7 * multiplier_y
                             x = (725+55.7*cell) * multiplier_x
@@ -279,18 +285,25 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                     m_data.turn = True
                         
                         else:
+                            fire()
                             name = attack_for_cell(row,cell)
                             text = ''
-                            with open(os.path.abspath(__file__+'/../../data/output.txt')) as file:
-                                text += file.read()
-                            with open(os.path.abspath(__file__+'/../../data/output.txt'),'w') as file:
-                                file.write(text+'\n'+f"{name}")
+                            
                             if name: 
                                 text_for_send+= f"attack:{row},{cell},{name};"
                                 #
                                 m_audio.explosion.play()
         
-        for row in range(10):
+
+        # if text != 'fire:':
+        #     text_for_send+= ';'+text
+        
+        
+        win_lose(text_for_send)
+def fire():
+    global need_to_send
+    text = 'fire:'
+    for row in range(10):
             if 8 in m_data.my_field[row]:
                 for cell in range(10):
                     if m_data.my_field[row][cell] == 8:
@@ -308,42 +321,36 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                             # for count in range(1000):
                                             #     print(m_data.my_field[row+row_fire-1][cell+cell_fire-1],row+row_fire-1,cell+cell_fire-1)
                                             m_data.my_field[row+row_fire-1][cell+cell_fire-1] = 9
-                                            
-                        m_data.my_field[row][cell] = 6
-                        for explosion in m_data.list_explosions:
-                            if explosion[0].name == 'fire' and explosion[1] == row and explosion[2] == cell:
-                                explosion[0].name == 'explosion'
-            else:
-                continue
-        text = 'fire:'
-        for row in range(10):
 
-            if 9 in m_data.my_field[row]:
-                for cell in range(10):
-                    if m_data.my_field[row][cell] == 9:
-                        text += f'{row},{cell} '
-                        m_data.my_field[row][cell] = 8
-                        image = m_images.Image(
-                                progression = "game",
-                                name = 'fire',
-                                x = 59+55.7*cell,
-                                y = 115+55.7*row,
-                                # 5 9 4
-                                width= 55.7,
-                                height=55.7
-                            )
-                        m_data.list_explosions.append([image,row,cell])
-            else:
-                continue
-        if text != 'fire:':
-            text_for_send+= text
-        
-            #
-        win_lose(text_for_send)
-def win_lose(text_for_send):
-    yes_no = True
-    print(m_data.enemy_ships, 153)
+                        # m_data.my_field[row][cell] = 6
+                        # for explosion in m_data.list_explosions:
+                            # if explosion[0].name == 'fire' and explosion[1] == row and explosion[2] == cell:
+                            #     explosion[0].name == 'explosion'
+                            #     explosion[0].update_image()
     
+    for row in range(10):
+        if 9 in m_data.my_field[row]:
+            for cell in range(10):
+                if m_data.my_field[row][cell] == 9:
+                    text += f'{row},{cell} '
+                    m_data.my_field[row][cell] = 8
+                    image = m_images.Image(
+                            progression = "game",
+                            name = 'fire',
+                            x = 59+55.7*cell,
+                            y = 115+55.7*row,
+                            # 5 9 4
+                            width= 55.7,
+                            height=55.7
+                        )
+                    m_data.list_explosions.append([image,row,cell])
+    if text != 'fire:':
+        need_to_send.append(';' + text)
+    # return text
+def win_lose(text_for_send):
+    global need_to_send
+    yes_no = True
+
     for ship in m_data.enemy_ships:
         print(ship in m_data.enemy_ships, not ship.explosion)
         if not ship.explosion:
@@ -354,9 +361,32 @@ def win_lose(text_for_send):
         m_transform.color = (25,255,25)
         m_transform.type_transform = 0
         m_data.progression = "win"
+        m_achievements.achievement('Like a Clap of Hands')
+        can= True
+        for row in m_data.my_field:
+            for cell in row:
+                if cell == 6 or cell == 8:
+                    can = False
+                    break 
+        if can:
+            m_achievements.achievement('Total Domination')
+        m_data.read_data['wins']+= 1
+        m_data.reading_data(m_data.read_data,'date.txt')
+        if m_data.read_data['wins'] > 2:
+            m_achievements.achievement('Smells Like Victory')
+            if m_data.read_data['wins'] > 49:
+                m_achievements.achievement('True Cossack')
+                # 0/0 = капибара 
+        if m_data.coins == 200:
+            m_achievements.achievement('Need More Gold!')
+        elif m_data.coins == 190:
+            m_achievements.achievement("Big Spender")
         text_for_send += ";lose:?????"
     if text_for_send:
         add = ''
         if not m_data.turn:
-            add = ';iDontHave'
+            add = ';iDontHave:'
+        if need_to_send:
+            text_for_send +=';' + ";".join(need_to_send)
+            need_to_send = []
         m_client.send(text_for_send + add)
