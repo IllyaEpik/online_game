@@ -1,7 +1,7 @@
 # імпорт чужих модулів для роботи
 import pygame , socket, os
 import threading, random
-import getpass,pyperclip
+import getpass
 # імпорт наших модулів
 import modules.audio as m_audio
 from modules.images import Image
@@ -407,12 +407,6 @@ class Input(Image):
     def edit(self,event):
         if self.enter:
             key = pygame.key.name(event.key)
-            if event.key == pygame.K_v and pygame.key == pygame.K_LCTRL: # Ctrl+V
-                try:
-                    self.TEXT = pyperclip.paste()
-                    print("Text pasted from clipboard:", self.TEXT)
-                except pyperclip.PyperclipException:
-                    print("Error pasting from clipboard. Maybe no clipboard available?")
             if event.key == pygame.K_BACKSPACE and self.TEXT != "ip: ":
                 # Убирает последний символ текста 
                 self.TEXT = self.TEXT[:-1]
