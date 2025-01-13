@@ -28,7 +28,7 @@ class Screen():
         self.HEIGHT = size.current_h * 0.75
         # создаємо екран
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT),pygame.RESIZABLE)
-        
+        self.counter = 0
 
         # задаємо назву нашому екрану
         pygame.display.set_caption('online game')
@@ -40,6 +40,8 @@ class Screen():
         # m_data.progression = 'lose'
         # задаємо правдиве значення грі
         game = True
+        self.counter += 1
+        
         # цикл поки гра активна
         size = pygame.display.Info()
         # m_data.progression = 'shop'
@@ -52,8 +54,10 @@ class Screen():
             # print(width2)
             # print(size,size1)
             # цикл всіх подій
+            # if self.counter == 5:
             for event in pygame.event.get():
                 # якщо вікно зачинено то 
+
                 if event.type == pygame.QUIT:
                     # значення гри неправда
                     game = False
@@ -109,6 +113,7 @@ class Screen():
                             # вибір місця атаки
                             m_attack.attack(event.pos,multiplier_x,multiplier_y)
                             m_buttons.shop.button_start(event)
+                            
                         elif m_data.progression == 'shop':
                             m_buttons.shop_.button_start(event)
                             m_buttons.buy.button_start(event)
@@ -192,6 +197,7 @@ class Screen():
                 for buff in m_data.my_buffs:
                     # 59, 115
                     # try:
+                    
                     if buff[0] == 'Air_Defence':
                         if str(m_data.my_field[buff[1]][buff[2]]) in '05':
                             m_images.air_defence.blit(self.screen,
@@ -205,14 +211,17 @@ class Screen():
                     del m_data.my_buffs[delete]
                     # except:
                     #     pass
-                for sprite in m_data.list_blits["game"]:
-                    if sprite.name in "miss, explosion, fire":
-                        sprite.blit(self.screen,
-                                 sprite.x*multiplier_x,
-                                 sprite.y*multiplier_y,
-                                 sprite.width*multiplier_x,
-                                 sprite.height*multiplier_y,
-                                 multiplier_x,multiplier_y)
+                # start_time = pygame.time.get_ticks()
+                for sprite in m_data.list_explosions:
+                    sprite = sprite[0]
+                    sprite.blit(self.screen,
+                                sprite.x*multiplier_x,
+                                sprite.y*multiplier_y,
+                                sprite.width*multiplier_x,
+                                sprite.height*multiplier_y,
+                                multiplier_x,multiplier_y)
+                # end_time = pygame.time.get_ticks()
+                # print(end_time-start_time,'attack',len(m_data.list_explosions))
                 if m_data.time_for_radar:
                     for sprite in m_data.list_for_radar:
                         pygame.draw.circle(self.screen,(50,255,50),((sprite.x+sprite.width/2)*multiplier_x,(sprite.y+sprite.height/2)*multiplier_y),10,25)
@@ -228,7 +237,8 @@ class Screen():
                         m_buttons.your_turn.COLOR = (140, 140, 140)
                         # sprite = m_buttons.your_turn_gray
                         # m_buttons.your_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
-                    
+                    sprite = m_buttons.shop
+                    m_buttons.shop.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     sprite = m_buttons.your_turn
                     m_buttons.your_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     sprite = m_buttons.opponent_turn

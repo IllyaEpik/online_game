@@ -1,3 +1,4 @@
+import os 
 type = "/"
 path = __file__.split("/")
 if len(path) == 1:
@@ -7,6 +8,10 @@ del path[-1]
 path.append("data")
 # path.append("data.txt")
 path = type.join(path)
+try:
+    os.mkdir(path+type+'achievements')
+except:
+    pass
 read_data = {"nickname": "",
              "ip": "",
              "sound": True,

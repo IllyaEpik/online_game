@@ -51,7 +51,8 @@ class Image():
     def blit(self,screen,x,y,width,height,multiplier_x,multiplier_y):
         # перевіряємо отриману ширину і висоту
         try:
-            if self.image.get_width() != width or self.image.get_height() != height:
+            if self.image.get_width() != int(width) or self.image.get_height() != int(height):
+                print(self.image.get_width(), width, self.image.get_height(), height)
                 # завантажуємо картинку
                 self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
                 # перевертаємо картинку

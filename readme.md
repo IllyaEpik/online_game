@@ -30,13 +30,13 @@
 
 2. Зайти на Git Hub
 3. У репозиторії проекту натиснути зелену кнопку "Code"
-![alt text](images/readme/github_image.png)
+    ![alt text](images/readme/github_image.png)
 4. Обрати "Завантажити ZIP"
 
 * Для Windows
 5. Перейти до завантаженого архіву та розархівувати його(Права кнопка миші -> "Витягнути до поточної папки".)
 6. Зайти до розархівованої папки і скопіювати шлях:
-- ![alt text](images/readme/path_to_folder.png)
+    ![alt text](images/readme/path_to_folder.png)
 7. Натиснути комбінацію **Wind + R**
 8. Вписати у віконці:
 - cmd
@@ -71,13 +71,13 @@
 * Другий способ:
 13. Запускаємо застосунок Radmin VPN:
 14. Натискаємо на кнопку:
-- ![alt text](images/readme/activate_radmin.png)
+    ![alt text](images/readme/activate_radmin.png)
 15. 1) Після цього один з гравців натискає:
-- ![alt text](images/readme/server_radmin.png)
+    ![alt text](images/readme/server_radmin.png)
 15. 1) Він має задати нобхідні данні і надати їх другому гравцю:
-- ![alt text](images/readme/create_server_radmin.png)
+    ![alt text](images/readme/create_server_radmin.png)
 15. 2) Другий має натиснути:
-- ![alt text](images/readme/connect_radmin.png)
+    ![alt text](images/readme/connect_radmin.png)
 15. 2) Та ввести данні які були передані першим гравцем
 16. Сервер(один з гравців) повідомляє іншому свій IP з Radmin VPN та обирає роль сервера
 17. Другий гравець вводить IP
@@ -110,44 +110,7 @@
 11. Launch the game using the command:  
 - python main.py 
 
-* For macOS  
-5. Navigate to the downloaded archive and extract it (double-click the archive to unpack it automatically).  
-6. Open the extracted folder and copy its path:  
-   ![alt text](images/readme/path_to_folder.png)
-7. Right-click on the folder -> Select "Get Info"-> Copy the path in the "Where" field.  
-8. Press Command + Space, type "Terminal", and hit Enter.  
-9. In the terminal, enter the command to navigate to the file:  
-- cd <path> 
-10. Run a command to download the required module:
-- pip3 install pygame 
-11. Launch the game using the command:  
-- python3 main.py
 
-* To connect over the network:
-12. Let's get into the game
-
-First Method:
-13. In the game, the server (one of the players) shares their IP and selects the server role
-14. Start the second stage (the first stage must be completed!)
-15. The second player selects the player role and enters the server's IP
-16. Enjoy the game!  
-
-Second Method:  
-13. Launch the Radmin VPN application
-14. Click the button:  
-   - ![alt text](images/readme/activate_radmin.png)  
-15. 1) After that, one of the players clicks:  
-   - ![alt text](images/readme/server_radmin.png)  
-15. 1) They need to set the necessary details and provide them to the second player:  
-   - ![alt text](images/readme/create_server_radmin.png)  
-15. 2) The second player clicks:  
-   - ![alt text](images/readme/connect_radmin.png)  
-15. 2) Then enters the details shared by the first player  
-16. The server (one of the players) shares their Radmin VPN IP and selects the server role
-* if it seems too difficult to you, look at this picture and relax
-- ![alt text](images/readme/relax_picture.jpg)
-17. The second player selects the player role and enters the IP.  
-18. Enjoy the game!
 
 
 ## структура проекту / project structure:
@@ -157,6 +120,7 @@ Second Method:
 * Четверте вікно: результат гри (програш чи перемога)/Fourth window: game result (lose or victory)
 
 ### повний опис файлів / a full description of files:
+
 #### Online_game/modules/main_window.py: створення головну екрану гри / create a main screen of game
 
 ```python
@@ -271,7 +235,7 @@ screen = Screen()
 ```
 
 
-#### Online_game/modules/attack.py: створення механіки атаки кораблів / 
+#### Online_game/modules/attack.py: створення механіки атаки кораблів / creation of ship attack mechanics
 ```python
 # імпортуємо необхідні модулі
 import pygame 
@@ -415,7 +379,7 @@ def win_lose():
 ```
 
 
-#### Online_game/modules/buttons.py: створення необхідних кнопок для застосунку / сreation of necessary buttons for the application 
+#### Online_game/modules/buttons.py: створення необхідних кнопок для застосунку / сreation of necessary buttons for the application
 ```python
 # імпорт чужих модулів для роботи
 import pygame , socket
@@ -1091,7 +1055,7 @@ lose = Image(width = 1280, height = 851, x = 0, y = 0, name = "lose", progressio
 win = Image(width = 1280, height = 851, x = 0, y = 0, name = "win", progression = "win", edit = False)
 ```
 
-#### Online_game/modules/audio.py: файл для роботи зі звуком / file for working with sound 
+#### Online_game/modules/audio.py: файл для роботи зі звуком / file for working with sound
 ```python
 # імпортуємо модулі pyagame і os
 import pygame, os 
@@ -1130,7 +1094,7 @@ track.play()
 # explosion = Audio('blas',0)
 ```
 
-#### Online_game/modules/data.py: файл у якому зберігається змінні / file for storing variables 
+#### Online_game/modules/data.py: файл у якому зберігається змінні / file for storing variables
 ```python
 # створення словника у якому містяться всі картинки для кожної стадії гри
 list_blits = {
@@ -1208,176 +1172,5 @@ cells = {
 }
 ```
 
-#### Online_game/modules/client.py: файл який відповідає за роботу клієнту для гри по мережі / file responsible for the client functionality in a networked game 
-```python
-import modules.data as m_data 
-import socket
+#### Online_game/modules/client.py: файл який відповідає за роботу клієнту та серверу для гри по мережі / file responsible for the client and server functionality in a networked game
 
-# создамо функцію для відправкм даних на сервер
-def send(data):
-    # відправляємо дані серверу
-    print(data)
-    client.sendall(data)
-client = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
-def activate():
-    global client
-    print('lod')
-    try:
-        # создаємо клієнта
-        print('hello')
-        print('hi')
-        # шифруємо поле гри
-        ships = "field:"
-        for ship in m_data.all_ships:
-            ships += f"{ship.name},{ship.row},{ship.cell},{ship.rotate} "
-        print('just')
-        # підключаємо кліента до сервера
-        client.connect((m_data.ip, 8800))
-        print("it is cool",m_data.ip)
-        # визиваємо функцію для відправки даних на сервер
-        send(ships.encode())
-        print("it's cool")
-    except:
-        # переходимо до серверу
-        print('hahhaahha')
-        activate()
-        
-```
-
-#### Online_game/modules/server.py: файл який відповідає за роботу серверу для гри по мережі / file responsible for the server functionality in a networked game 
-```python
-# Імпортування необхідних модулей
-import socket
-import modules.data as m_data
-import modules.ships as m_ships
-import modules.images as m_images
-
-# Повертае ім'я компьютера(хоста)
-hostname = socket.gethostname()
-# Повертає IP адрессу по імені хосту
-ip = socket.gethostbyname(hostname)
-# ip = "127.0.0.1"
-# ip = '46.118.25.208'
-
-# виводимо у терміналі статус нашого сервера
-print(socket.SO_KEEPALIVE,'132123132321132132132')
-# Створення функції що буде активувати під'єднання до серверу 
-def activate():
-    #  Створення серверного сокету
-    with socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM) as server:
-        # Повертае ім'я компьютера(хоста)
-        hostname = socket.gethostname()
-        # Повертає IP адрессу по імені хосту
-        ip = socket.gethostbyname(hostname)
-        #  Під'єдання сервера до вказаного IP та порту
-        server.bind((f"{ip}", 8800))
-        # Функція listen активує очікування підключення користувача
-        server.listen()
-        # Підтверджуємо з'єднання від клієнту
-        client = server.accept()
-        
-        for coun in range(100):
-            print(client[1],"katkit")
-        print("Acept_Client")
-
-        while True:
-            
-            # Отримання данних кліенту та декодування їх
-            client_data = client[0].recv(1024).decode()
-            print(client_data)
-            # Перетворення даних на список розділяючи символом :
-            data = client_data.split(":")
-            # Якщо списку всіх даних перше значення field,
-            if data[0] == "field":
-                # то друге значення зі списку буде розділен за пробілами
-                data = data[1].split(" ")
-                # Для кожного корабля у списку всіх даних
-                for ship in data:
-                    # Розділення кожного корабля по комі
-                    splited_data = ship.split(",")
-                    # Якщо розділенні данні кораблів пусті,
-                    if splited_data != [""]:
-                        print('create ship')
-                        print(splited_data)
-                        # то створюеться екземпляр класу корабля з переданими параметрами
-                        ship = m_ships.Ship(x = 724,y = 115,
-                                    field_cor = (724,115),
-                                    name  = splited_data[0],
-                                    row = int(splited_data[1]),
-                                    cell = int(splited_data[2]),
-                                    rotate = int(splited_data[3]),
-                                    add = False)
-                        
-                        # Для кожного корабля первірка
-                        for count in range(int(ship.name[0])):
-                            # Якщо корабль не було повернуто
-                            if ship.rotate % 180 == 0:
-                                # Додаємо його частини в поле противника по рядку
-                                m_data.enemy_field[ship.row][ship.cell+count] = int(ship.name[0])
-                            # Інакше
-                            else:
-                                # Додаємо його частини в поле противника по стовпцю
-                                m_data.enemy_field[ship.row+count][ship.cell] = int(ship.name[0])
-                        
-                        # Додаємо корабель до списку кораблів противника
-                        m_data.enemy_ships.append(ship)
-
-                for row in m_data.enemy_field:
-                    print(row)
-
-            # Перевірка, чи отримана команда "attack"
-            elif data[0] == "attack":
-                print("attack_get")
-                # Отримуємо позицію атаки
-                pos = data[1].split(" ")[0].split(",")
-                pos = [int(pos[0]), int(pos[1])]
-                # Перевірка, чи атака була промахом
-                if data[1].split(" ")[-1] == "miss":
-                    # Передаємо хід гравцю
-                    m_data.turn = True
-                    # Позначаємо промах на полі
-                    m_data.my_field[pos[0]][pos[1]] = 7
-                # Інакше
-                else:
-                    # Позначаємо влучання на полі
-                    m_data.my_field[pos[0]][pos[1]] = 6
-                # Створюємо обект класа картинки, власне картинку, для відображення результату атаки
-                image = m_images.Image(
-                    progression = "game",
-                    name = data[1].split(" ")[-1],
-                    x = 59+55.7*pos[1],
-                    y = 115+55.7*pos[0],
-                    width= 55.7,
-                    height=55.7
-                )
-            # Перевірка, чи відбувся вибух
-            elif data[0] == "explosion":
-                # Отримуємо позицію вибуху
-                pos = data[1].split(",")
-                print(pos)
-                # try:
-                if len(pos[0]) > 1:
-                    pos[0] = pos[0][0]
-                if len(pos[1]) > 1:
-                    pos[1] = pos[1][0]
-                pos = [int(pos[0]), int(pos[1])]
-                # except:
-                # Перебираемо всі кораблі
-                for ship in m_data.all_ships:
-                    # Якщо це корабль противника пропускаємо
-                    if ship in m_data.enemy_ships:
-                        pass
-                    # Якщо координати вибуху збігаються з позицією корабля,
-                    elif ship.row == pos[0] and ship.cell == pos[1]:
-                        # то відбуваеться вибух
-                        ship.explosion = True
-                        
-            
-
-            # Якщо відбуваеться програш
-            elif data[0] == "lose":
-                # То стан гри змінюеться на виграш
-                m_data.progression = "win"
-            # Додаємо отримані дані від клієнта до списку даних противника
-            m_data.enemy_data.append(client_data)
-```
