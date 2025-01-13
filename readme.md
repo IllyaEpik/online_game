@@ -1173,4 +1173,5 @@ cells = {
 ```
 
 #### Online_game/modules/client.py: файл який відповідає за роботу клієнту та серверу для гри по мережі / file responsible for the client and server functionality in a networked game
-
+```python
+```python

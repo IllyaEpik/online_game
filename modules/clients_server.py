@@ -291,9 +291,13 @@ def activate():
                                 # try:
                                 #
                                 if len(pos[0]) > 1:
+                                    #
                                     pos[0] = pos[0][0]
+                                    #
                                 if len(pos[1]) > 1:
+                                    #
                                     pos[1] = pos[1][0]
+                                    #
                                 pos = [int(pos[0]), int(pos[1])]
                                 # except:
                                 # Перебираемо всі кораблі
