@@ -38,12 +38,15 @@ class Button(Image):
         self.Y = y
         self.function = fun
         self.TEXT = text  
+        self.render = None
+        self.last_text = None
         self.activate = 0
         # створюємо параметри
         self.COLOR = color
         self.FONT = pygame.font.SysFont("algerian", size)
         self.rect = pygame.Rect(x,y,width,height)
         self.size = size 
+        self.current_size = self.size
     # метод з кнопкою старт
     def button_start(self, event):
         if type(event) == pygame.event.Event:
@@ -54,6 +57,7 @@ class Button(Image):
         # якщо кнопка натиснута
         if self.rect.collidepoint(pos):
             if type(self.function) == type("123") and self.function.split(":")[0] == "c_s":
+                print(self.function.split(":")[1])
                 m_data.client_server = self.function.split(":")[1]
                 server.COLOR = (0,0,0)
                 client.COLOR = (0,0,0)
@@ -315,20 +319,30 @@ class Button(Image):
             # відображення картинки 
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
         # задання розміру для тексту 
-        if multiplier_x > multiplier_y:
+        if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
-        else:
+            self.current_size= int((self.size*multiplier_y))
+            # self.size = int((self.size*multiplier_y))
+        elif self.current_size != int((self.size*multiplier_x)) and multiplier_x <= multiplier_y:
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_x)))
+            self.current_size = int((self.size*multiplier_x))
         if type(self.TEXT) == type(""):
             size = self.FONT.size(self.TEXT) 
             # задаємо y для тексту
             y = y + height/2-size[1]/2
             # задаємо x для тексту
             x = x + width/2-size[0]/2
-            # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
+            # if self.TEXT != self.last_text:
+                # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
             render = self.FONT.render(self.TEXT,True,self.COLOR)
             render.set_alpha(self.opasity)
             screen.blit(render, (x, y))
+            self.render = render
+            # print(render,self.render)
+            self.last_text = self.TEXT
+            # print('hoh')
+            # else:
+            #     screen.blit(self.render, (x, y))
             # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
         elif type(self.TEXT) == type([]):
             count = 0
@@ -373,19 +387,23 @@ class Input(Image):
         self.rect = pygame.Rect(x,y,width,height)
         self.list = list
         self.size = 65 
-
+        self.current_size = self.size
     def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
         if self.name != "":
             # відображення картинки
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
+        # s = pygame.time.get_ticks()
         # задання розміру для тексту
         self.rect = pygame.Rect(x,y,width,height)
         if self.list == 'any':
             self.x = 42
-        if multiplier_x > multiplier_y:
+        if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
-        else:
+            self.current_size= int((self.size*multiplier_y))
+            # self.size = int((self.size*multiplier_y))
+        elif self.current_size != int((self.size*multiplier_x)) and multiplier_x <= multiplier_y:
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_x)))
+            self.current_size = int((self.size*multiplier_x))
         size = self.FONT.size(self.TEXT)
         # задаємо y для тексту
         y = y + height/2-size[1]/2
@@ -395,6 +413,8 @@ class Input(Image):
         render.set_alpha(self.opasity)
         screen.blit(render, (x, y))
         self.rect = pygame.Rect(x,y,width,height)
+        # e = pygame.time.get_ticks()
+        # print(e-s,'input')
         # відображення тексту на екрані
     def activate(self, event):
         # rect = pygame.Rect(self.x,self.y,self.width,self.height)

@@ -44,8 +44,7 @@ weapon_data = {
         "Anti_fire":f"This buff cost:{cost_data['Anti_fire']} and enables the player to extinguish a ship after it has been hit by a fire missile."
     }
 }
-#     "fire_rocket":2,
-#     "Anti_fire":10,
+
 select_weapon = None
 attack = None
 time_for_radar = 0
@@ -233,7 +232,7 @@ for count in range(10):
     enemy_field.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     my_field.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 # Створеня змінної, у якій ми говоримо треба чи ні повернути корабель
-turn = True
+turn = False
 client_server = read_data["client_server"]
 revenge = False
 # Створеня словника, у якому міститься стандартне розташування всіх кораблів

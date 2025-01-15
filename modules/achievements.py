@@ -20,7 +20,7 @@ class achievement():
         # робимо змінні глобальними
         global x,y,width,height
         # перевіряємо чи не має досягнення
-        if m_data.achievements_data[name]['has'] == "False" or 1:
+        if m_data.achievements_data[name]['has'] == "False":
             # задаємо наявність досягнення
             if name != "Into the Sunset...":
                 yes_no = True

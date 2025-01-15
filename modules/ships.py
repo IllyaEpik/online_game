@@ -254,13 +254,16 @@ def check(field, row, cell, values=[0, 5]):
                 if values[1] == 7:
                     # print(11)
                     image = m_images.Image(
-                        progression="game",
+                        progression="Noke",
                         name="miss",
                         x=725 + 55.7 * cell,
                         y=115 + 55.7 * row,
                         width=55.7,
                         height=55.7
                     )
+                    image.update_image()
+                    if image:
+                        m_data.list_explosions.append((image,row,cell))
 # Заповнюємо поле
 def fill_field(field: list):
     clear_field(field)

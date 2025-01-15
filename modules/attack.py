@@ -6,6 +6,7 @@ import modules.clients_server as m_client
 import modules.audio as m_audio
 import modules.achievements as m_achievements
 import modules.transform as m_transform
+import modules.animations as m_animations
 # список клітинок без кораблів
 list_miss = "05"
 # список клітинок з кораблями
@@ -13,7 +14,7 @@ list_explosion = "1234"
 def attack_for_cell(row,cell):
     name = None
     image = m_images.Image(
-            progression = "game",
+            progression = "Noke",
             name = "",
             x = 725+55.7*cell,
             y = 115+55.7*row ,
@@ -22,11 +23,16 @@ def attack_for_cell(row,cell):
     )
     if str(m_data.enemy_field[row][cell]) in list_explosion:
         m_data.enemy_field[row][cell] = 6
-        image.name = 'explosion'
+        image = m_animations.Animation(progression = "Noke",
+            x = 725+55.7*cell,
+            y = 115+55.7*row ,
+            width= 55.7,
+            name = 'explosion',
+            height=55.7)
         name = "explosion"
         if m_data.attack == 'fire_rocket':
-            image.name = 'fire'
             name = 'fire'
+            image.name = 'fire'
             m_data.enemy_field[row][cell] = 8
             m_data.attack = None
         # відправляє закодовані данні
@@ -85,6 +91,7 @@ def attack_for_cell(row,cell):
         image.update_image()
         #
         m_data.turn = False
+        m_data.list_explosions.append([image, row, cell])
         #
     return name
 
@@ -385,7 +392,7 @@ def win_lose(text_for_send):
     if text_for_send:
         add = ''
         if not m_data.turn:
-            add = ';iDontHave:'
+            add = ';pass:'
         if need_to_send:
             text_for_send +=';' + ";".join(need_to_send)
             need_to_send = []

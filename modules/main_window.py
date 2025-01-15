@@ -144,6 +144,7 @@ class Screen():
                             # object.update_image()
             m_buttons.coins.TEXT = f"{m_data.coins}"
             # цикл відображення всього що є в списку
+            s = pygame.time.get_ticks()
             for sprite in m_data.list_blits[m_data.progression]:
                 # print(sprite.name)
                 # відображення елементу
@@ -156,6 +157,8 @@ class Screen():
                                  sprite.width*multiplier_x,
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
+            
+            e = pygame.time.get_ticks()
             if m_data.progression == "menu" and m_audio.track.stoped:
                 pygame.draw.line(self.screen,(255,50,50),
                                  (m_buttons.music.x*multiplier_x,m_buttons.music.y*multiplier_y,),
@@ -191,6 +194,7 @@ class Screen():
                     # print(sprite.x,sprite.y,sprite.width,sprite.height,multiplier_x,multiplier_y,ship.name)
                     # print(sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y,ship.name)
                     ship.blit(self.screen,ship.x*multiplier_x,ship.y*multiplier_y,ship.width*multiplier_x,ship.height*multiplier_y,multiplier_x,multiplier_y)
+            start_time,end_time = 0,0
             if m_data.progression == "game":
                 count = 0
                 list_to_delete = []
@@ -211,7 +215,8 @@ class Screen():
                     del m_data.my_buffs[delete]
                     # except:
                     #     pass
-                # start_time = pygame.time.get_ticks()
+                start_time = pygame.time.get_ticks()
+
                 for sprite in m_data.list_explosions:
                     sprite = sprite[0]
                     sprite.blit(self.screen,
@@ -220,7 +225,7 @@ class Screen():
                                 sprite.width*multiplier_x,
                                 sprite.height*multiplier_y,
                                 multiplier_x,multiplier_y)
-                # end_time = pygame.time.get_ticks()
+                end_time = pygame.time.get_ticks()
                 # print(end_time-start_time,'attack',len(m_data.list_explosions))
                 if m_data.time_for_radar:
                     for sprite in m_data.list_for_radar:
@@ -291,5 +296,6 @@ class Screen():
             m_transform.transform(self,multiplier_x,multiplier_y)
             # фпс
             self.clock.tick(60)
+            print(int(self.clock.get_fps()),e-s,len(m_data.list_blits[m_data.progression]),end_time-start_time)
 # створення екземпляру классу
 screen = Screen()

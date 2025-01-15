@@ -6,7 +6,7 @@ import modules.buttons as m_buttons
 import modules.transform as m_transform
 import modules.achievements as m_achievements
 import socket,random,os
-
+import modules.animations as m_animations
 # створюємо функцію для відправкм даних на сервер
 def send(data:bytes):
     # відправляємо дані серверу
@@ -31,22 +31,22 @@ print(ip)
 # print(conn)
 # conn = conn.getresponse('ip')
 # print(conn)
-import requests
+# import requests
 
-def get_external_ip():
-    try:
-        response = requests.get("https://api.ipify.org?format=json") # или https://ifconfig.me/ip
-        response.raise_for_status() # Проверка на ошибки HTTP
-        ip_data = response.json()
-        return ip_data['ip']
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка при получении внешнего IP: {e}")
-        return None
+# def get_external_ip():
+#     try:
+#         response = requests.get("https://api.ipify.org?format=json") # или https://ifconfig.me/ip
+#         response.raise_for_status() # Проверка на ошибки HTTP
+#         ip_data = response.json()
+#         return ip_data['ip']
+#     except requests.exceptions.RequestException as e:
+#         print(f"Ошибка при получении внешнего IP: {e}")
+#         return None
 
-external_ip = get_external_ip()
-if external_ip:
-    print(f"Внешний IP-адрес: {external_ip}")
-ip = external_ip
+# external_ip = get_external_ip()
+# if external_ip:
+#     print(f"Внешний IP-адрес: {external_ip}")
+# ip = external_ip
 # створюємо сокет клієнту
 client_server = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
 # socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
@@ -68,9 +68,12 @@ def activate():
             # перевіряємо чи клієнт на сервері
             if m_data.client_server == "server":
                 # зв'язує клієнта з ip і портом
-                client_server.bind(("0.0.0.0", 8800))
+                client_server.bind(('0.0.0.0', 8800))
                 # Функція listen активує очікування підключення користувача
                 client_server.listen()
+                m_data.turn = random.randint(0,1)
+                if not m_data.turn:
+                    ships+=';pass:'
                 # Підтверджуємо з'єднання від клієнту
                 client = client_server.accept()[0]
                 # перевіряємо з'єднання
@@ -119,9 +122,6 @@ def activate():
                             # Перетворення данних на список розділяючи символом :
                             data = client_data.split(":")
                             # якщо в даті нічого не маємо
-                            if 'iDontHave' in data[0]:
-                                #змінюємо значення перевороту на True
-                                m_data.turn = True
                             # перевіряємо наявність ім'я на полі
                             if "field_nickname" in data[0]:
                                 # текст нікнейму такий самий як твій нікнейм
@@ -209,12 +209,15 @@ def activate():
                                         pos = attack.split(",")
                                         # записуємо функції до змінних
                                         pos = [int(pos[0]), int(pos[1]),pos[2]]
+                                        # Створюємо обект класа картинки, для відображення результату атаки, та передаємо параметри 
                                         # Перевірка, чи атака була промахом
+                                        clas = m_animations.Animation
                                         if pos[2] == "miss":
                                             # Передаємо хід гравцю
                                             m_data.turn = True
                                             # Позначаємо промах на полі
                                             m_data.my_field[pos[0]][pos[1]] = 7
+                                            clas = m_images.Image
                                             print("MISS")
                                         # перевіряємо чи корабель горить
                                         elif pos[2] == "fire":
@@ -223,14 +226,13 @@ def activate():
                                         else:
                                             # Позначаємо влучання на полі
                                             m_data.my_field[pos[0]][pos[1]] = 6
-                                        # Створюємо обект класа картинки, для відображення результату атаки, та передаємо параметри 
-                                        image = m_images.Image(
-                                            progression = "game",
+                                        image = clas(
+                                            progression = "Noke",
                                             name = pos[2],
                                             x = 59+55.7*pos[1],
                                             y = 115+55.7*pos[0],
                                             width= 55.7,
-                                            height=55.7
+                                            height=55.7,
                                         )
                                         # додаємо картинку до списку вибуху
                                         m_data.list_explosions.append([image,pos[0],pos[1]])
@@ -244,12 +246,8 @@ def activate():
                             if 'fire' in data[0]:
                                 
                                 try:
-                                    #
+                                    # додає пробіл до ряду в даті
                                     raw_data1 = data[1].split(' ')
-                                    # with open(os.path.abspath(__file__+'/../../data/output.txt')) as file:
-                                    #     text1 += file.read()
-                                    # with open(os.path.abspath(__file__+'/../../data/output.txt'),'w') as file:
-                                    #     file.write(text1+'\nfire: '+f"{raw_data1}")
                                     # для клітинок в ряду
                                     for cells in raw_data1:
                                         # чи є в клітинках щось
@@ -289,15 +287,15 @@ def activate():
                                 pos = data[1].split(",")
                                 print(pos)
                                 # try:
-                                #
+                                # перевіряє довжин
                                 if len(pos[0]) > 1:
-                                    #
+                                    # залишає значення позиції таким самим
                                     pos[0] = pos[0][0]
-                                    #
+                                # перевіряє довжину
                                 if len(pos[1]) > 1:
-                                    #
+                                    # змінює значення позиції
                                     pos[1] = pos[1][0]
-                                    #
+                                # записуємо функції до змінних
                                 pos = [int(pos[0]), int(pos[1])]
                                 # except:
                                 # Перебираемо всі кораблі
@@ -305,27 +303,32 @@ def activate():
                                     # Якщо це корабль противника пропускаємо
                                     if ship in m_data.enemy_ships:
                                         pass
-                                    # Якщо координати вибуху збігаються з позицією корабля,
+                                    # якщо координати вибуху збігаються з позицією корабля
                                     elif ship.row == pos[0] and ship.cell == pos[1]:
                                         # то відбуваеться вибух
                                         ship.explosion = True
                                         
                                         
-                            
+                                # дата видаляється
                                 del data[0]
-                            # Якщо відбуваеться програш
+                            # якщо відбуваеться програш
                             elif "lose" in data[0]:
-                                # То стан гри змінюеться на виграш
+                                # змінюємо колір трансформації
                                 m_transform.color = (255,25,25)
+                                #задаємо кількість типів трансформації
                                 m_transform.type_transform = 0
+                                # стан гри змінюеться на програш
                                 m_data.progression = "lose"
+                                # додається нове досягнення
                                 m_achievements.achievement('Pants on Fire')
+                                # дата видаляється
                                 del data[0]
                             # Додаємо отримані дані від клієнта до списку даних противника
                             m_data.enemy_data.append(client_data)
-                            print(client_data)
                 except:
                     print('error:connect')
     except:
+        # до числа додаємо 1
         count += 1
+        # активовуємо
         activate()
