@@ -1,3 +1,8 @@
+'''
+    >>> Відповідає за атаку кораблей
+    >>> Перевіряє чи відбулась атака
+    >>> Відповідає за роботу зброї
+'''
 # імпортуємо необхідні модулі
 import pygame,random, time, threading,os
 import modules.data as m_data
@@ -217,10 +222,11 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                 ship = str(m_data.enemy_field[row][cell])
                                 name = attack_for_cell(row,cell)
                                 text += f"{row},{cell},{name}"
+                                text_for_send+= f"attack:{row},{cell},{name};"
                                 if ship in '1234':
                                     break
                                 print(m_data.enemy_field[row][cell])
-                            text_for_send+= text + ';'
+                            text_for_send+= ';' + text + ';'
                             text_for_send+= 'pass:' + ';'
                             m_data.attack = None
                                 # elif str(m_data.enemy_field[row][cell]) in '05':
@@ -341,8 +347,8 @@ def fire():
                 if m_data.my_field[row][cell] == 9:
                     text += f'{row},{cell} '
                     m_data.my_field[row][cell] = 8
-                    image = m_images.Image(
-                            progression = "game",
+                    image = m_animations.Animation(
+                            progression = "Noke",
                             name = 'fire',
                             x = 59+55.7*cell,
                             y = 115+55.7*row,

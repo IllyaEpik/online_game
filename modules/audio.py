@@ -1,3 +1,7 @@
+'''
+    >>> Програє звуки і музику
+    >>> Зупиняє звук і музику
+'''
 # імпортуємо модулі 
 import pygame, os 
 import modules.data as m_data

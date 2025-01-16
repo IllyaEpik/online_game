@@ -1,3 +1,12 @@
+'''
+    >>> Відображає кораблі на полі - клас Ship
+    >>> Розміщує кораблі за координатами - параметри x, y
+    >>> Перевіряє чи можна поставити корабель - метод check_enemy
+    >>> Обертає кораблі - метод rotate_ship
+    >>> Переміщує кораблі на нову позицію - метод place
+    >>> Робить перевірку кожної клітинки - функція check
+    >>> Очищує поле - функція clear_field
+'''
 # імпортуємо файли
 import modules.images as m_images
 import modules.data as m_data
@@ -7,7 +16,7 @@ import modules.achievements as m_achievements
 # імпортуємо модуль pygame
 import pygame,random
 
-# создаемо з Кораблями
+# створює кораблі
 class Ship(m_images.Image):
     # Ініціалізація корабля, параметри координат, розміри та орієнтація
     def __init__(self, x: int, y: int, name='1', row=0, cell=0, field_cor=[59, 115], rotate=0, add=True):
@@ -240,6 +249,8 @@ class Ship(m_images.Image):
                     break
                 count += 1 
         fill_field(m_data.my_field)
+        for row in m_data.my_field:
+            print(row)
         # print(m_data.cells)
 
         # for row in m_data.my_field:

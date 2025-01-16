@@ -1,3 +1,6 @@
+'''
+    >>> Створює головне вікно - класс Screen
+'''
 # імпортуємо модуль pygame
 import pygame, threading, os
 # ініціалізуємо pygame
@@ -12,10 +15,12 @@ import modules.attack as m_attack
 import modules.transform as m_transform
 import modules.audio as m_audio
 import modules.achievements as m_achievements
+import modules.animations as m_animations
 # m_achievements.achievement('Glory to Air Defense')
 # m_achievements.achievement('Big Spender')
 # m_achievements.achievement('Pants on Fire')
-# 
+# клас для налаштування головного вікна
+threading.Thread(target=m_animations.play_animation,daemon=True).start()
 class Screen():
     # ініціалізуємо screen
     def __init__(self):
@@ -38,13 +43,14 @@ class Screen():
     # функція запуску
     def run(self):
         # m_data.progression = 'lose'
-        # задаємо правдиве значення грі
+        # запускаємо гру
         game = True
         self.counter += 1
         
-        # цикл поки гра активна
+        # налаштування розміра дісплея
         size = pygame.display.Info()
         # m_data.progression = 'shop'
+        # поки гра триває
         while game:
             size1 = self.screen.get_size()
             WIDTH = size1[0]
@@ -125,7 +131,7 @@ class Screen():
                         m_transform.type_transform = None
                         m_transform.size = 0
                 if event.type == pygame.KEYDOWN and m_data.progression == "menu":
-                    # додає символи до input
+                    # додає символи в event
                     m_buttons.input.edit(event)
                     m_buttons.nickname.edit(event)
                     for object in [m_buttons.nickname]:
@@ -251,19 +257,19 @@ class Screen():
                 else:
                     wait = m_buttons.wait
                     wait.blit(self.screen,wait.x*multiplier_x,wait.y*multiplier_y,wait.width*multiplier_x,wait.height*multiplier_y,multiplier_x,multiplier_y)
-            elif m_data.progression == 'shop':
-                square = pygame.Surface((m_buttons.description.rect.width,m_buttons.description.rect.height))
-                square.fill((255, 255, 255))
-                square.set_alpha(200)
-                self.screen.blit(square,m_buttons.description.rect)
-                m_buttons.stroke(self.screen,m_buttons.description.rect,(0,0,0),5)
-                sprite = m_buttons.description
-                m_buttons.description.blit(self.screen,
-                                 sprite.x*multiplier_x,
-                                 sprite.y*multiplier_y,
-                                 sprite.width*multiplier_x,
-                                 sprite.height*multiplier_y,
-                                 multiplier_x,multiplier_y)
+            # elif m_data.progression == 'shop':
+            #     square = pygame.Surface((m_buttons.description.rect.width,m_buttons.description.rect.height))
+            #     square.fill((255, 255, 255))
+            #     square.set_alpha(200)
+            #     self.screen.blit(square,m_buttons.description.rect)
+            #     m_buttons.stroke(self.screen,m_buttons.description.rect,(0,0,0),5)
+            #     sprite = m_buttons.description
+            #     m_buttons.description.blit(self.screen,
+            #                      sprite.x*multiplier_x,
+            #                      sprite.y*multiplier_y,
+            #                      sprite.width*multiplier_x,
+            #                      sprite.height*multiplier_y,
+            #                      multiplier_x,multiplier_y)
             elif m_data.progression == 'achievements':
                 square = pygame.Surface((m_buttons.description_.rect.width,m_buttons.description_.rect.height))
                 square.fill((255, 255, 255))
@@ -296,6 +302,6 @@ class Screen():
             m_transform.transform(self,multiplier_x,multiplier_y)
             # фпс
             self.clock.tick(60)
-            print(int(self.clock.get_fps()),e-s,len(m_data.list_blits[m_data.progression]),end_time-start_time)
+            # print(int(self.clock.get_fps()),e-s,len(m_data.list_blits[m_data.progression]),end_time-start_time)
 # створення екземпляру классу
 screen = Screen()

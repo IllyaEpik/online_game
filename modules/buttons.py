@@ -1,3 +1,7 @@
+'''
+    >>> Відповідяє за створення всіх кнопок - клас Button
+    >>> Відповідає за функції при натисканні кнопок - метод button_start 
+'''
 # імпорт чужих модулів для роботи
 import pygame , socket, os
 import threading, random
@@ -258,22 +262,30 @@ class Button(Image):
                     print(description_.TEXT)
             elif self.function and 'weapons' in self.function:
                 # buff
-                description.TEXT = m_data.weapon_data[self.function.split('/')[1]][self.name.split('/')[1]].split(' ') +['                ', '           ']
-                m_data.select_weapon = self.name.split('/')[1]
+                description.TEXT = m_data.weapon_data[self.function.split('/')[1]][self.function.split('/')[2]].split(' ') +['                ', '           ']
+                m_data.select_weapon = self.function.split('/')[2]
                 print(description.TEXT)
+                multiplers = [
+                    self.rect.width/self.width,
+                    self.rect.height/self.height
+                ]
+                if multiplers[0] > multiplers[1]:
+                    description.FONT = pygame.font.SysFont("algerian", int((40*multiplers[1])))
+                else:
+                    description.FONT = pygame.font.SysFont("algerian", int((40*multiplers[0])))
                 size = description.FONT.size(" ".join(description.TEXT))
-                if size[0] < description.rect.width:
+                if size[0] < description.width*multiplers[0]:
                     description.TEXT = [" ".join(description.TEXT)]
                 elif len(description.TEXT)-2:
                     list_text = []
                     text = ''
                     
                     for text_for in description.TEXT:
-                        print(description.rect.width)
+                        print(description.width*multiplers[0])
                         size = description.FONT.size(text+text_for)
-                        if size[0] < description.rect.width:
+                        if size[0] < description.width*multiplers[0]:
                             text += text_for + ' '
-                        elif size[0] > description.rect.width:
+                        elif size[0] > description.width*multiplers[0]:
                             list_text.append(text)
                             text = text_for + ' '
                         elif description.TEXT[-1] == text_for + ' ':
@@ -282,14 +294,14 @@ class Button(Image):
                         pass
                     else:
                         size = description.FONT.size(text+text_for)
-                        if size[0] < description.rect.width:
+                        if size[0] < description.width*multiplers[0]:
                             text += text_for
-                        elif size[0] > description.rect.width:
+                        elif size[0] > description.width*multiplers[0]:
                             list_text.append(text)
                             list_text.append(text_for)
                         elif description.TEXT[-1] == text_for:
                             list_text.append(text)
-                    description.TEXT = [self.name.split('/')[1]+': '] +  list_text
+                    description.TEXT = [self.function.split('/')[2]+': '] +  list_text
                     print(description.TEXT)
                     # print(description.TEXT)
             else:
@@ -547,13 +559,13 @@ if m_data.read_data["nickname"] != "":
     nick = m_data.read_data["nickname"]
 if "." in m_data.read_data["ip"]:
     ip1 = m_data.read_data["ip"]
-button_start = Button(width = 402 , height = 120, x = 435, y = 343, name = "", text= "start")
+button_start = Button(width = 402 , height = 120, x = 435, y = 370, name = "", text= "start")
 m_data.list_blits["menu"].append(button_start)
 
 input = Input(width = 496, height = 148, x = 387 , y = 568, name = "button_start", text = f"ip: {ip1}")
 nickname = Input(x= 42, y= 43, width= 281, height= 84, name = "button_start", text = nick, list = "any")
 ip = Button(x = 981, y = 59, width = 281, height = 84, name = "button_start", text = m_client.ip, size = 50)
-for object in [input, nickname, ip]:
+for object in [nickname, ip]:
     size = object.FONT.size(object.TEXT)
     if object.width - size[0] - 10 < 0:
         width = -(object.width - size[0] - 10)
@@ -562,9 +574,9 @@ for object in [input, nickname, ip]:
         object.update_image()
 text_ip = Button(x = ip.x, y = 10, width = ip.width, height = 45, text = "user ip", size = 50)
 m_data.list_blits["menu"].append(text_ip)
-auto = Auto(width= 170, height= 58, x= 665, y= 610)
-rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "", progression= "pre-game", text= "")
-play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60, text = "")
+auto = Auto(width= 179, height= 79, x= 794, y= 587)
+rotate = Button(fun= 'ship',  width = 222, height = 68, x= 1000, y= 600, name = "", progression= "pre-game", text= "")
+play = Button(x = 900, y = 720, name = "", fun= 'play', width = 200, height = 65, text = "")
 revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "win", fun= "win_lose")
 out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text = "", fun = "check")
 m_data.list_blits["pre-game"].extend([rotate,play])
@@ -572,36 +584,37 @@ m_data.list_blits["pre-game"].extend([rotate,play])
 # out = Button(height = 80, width = 518, x = 0, y = 712, progression = "lose", text = "", fun = "check")
 music =Button(width = 76,height = 72,x = nickname.width + 50, y = 45, text = "", fun = "music", name =  "music")
 client = Button(width= 281, height= 100, name= "button_start", text= "client", x= 42, y= 600, fun= "c_s:client")  
-shop = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+110, y= 725, fun= "shop",progression="NONE")
-shop_ = Button(width= 281, height= 90, name= "button_start", text= "back to game", x= 15, y= 15, fun= "shop",progression='shop', size = 40)
+shop = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+60, y= 725, fun= "shop",progression="NONE")
+shop_ = Button(width= 321, height= 145, name= "", text= "", x= 0, y= 0, fun= "shop",progression='shop', size = 40)
 achievements = Button(width= 500, height= 90, name= "button_start", text= "achievements", x= 387, y= 725, fun= "achievements",progression="menu")
 achievements_ = Button(width= 281, height= 90, name= "button_start", text= "back to menu", x= 960, y= 15, fun= "achievements",progression='achievements', size = 40)
 server = Button(width= 281, height= 100, name= "button_start", text= "server", x= 981, y= 600, fun= "c_s:server")
 wait = Button(width= 1280, x = 0, y = 712, height= 59, text = "wait", progression= "game")
 enemy_nickname = Button(y = 10, x = 1000, width= 200, height= 40, size = 40)
 your_nickname = Button(y = 10, x = 20, width= 200, height= 40, size = 40)
-coins = Button(y = 30, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "0", name = "button_start")
-description = Button(y = 150, x = 950, width= 300, height= 533, size = 20, progression= "shop", text = "select item")
+coins = Button(y = 30, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "0", name = "")
+# coin = Button(y = 50, x = 970, width= 50, height= 50, size = 0, progression= "shop", text = "", name = "duplone")
+description = Button(y = 175, x = 950, width= 300, height= 533, size = 20, progression= "shop", text = "select item")
 description_ = Button(y = 150, x = 950, width= 300, height= 533, size = 20, progression= "achievements", text = "select achievement")
-buy = Button(y = 533+150+25, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "buy", name = "button_start",fun='buy')
+buy = Button(y = 696, x = 957, width= 321, height= 145, size = 40, progression= "shop", text = "", name = "",fun='buy')
 # m_data.list_blits["shop"].append(description)
-homing_rocket = Button(y = 103, x = 267, width= 88, height= 179, progression= "shop", text = "", name = "weapons/homing_rocket", fun = "weapons/rockets")
-line_rocket= Button(y = 110, x = 423, width= 79, height= 180, progression= "shop", text = "", name = "weapons/line_rocket", fun = "weapons/rockets")
-rocket_3x3 = Button(y = 110, x = 577, width= 84, height= 180, progression= "shop", text = "", name = "weapons/rocket_3x3", fun = "weapons/rockets")
-fire_rocket = Button(y = 110, x = 767, width= 63, height= 215, progression= "shop", text = "", name = "weapons/fire_rocket", fun = "weapons/rockets")
+homing_rocket = Button(y = 235, x = 15, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/rockets/homing_rocket")
+line_rocket= Button(y = 235, x = 167, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/rockets/line_rocket")
+fire_rocket = Button(y = 235, x = 319, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/rockets/fire_rocket")
+rocket_3x3 = Button(y = 235, x = 469, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/rockets/rocket_3x3")
 
-Energetic = Button(y = 415, x = 267, width= 65, height= 128, progression= "shop", text = "", name = "weapons/Energetic", fun = "weapons/buff")
-radar = Button(y = 413, x = 423, width= 131, height= 132, progression= "shop", text = "", name = "weapons/radar", fun = "weapons/buff")
-Air_Defence = Button(y = 391, x = 577, width= 186, height= 176, progression= "shop", text = "", name = "weapons/Air_Defence", fun = "weapons/buff")
-Anti_fire = Button(y = 391, x = 767, width= 184, height= 185, progression= "shop", text = "", name = "weapons/Anti_fire", fun = "weapons/buff")
-
+Anti_fire = Button(y = 514, x = 15, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/Anti_fire")
+radar = Button(y = 514, x = 167, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/radar")
+Energetic = Button(y = 514, x = 319, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/Energetic")
+Air_Defence = Button(y = 514, x = 469, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/Air_Defence")
 list_weapons = [homing_rocket,rocket_3x3,line_rocket,fire_rocket,Energetic,radar,Air_Defence,Anti_fire]
+m_data.list_blits['shop'] += list_weapons+[coins,buy,description]
 if m_data.client_server == "server":
     server.COLOR =(40,2,255)
 if m_data.client_server == "client":
     client.COLOR =(40,2,255)
-your_turn = Button(width= 272, height= 66, x= 133, y= 712, text= "your step", progression= "", color=(0, 0, 255))
-opponent_turn = Button(width= 350, height= 66, x= 772, y= 712, text= "opponent`s step", progression= "", color = (255, 0, 0))
+your_turn = Button(width= 272, height= 66, x= 133, y= 712, text= "your step", progression= "", color=(0, 0, 255),size=50)
+opponent_turn = Button(width= 350, height= 66, x= 800, y= 712, text= "opponent`s step", progression= "", color = (255, 0, 0),size=50)
 
 m_data.list_blits["game"].append(your_nickname)
 m_data.list_blits["game"].append(enemy_nickname)

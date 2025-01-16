@@ -1,3 +1,8 @@
+'''
+    >>> Працює з зображеннями - клас Image
+    >>> Оновлюємо зображення - метод update_image
+    >>> Відображує картинки на екрані - метод blit
+'''
 # імпортуємо модуль pygame , os
 import pygame, os
 #імпртуємо модуль modules.data як m_data
@@ -105,9 +110,9 @@ lose = Image(width = 1280, height = 852, x = 0, y = 0, name = "lose", progressio
 # задаємо параметри для екрану перемоги
 win = Image(width = 1280, height = 852, x = 0, y = 0, name = "win", progression = "win", edit = False)
 # задаємо параметри для іконок ракет
-rockets_icon = Image(width = 130, height = 130, x = 50, y = 180, name = "weapons/rockets_icon", progression = "shop")
+# rockets_icon = Image(width = 130, height = 130, x = 50, y = 180, name = "weapons/rockets_icon", progression = "shop")
 # задаємо параметри для серця
-hearts = Image(width = 130, height = 130, x = 50, y = 410, name = "weapons/hearts", progression = "shop")
+# hearts = Image(width = 130, height = 130, x = 50, y = 410, name = "weapons/hearts", progression = "shop")
 # задаємо параметри для екрану досягнень
 background_achievements = Image(width = 1280, height = 851, x = 0, y = 0, name = "achievements", progression = "achievements")
 # задаємо параметри для протиповітряної охорони

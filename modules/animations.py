@@ -1,12 +1,30 @@
+'''
+    >>> Відповідяє за створення анімації - класс Animation
+    >>> Програє анімації під час гри
+'''
 # імпортуємо модуль pygame , os
 import pygame, os
 #імпртуємо модуль modules.data як m_data
 import modules.data as m_data
 import modules.main_window as main_window
+import time
+def play_animation():
+    while True:
+        # print('play')
+
+        list_to_delete = []
+        
+        for count in range(len(m_data.list_animations)):
+            if m_data.list_animations[count]():
+                list_to_delete.append(m_data.list_animations[count])
+        
+        for count in list_to_delete:
+            del m_data.list_animations[-(count+1)]
+        time.sleep(0.1)
 # клас для роботи з зображенням
 class Animation():
     # ініціалізуємо зображення
-    def __init__(self, width: int, height: int, x: int, y: int, name = '', progression: str = "None", rotate = 0,count_animations = 1,end = 'repeat',max_time= 4): 
+    def __init__(self, width: int, height: int, x: int, y: int, name = '', progression: str = "None", rotate = 0,count_animations = 1,end = 'repeat',max_time= 0): 
         # переносимо параметри в змінні
         self.opasity = 255
         self.width = width
@@ -29,11 +47,27 @@ class Animation():
         self.end = end
         # оновлюємо наше зображення
         self.update_image()
+        m_data.list_animations.append(lambda:self.animate())
+    def animate(self):
+        
+        if self.time <= 0:
+            self.time = self.max_time
+            self.count += self.different
+        else:
+            self.time -= 1
+        if self.count == self.count_animations-1:
+            if self.end == 'static':
+                return True
+            elif self.end == 'repeat':
+                self.count = 0
+            else:
+                self.different = -1
+        elif self.count <= 0:
+            self.different = 1
     # создаємо метод який оновлює наше зображення
     def update_image(self):
         try:
             # завантажуємо зображення з вказаного нам шляху
-            
             self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../animations/{self.name}/{self.name}_0.png"))
             self.image = pygame.transform.rotate(self.image, self.rotate)
             
@@ -41,12 +75,6 @@ class Animation():
                 # змінюємо розмір зображення 
                 self.image = pygame.transform.scale(self.image, (self.width, self.height))
                 self.image = pygame.transform.rotate(self.image, self.rotate)
-            # пепевіряємо чи є наше зораження в  списку в якому все відображаться на екрані
-            # if self in m_data.list_blits[self.progression]:
-            #     pass
-            # else:
-            #     # ми додаємо в цей список наше зображення
-            #     m_data.list_blits[self.progression].append(self)
         except :
             # якщо сталась помилка при завантаженні зображення - ми пишемемо її
             print("Error: image",self.name)
@@ -90,19 +118,6 @@ class Animation():
                         self.count_animations = len(self.images)
             # відображення зображення на екрані
             screen.blit(self.images[self.count], (x, y))
-            if self.time <= 0:
-                self.time = self.max_time
-                self.count += self.different
-            else:
-                self.time -= 1
-            if self.count == self.count_animations-1:
-                if self.end == 'static':
-                    pass
-                elif self.end == 'repeat':
-                    self.count = 0
-                else:
-                    self.different = -1
-            elif self.count <= 0:
-                self.different = 1
+            
         except Exception as error:
             print('hhaaa',error)

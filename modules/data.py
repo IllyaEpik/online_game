@@ -1,3 +1,7 @@
+'''
+    >>> Працює з словниками та списками
+    >>> Зберігає данні та налаштування гри
+'''
 import os 
 type = "/"
 path = __file__.split("/")
@@ -51,6 +55,7 @@ time_for_radar = 0
 rect_for_radar = None
 coins = 0
 list_achievements = []
+list_animations = []
 list_for_radar = []
 buffs = []
 my_buffs = []

@@ -1,3 +1,6 @@
+'''
+    >>> Працює з підключенням клієнта та сервера - змінна client_server
+'''
 # імпортуємо необхідні модулі
 import modules.data as m_data 
 import modules.ships as m_ships
@@ -16,10 +19,10 @@ def send(data:bytes):
     # else:
     try:
         # відпровляємо закодовані данні
-        client.sendall(data+[';'.encode()][0])
+        client.sendall([';'.encode()][0]+data+[';'.encode()][0])
     except:
         # відпровляємо закодовані данні
-        client.sendall(f"{data};".encode())
+        client.sendall(f";{data};".encode())
 # отримує ім'я хоста 
 hostname = socket.gethostname()
 # Повертає IP адрессу по імені хосту 
@@ -54,8 +57,8 @@ client_server = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM
 count = 0
 def activate():
     # робимо змінну глобальною
-    global client,count
-    try:
+        global client,count
+    # try:
 
         # перевіряємо чи не відбувається хід супротивника
         if not m_data.revenge:
@@ -104,26 +107,32 @@ def activate():
             # відправляємо закодані данні 
             send(ships.encode())
             # перевіряємо чи не закінчена гра
+            client_data = ''
             while not m_data.end:
-                try:
+                # try:
+                    # print(client_data)
                     # Отримання данних кліенту та декодування їх
                     client_data = client.recv(1024).decode()
-                    print(client_data)
+                    # print(client_data)
                     # розділяємо рядки сиволом ";"
+
                     raw_data = client_data.split(";")
                     # створюємо змінну текст зі значенням str
                     text1 = ''
+                    list_to_del = []
+                    print('\n'+client_data+'\n','hhhhhhhhhh')
                     # перевіряємо ряди 
-                    for client_data in raw_data:
+                    for counter in range(len(raw_data)):
                         # перевіряємо клієнт дату
-                        if client_data:
+                        if raw_data[counter]:
                             # створюємо змінну текст зі значенням str
                             text1 = ''
                             # Перетворення данних на список розділяючи символом :
-                            data = client_data.split(":")
+                            data = raw_data[counter].split(":")
                             # якщо в даті нічого не маємо
                             # перевіряємо наявність ім'я на полі
                             if "field_nickname" in data[0]:
+                                list_to_del.append(counter)
                                 # текст нікнейму такий самий як твій нікнейм
                                 m_buttons.your_nickname.TEXT = m_buttons.nickname.TEXT
                                 print(m_buttons.enemy_nickname.TEXT, data[1])
@@ -165,21 +174,24 @@ def activate():
                                         except:
                                             pass
                                 # для рядів на ворожнечому полі
-                                for row in m_data.enemy_field:
-                                    print(row)
-                                        
+                                # for row in m_data.enemy_field:
+                                #     print(row)
+
                                 print(data)
-                                print("nickname" in data[0],"nickname", data[0])
+                                # print("nickname" in data[0],"nickname", data[0])
                             # Перевіряємо чи є "buff" в даті
                             elif "buff" in data[0]:
                                 # додаємо "buff" в дату
                                 m_data.buffs.append(data[1].split(','))
+                                list_to_del.append(counter)
                             # Перевіряємо чи є "remove_buff" в даті
                             elif "remove_buff" in data[0]:
                                 # видаляємо "buff" з дати
                                 m_data.buffs.remove(data[1].split(','))
+                                list_to_del+=[counter]
                             # Перевіряємо чи є "Anti_fire" в даті
                             elif 'Anti_fire' in data[0]:
+                                list_to_del.append(counter)
                                 # для повторів рядів
                                 for row in range(10):
                                     # якщо 8 в ряду поля супротивника
@@ -238,13 +250,14 @@ def activate():
                                         m_data.list_explosions.append([image,pos[0],pos[1]])
                                     except Exception as error:
                                         print(error)
+                                list_to_del.append(counter)
                             # записуємо "pass" в дату
                             elif "pass" in data[0]:
                                 # передаємо хід 
                                 m_data.turn = True
+                                list_to_del.append(counter)
                             # перевіряємо наявність "fire" в даті
                             if 'fire' in data[0]:
-                                
                                 try:
                                     # додає пробіл до ряду в даті
                                     raw_data1 = data[1].split(' ')
@@ -280,6 +293,7 @@ def activate():
                                     with open(os.path.abspath(__file__+'/../../data/output.txt'),'w') as file:
                                         # відкриває файл для написання
                                         file.write(text1+'\n'+str(error))
+                                list_to_del.append(counter)
                                                     
                             # Перевірка, чи відбувся вибух
                             if "explosion" in data[0]:
@@ -309,8 +323,9 @@ def activate():
                                         ship.explosion = True
                                         
                                         
+                                list_to_del.append(counter)
                                 # дата видаляється
-                                del data[0]
+                                
                             # якщо відбуваеться програш
                             elif "lose" in data[0]:
                                 # змінюємо колір трансформації
@@ -321,14 +336,23 @@ def activate():
                                 m_data.progression = "lose"
                                 # додається нове досягнення
                                 m_achievements.achievement('Pants on Fire')
+                                list_to_del.append(counter)
                                 # дата видаляється
-                                del data[0]
+                                
                             # Додаємо отримані дані від клієнта до списку даних противника
-                            m_data.enemy_data.append(client_data)
-                except:
-                    print('error:connect')
-    except:
-        # до числа додаємо 1
-        count += 1
-        # активовуємо
-        activate()
+                            # m_data.enemy_data.append(client_data)
+                    try:
+                        for counts in list_to_del:
+                            del raw_data[-(counts+1)]
+                        client_data = ";".join(raw_data)
+                        print(list_to_del,len(raw_data),'work')
+                    except Exception as error:
+                        print(list_to_del,len(raw_data),raw_data,error)
+                # except Exception as error:
+                #     print('error:connect',error,client_data)
+                #     raise error
+    # except:
+    #     # до числа додаємо 1
+    #     count += 1
+    #     # активовуємо
+    #     activate()

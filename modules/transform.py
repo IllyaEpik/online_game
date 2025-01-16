@@ -1,3 +1,7 @@
+'''
+    >>> Відповідає за перехід між екранами - фунція transform
+    >>> Відповідає за анімацію переходу між екранами - функція transform_rect
+'''
 # імпортуємо рандомайзер
 import random
 # робимо імпорт pygame
@@ -56,7 +60,7 @@ def transform_rect(screen,multiplier_x,multiplier_y):
     size += 25
     # зміна розміру прямокутника при переході
     rect = pygame.Rect((640 - size/2*1.53846153846)*multiplier_x, (416 - size/2)*multiplier_y, size*multiplier_x*1.53846153846,size*multiplier_y)
-    # надаємо параметри для удару
+    # надаємо параметри для ходу
     m_buttons.stroke(screen,rect,
                      color,10)
     # оновлюємо перехід екрану
