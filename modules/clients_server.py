@@ -8,10 +8,14 @@ import modules.images as m_images
 import modules.buttons as m_buttons
 import modules.transform as m_transform
 import modules.achievements as m_achievements
+import modules.audio as m_audio
 import socket,random,os
 import modules.animations as m_animations
 # створюємо функцію для відправкм даних на сервер
 def send(data:bytes):
+    '''
+        >>> Відправляє закодовані данні
+    '''
     # відправляємо дані серверу
     # if m_data.client_server == "server":
         # server1[0].sendall(data)
@@ -56,10 +60,12 @@ client_server = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM
 # функція для активації
 count = 0
 def activate():
+        '''
+            >>> Під'єднуємо клієнта і сервера
+        '''
     # робимо змінну глобальною
         global client,count
     # try:
-
         # перевіряємо чи не відбувається хід супротивника
         if not m_data.revenge:
             # виводимо ім'я на поле
@@ -219,8 +225,22 @@ def activate():
                                     try:
                                         # додаємо "," до атаки
                                         pos = attack.split(",")
+                                        
+                                        
                                         # записуємо функції до змінних
+                                        volume = 0.5
+                                        try:
+                                            pos[3]
+                                            if pos[3] == '1':
+                                                volume = float(pos[3])
+                                            else:
+                                                for c in range(1000):
+                                                    print('YYYYYYYYYYYYYYYYYYYEEEEEEEEEEEEEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSSS')
+                                        except Exception as error:
+                                            
+                                            print(error)
                                         pos = [int(pos[0]), int(pos[1]),pos[2]]
+
                                         # Створюємо обект класа картинки, для відображення результату атаки, та передаємо параметри 
                                         # Перевірка, чи атака була промахом
                                         clas = m_animations.Animation
@@ -246,6 +266,7 @@ def activate():
                                             width= 55.7,
                                             height=55.7,
                                         )
+                                        m_audio.explosion.play(volume)
                                         # додаємо картинку до списку вибуху
                                         m_data.list_explosions.append([image,pos[0],pos[1]])
                                     except Exception as error:

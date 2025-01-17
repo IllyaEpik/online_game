@@ -18,6 +18,9 @@ import pygame,random
 
 # створює кораблі
 class Ship(m_images.Image):
+    '''
+        >>> Створює кораблі
+    '''
     # Ініціалізація корабля, параметри координат, розміри та орієнтація
     def __init__(self, x: int, y: int, name='1', row=0, cell=0, field_cor=[59, 115], rotate=0, add=True):
         # Розміри корабля залежать від його імені (перший символ - це кількість клітин корабля)
@@ -55,6 +58,9 @@ class Ship(m_images.Image):
     #     self.x 
     # Метод для перевірки, чи можна поставити корабель
     def check_enemy(self):
+        '''
+            >>> Перевіряє чи ми потрапили в ворожий корабель чи ні  
+        '''
         yes_no = 0
         field = m_data.enemy_field
         cells = []
@@ -66,12 +72,30 @@ class Ship(m_images.Image):
             elif self.rotate % 180 != 0 and m_data.enemy_field[self.row + count][self.cell] != int(self.name[0]):
                 cells.append([self.row + count, self.cell])
                 yes_no += 1
-                
-        # Якщо перевірка пройдена успішно, оновлюємо поле
+
+        # Якщо перевірка пройдена успішно, оновлюємо поле 
         if yes_no == int(self.name[0]):
             if self in m_data.all_ships:
                 pass
             else:
+                try:
+                    for cell in cells:
+                        print(cell,0)
+                        print(m_data.list_explosions)
+                        list = m_data.list_explosions
+                        list.reverse()
+                        print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhssssssssssssssssssssssssssssssssssssssssssssssssssssss')
+                        print(list)
+                        count = 0
+
+                        for explosion in list:
+                            print(explosion,count,'troll')
+                            if explosion[1] == cell[0] and explosion[2] == cell[1]:
+                                del m_data.list_explosions[count]
+                            count += 1
+                except Exception as error:
+                    for c in range(222):
+                        print(error)
                 self.explosion = True
 
                 m_data.all_ships.append(self)
@@ -98,6 +122,9 @@ class Ship(m_images.Image):
 
     # Метод активації корабля при натисканні
     def activate(self, event, multiplier_x=1, multiplier_y=1):
+        '''
+            >>> Виділяє корабель при натисканні на нього
+        '''
         if self.rect.collidepoint(event.pos):
             self.select = True
             if random.randint(0,50) == 0 and ship.name[0] == '4':
@@ -119,6 +146,9 @@ class Ship(m_images.Image):
         self.update_image()
     # Метод для обертання корабля
     def rotate_ship(self):
+        '''
+            >>> Обертає кораблі
+        '''
         # print(2132132312123123231213231)
         # Очищаємо місце для нового положення корабля на полі
         for count in range(int(self.name[0])):
@@ -159,6 +189,9 @@ class Ship(m_images.Image):
 
     # Метод для зміщення корабля на нову позицію
     def place(self, pos, multiplier_x=1, multiplier_y=1):
+        '''
+            >>> Зміщує кораблі на нову позицію
+        '''
         if self.select:
             # print(self.field.collidepoint(pos))
             for row in range(10):
@@ -257,6 +290,9 @@ class Ship(m_images.Image):
         #     print(row)
 # Функція перевірки на полі для кожної клітинки
 def check(field, row, cell, values=[0, 5]):
+    '''
+        >>> Перевіряє клітинки на полі
+    '''
     if row != -1 and -1 != cell:
         if row != 10 and 10 != cell:
             # Перевірка значення в клітинці
@@ -277,6 +313,9 @@ def check(field, row, cell, values=[0, 5]):
                         m_data.list_explosions.append((image,row,cell))
 # Заповнюємо поле
 def fill_field(field: list):
+    '''
+        >>> Заповнює поле
+    '''
     clear_field(field)
     for row in range(10):
         for cell in range(10):
@@ -293,6 +332,9 @@ def fill_field(field: list):
                 check(field=field, row=row, cell=cell - 1)
 # Очищаємо поле від певних значень
 def clear_field(field):
+    '''
+        >>> Очищує поле
+    '''
     for row in range(10):
         for cell in range(10):
             if field[row][cell] == 5:

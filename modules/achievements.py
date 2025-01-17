@@ -20,6 +20,10 @@ x = 1280
 
 # класс з досягненнями
 class achievement():
+    '''
+        >>> Перевіряє наявність досягнень
+        >>> Додає нові досягнення
+    '''
     # метод класу
     def __init__(self,name):
         # робимо змінні глобальними
@@ -91,7 +95,7 @@ class achievement():
                     elif self.text[-1] == text_for:
                         # додаємо текст до списку
                         list_text.append(text)
-                # тукст дорівнює списку з текстом
+                # текст дорівнює списку з текстом
                 self.text = list_text
             # звук при отриманні досягнення   
             m_audio.achievement.play()
@@ -109,6 +113,9 @@ class achievement():
                 file.write('True')
     # метод для руху
     def move(self):
+        '''
+            >>> Відповідає за анімацію вилізання досягнення
+        '''
         # робимо змінні глобальними
         global x,y,width,height
         # перевіряємо чи не активований таймер
@@ -133,6 +140,9 @@ class achievement():
                     self.rect.x += 15
     # промальовуємо основу поверхності
     def blit(self,screen:pygame.Surface,multiplier_x,multiplier_y):
+        '''
+            >>> Трансформує масштаб картинки
+        '''
         # завантажуємо картинку
         self.img = pygame.image.load(os.path.abspath(f"{__file__}/../../images/achievements/{self.name}.png"))
         # трансформуємо масштаб
@@ -179,6 +189,9 @@ class achievement():
             count += 1
     # метод для таймеру
     def timer(self):
+        '''
+            >>> Відповідає за запуск і зупинку часу
+        '''
         # працює поки час не дорувнює 0
         while self.time != 0:
             # від часу віднімається 1

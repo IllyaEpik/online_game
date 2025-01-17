@@ -19,6 +19,9 @@ list_explosion = "1234"
 attack_list = '012345'
 # функція для атаки кораблів в клітинках
 def attack_for_cell(row,cell):
+    '''
+        >>> Відповідає за вибух кораблів
+    '''
     # змінна з назвою
     name = None
     # наслідування класа Image для картинки і задання параметрів для неї
@@ -123,9 +126,12 @@ def attack_for_cell(row,cell):
     return name
 # функція для часу радара
 def timer_for_radar():
+    '''
+        >>> Відповідає за час роботи(таймер) радару
+    '''
     # поки радар працює
     while m_data.time_for_radar:
-        # від асу віднімається 1 секунда
+        # від часу віднімається 1 секунда
         m_data.time_for_radar -= 1
         # пауза на 1 секунду
         time.sleep(1)
@@ -137,6 +143,9 @@ def timer_for_radar():
 need_to_send = []
 # метод з атакою
 def attack(pos: tuple,multiplier_x,multiplier_y):
+    '''
+        >>> Відповідає за атаку кораблів зі зброєю
+    '''
     # створення глобальних змінних
     global list_miss, list_explosion
     # blits = True
@@ -174,7 +183,6 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                 # головна клітинка додається до головного корабля
                 main_row += main_cell
                 # нове досягнення
-                m_achievements.achievement('Closed Skies')
                 # головна клітинка дорівнює головному кораблю
                 main_cell = main_ship.cell
             # наявнісь ефектів
@@ -206,32 +214,45 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                             # в ряду ефект в ряд
                             main_row = buff_row
                             # в клітинці ефект в клітинку
+                            m_achievements.achievement('Closed Skies')
                             main_cell = buff_cell
                             # видалення ефекту
                             m_data.buffs.remove(buff)
             # if can_attack:
-            # функція атаки для клітинок
-            name = attack_for_cell(main_row,main_cell)
-            # текст для відправки: атака
-            text_for_send+=f"attack:{main_row},{main_cell},{name};"
-            # if name: 
-            # атака
-            m_data.attack = None
-            # зміна ходу
-            m_data.turn = False
-            # для ефекту в ефектах
-            for buff in m_data.buffs:
-                # якщо ефект енергетик
-                if buff[0] == 'Energetic':
-                    # зміна ходу
-                    m_data.turn = True
-            # якщо не має ходу
-            if not m_data.turn:
-                # текст для відправки: пропуск
-                text_for_send+= 'pass:;'
+            def atta(main_row,main_cell):
+                '''
+                    >>> Відповідає за хід після атаки
+                '''
+                # функція атаки для клітинок
+                name = attack_for_cell(main_row,main_cell)
+                # текст для відправки: атака
+                text_for_send = f"attack:{main_row},{main_cell},{name};"
+                # if name: 
+                # атака
+                m_data.attack = None
+                # зміна ходу
+                m_data.turn = False
+                # для ефекту в ефектах
+                for buff in m_data.buffs:
+                    # якщо ефект енергетик
+                    if buff[0] == 'Energetic':
+                        # зміна ходу
+                        m_data.turn = True
+                # якщо не має ходу
+                if not m_data.turn:
+                    # текст для відправки: пропуск
+                    text_for_send+= 'pass:'
+                win_lose(text_for_send) 
+                m_audio.explosion.play()
+            
+            m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*main_row,f'weapons/homing_rocket','Noke',0),main_row,main_cell,lambda:atta(main_row,main_cell),0))
+            try:
+                #
+                threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
+            except:
+                pass
             ## 59, 115
             # звук вибуху
-            m_audio.explosion.play()
         # атака протиповітряної оборони
         elif m_data.attack == 'Air_Defence':
             # функція вогню
@@ -287,53 +308,102 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                         # якщо атака ракетою 3x3
                         if m_data.attack == 'rocket_3x3':
                             # текст: атака
-                            text = 'attack:'
-                            # цикл для ракети 3х3
-                            for row_3x3 in range(3):
+                            def atta(row,cell):
+                                '''
+                                    >>> Відповідає за атаку ракетою 3x3
+                                '''
+                                text = 'attack:'
                                 # цикл для ракети 3х3
-                                for cell_3x3 in range(3):
-                                    # для кількосі в діапазоні
-                                    for count in range(5):
-                                        print(row_3x3,cell_3x3,row+row_3x3,cell+cell_3x3)
-                                    # перевірка ракети в клітинках 3х3
-                                    if -1 < row+row_3x3-1 < 10 and -1 < cell+cell_3x3-1 < 10:
-                                        # атака для клітинок
-                                        name = attack_for_cell(row+row_3x3-1,cell+cell_3x3-1)
-                                        # текст для ракети 3х3 в ряду і клітинці
-                                        text += f'{row+row_3x3-1},{cell+cell_3x3-1},{name} '
-                            # до тексту додаємо символ ";"
-                            text_for_send+= text + ';'
-                            # атака
-                            m_data.attack = None
-                            # функція вогню
-                            fire()
+                                for row_3x3 in range(3):
+                                    # цикл для ракети 3х3
+                                    for cell_3x3 in range(3):
+                                        # для кількосі в діапазоні
+                                        for count in range(5):
+                                            print(row_3x3,cell_3x3,row+row_3x3,cell+cell_3x3)
+                                        # перевірка ракети в клітинках 3х3
+                                        if -1 < row+row_3x3-1 < 10 and -1 < cell+cell_3x3-1 < 10:
+                                            # атака для клітинок
+                                            name = attack_for_cell(row+row_3x3-1,cell+cell_3x3-1)
+                                            # текст для ракети 3х3 в ряду і клітинці
+                                            text += f'{row+row_3x3-1},{cell+cell_3x3-1},{name},1 '
+                                # до тексту додаємо символ ";"
+                                # атака
+                                m_data.attack = None
+                                # функція вогню
+                                fire()
+                                m_audio.explosion.play(1)
+                                win_lose(text + ';')
+                            # змінна для тимчасового збереження рядка   
+                            ok,ok1 = row,cell 
+                            m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*row,f'weapons/rocket_3x3','Noke',0),ok,ok1,lambda:atta(ok,ok1),0))
+                            try:
+                                #
+                                threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
+                            except:
+                                pass
                         # атака дінійною ракетою  
                         elif m_data.attack == 'line_rocket':
-                            # функція вогню
+                            # # функція вогню
+                            # fire()
+                            # # текст: атака
+                            # text = 'attack:'
+                            # # для клітинок в діапазоні
+                            # for cell in range(10):
+                            #     # розташування ворожого корабля
+                            #     ship = str(m_data.enemy_field[row][cell])
+                            #     # атака в клітинках
+                            #     name = attack_for_cell(row,cell)
+                            #     # текст ряду, клітинки і назва
+                            #     text += f"{row},{cell},{name}"
+                            #     # текст для відправки: атака 
+                            #     text_for_send+= f"attack:{row},{cell},{name};"
+                            #     # якщо корабель в клітинках
+                            #     if ship in '1234':
+                            #         # зуптнка
+                            #         break
+                            #     print(m_data.enemy_field[row][cell])
+                            # # до тексту для відправки додаємо символ ';'
+                            # text_for_send+= ';' + text + ';'
+                            # # до тексту з пропуском додаємо символ ';'
+                            # text_for_send+= 'pass:' + ';'
+                            # # атака
+                            # m_data.attack = None
                             fire()
-                            # текст: атака
-                            text = 'attack:'
-                            # для клітинок в діапазоні
-                            for cell in range(10):
-                                # розташування ворожого корабля
-                                ship = str(m_data.enemy_field[row][cell])
-                                # атака в клітинках
+                            # функція для атаки
+                            def atta(row,cell,last = 0):
+                                '''
+                                    >>> Відповідає за атаку в клітинках
+                                '''
+                                # функція вогню
+                                # даємо назву - атака для клітинок
                                 name = attack_for_cell(row,cell)
-                                # текст ряду, клітинки і назва
-                                text += f"{row},{cell},{name}"
-                                # текст для відправки: атака 
-                                text_for_send+= f"attack:{row},{cell},{name};"
-                                #
-                                if ship in '1234':
-                                    # зуптнка
-                                    break
-                                print(m_data.enemy_field[row][cell])
-                            #
-                            text_for_send+= ';' + text + ';'
-                            #
-                            text_for_send+= 'pass:' + ';'
-                            # атака
-                            m_data.attack = None
+                                # змінна текст
+                                text = ''
+                                # якщо назва - атака для клітинок
+                                if name: 
+                                    # виграш або програш 
+                                    # win_lose(f"attack:{row},{cell},{name}")
+                                    if last:
+                                        for c in range(292):
+                                            print(m_data.list_rockets[-1][-1])
+                                        win_lose(m_data.list_rockets[-1][-1]+f"{row},{cell},{name}")
+                                        m_audio.explosion.play() 
+                                    else:
+                                        # m_data.list_rockets[-1][-1]+=f"{row},{cell},{name} "
+                                        win_lose(f"attack:{row},{cell},{name},0")
+                                        print('HHHHA')
+                                    # звук вибуху
+                                
+                            # змінна для тимчасового збереження рядка   
+                            ok = row
+                            
+                            # до списку ракет додаємо параметри
+                            m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*row,f'weapons/line_rocket','Noke',0),ok,atta,'pass;attack:'))
+                            try:
+                                # запуск списку ракет, їх анімація
+                                threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
+                            except:
+                                pass
                                 # elif str(m_data.enemy_field[row][cell]) in '05':
                         # атака радаром
                         elif m_data.attack == 'radar':
@@ -341,52 +411,86 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                             fire()
                             # нове досягнення
                             m_achievements.achievement('used radar')
+                            # змінюємо ширину
                             width = 55.7 * multiplier_x
+                            # змінюємо висоту
                             height = 55.7 * multiplier_y
+                            # змінюємо розташування по x
                             x = (725+55.7*cell) * multiplier_x
+                            # змінюємо розташування по y
                             y = (115+55.7*row) * multiplier_y
+                            # задаємо початок клітинок
                             start_cell = cell
+                            # задаємо початок рядів
                             start_row = row
+                            # задаємо кінець клітинок
                             end_cell = cell
+                            # задаємо кінець рядів
                             end_row = row
+                            # перевіряємо розташування рядів
                             if row > 1:
+                                # змінюємо параметри ширини, x і початку ряду
                                 width += 55.7 * multiplier_x *2
                                 x -= 55.7 * multiplier_x *2
                                 start_row -= 2
+                            # перевіряємо розташування рядів
                             elif row == 1:
+                                # змінюємо параметри ширини, x і початку ряду
                                 width += 55.7 * multiplier_x
                                 x -= 55.7 * multiplier_x
                                 start_row -= 1
+                            # перевіряємо розташування рядів
                             if row < 8:
+                                # змінюємо параметри ширини і кінця ряду
                                 width += 55.7 * multiplier_x*2
                                 end_row += 2
+                            # перевіряємо розташування рядів
                             elif row == 8:
+                                # змінюємо параметри ширини і кінця ряду
                                 width += 55.7 * multiplier_x
                                 end_row += 1
+                            # перевіряємо розташування клітинок
                             if cell < 8:
+                                # змінюємо параметри висоти і кінця клітинок
                                 height += 55.7 * multiplier_y*2
                                 end_cell += 2
+                            # перевіряємо розташування клітинок
                             elif cell == 8:
+                                # змінюємо параметри висоти і кінця клітинок
                                 height += 55.7 * multiplier_y
                                 end_cell += 1
+                            # перевіряємо розташування клітинок
                             if cell > 1:
+                                # змінюємо параметри висоти, y і початку клітинок
                                 start_cell -=2
                                 height += 55.7 * multiplier_y*2
                                 y -= 55.7 * multiplier_y * 2 
+                            # перевіряємо розташування клітинок
                             elif cell == 1:
+                                # змінюємо параметри висоти, y і початку клітинок
                                 start_cell -=1
                                 height += 55.7 * multiplier_y
                                 y -= 55.7 * multiplier_y
+                            # поле для радару
                             m_data.rect_for_radar = pygame.Rect(x,y,width,height)
+                            # список для радару
                             m_data.list_for_radar = []
                             print(start_row,start_cell,end_row,end_cell)
+                            # звук радару
                             m_audio.radar.play()
+                            # цикл для ряду
                             for row2 in range(10):
+                                # цикл для клітинки
                                 for cell2 in range(10):
+                                    # перевірка першого і останнього ряда
                                     if row2 >= start_row and row2 <= end_row:
+                                        # перевірка першої клітинки і останньої
                                         if cell2 >= start_cell and cell2 <= end_cell:
+                                            # перевірка розташування кораблів на ворожому полі
                                             if str(m_data.enemy_field[row2][cell2]) in '1234':
+                                                # додаємо до списку з радаром:
                                                 m_data.list_for_radar.append(
+                                                    # наслідуємо клас Image і задаємо параметри
                                                     m_images.Image(55.7,
                                                                 55.7,
                                                                 725+55.7*cell2,
@@ -395,28 +499,51 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                                                 progression='Noke')
                                                                 )
                                                 print('hallo')
-
+                            # ставимо час для роботи радару 5 секунд
                             m_data.time_for_radar = 5
+                            # запускаємо час дії радару
                             threading.Thread(target= timer_for_radar,daemon = True).start()
+                            # атакуємо
                             m_data.attack = None
+                            # змінюємо ход
                             m_data.turn = False
+                            # для ефекту в ефектах
                             for buff in m_data.buffs:
+                                # якщо ефект - енергетик
                                 if buff[0] == 'Energetic':
+                                    # дозволяємо ходити
                                     m_data.turn = True
                         
                         else:
+                            # функція для атаки
                             def atta(row,cell):
+                                '''
+                                    >>> Відповідає за атаку по клітинкам
+                                '''
+                                # функція вогню
                                 fire()
+                                # даємо назву - атака для клітинок
                                 name = attack_for_cell(row,cell)
+                                # змінна текст
                                 text = ''
-                                if name:
-                                    
-                                    m_client.send(f"attack:{row},{cell},{name}")
+                                # якщо назва - атака для клітинок
+                                if name: 
+                                    # виграш або програш                                  
+                                    win_lose(f"attack:{row},{cell},{name}")
+                                    # звук вибуху
                                     m_audio.explosion.play()
+                            # змінна для тимчасового збереження рядка   
                             ok,ok1 = row,cell
-                            
-                            m_data.list_rockets.append((m_images.Image(55.7,55.7*2,-120,115+55.7*row,'weapons/line_rocket','Noke',90),ok,ok1,lambda:atta(ok,ok1)))
+                            # створення назви для звичайної ракети
+                            name_for_rocket = 'standart_rocket'
+                            # якщо атака вогняною ракетою, то
+                            if m_data.attack == 'fire_rocket':
+                                # назва ракети змінюється на вогняну ракету
+                                name_for_rocket = 'fire_rocket'
+                            # до списку ракет додаємо параметри
+                            m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*row,f'weapons/{name_for_rocket}','Noke',0),ok,ok1,lambda:atta(ok,ok1),0))
                             try:
+                                # запуск списку ракет, їх анімація
                                 threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
                             except:
                                 pass
@@ -424,19 +551,34 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
         # if text != 'fire:':
         #     text_for_send+= ';'+text
         
-        
+        # функція для перемоги і програшу
         win_lose(text_for_send)
+# функція для вогню
 def fire():
+    '''
+        >>> Відповідає за горіння кораблів
+    '''
+    # робимо змінну необхідної для відправки глобальною
     global need_to_send
+    # текст для вогню
     text = 'fire:'
+    # цикл для перевірки рядів
     for row in range(10):
+            # перевіряємо ряди на полі
             if 8 in m_data.my_field[row]:
+                # цикл для перевірки клітинок
                 for cell in range(10):
+                    #  перевіряємо кількість ряди на полі
                     if m_data.my_field[row][cell] == 8:
+                        # цикл для вогню в ряд
                         for row_fire in range(3):
+                            # цикл для вогню в клітинках
                             for cell_fire in range(3):
+                                # перевіряємо ряди і вогонь в рядах
                                 if -1 < (row_fire + row-1) < 10:
+                                    # перевіряємо клітинки і вогонь в клітинках 
                                     if -1 < (cell_fire + cell-1) < 10:
+                                        # перевіряємо вибухи на полі в списку вибухів
                                         if str(m_data.my_field[row+row_fire-1][cell+cell_fire-1]) in list_explosion:
                                             # with open(os.path.abspath(__file__+'/../../data/output.txt')) as file:
                                             #     text += file.read()
@@ -446,6 +588,7 @@ def fire():
                                             #     file.write(text+'\n'+f"{m_data.my_field[row+row_fire-1][cell+cell_fire-1]},{row+row_fire-1},{cell+cell_fire-1}")
                                             # for count in range(1000):
                                             #     print(m_data.my_field[row+row_fire-1][cell+cell_fire-1],row+row_fire-1,cell+cell_fire-1)
+                                            # 9 рядів і клітинок на полі
                                             m_data.my_field[row+row_fire-1][cell+cell_fire-1] = 9
 
                         # m_data.my_field[row][cell] = 6
@@ -453,13 +596,19 @@ def fire():
                             # if explosion[0].name == 'fire' and explosion[1] == row and explosion[2] == cell:
                             #     explosion[0].name == 'explosion'
                             #     explosion[0].update_image()
-    
+    # цикл для рядів
     for row in range(10):
+        # якщо на полі є 9 рядів
         if 9 in m_data.my_field[row]:
+            # цикл для клітинок
             for cell in range(10):
+                # якщо на полі 9 рядів і клітинок
                 if m_data.my_field[row][cell] == 9:
+                    # до тексту записується ряд і клітинка
                     text += f'{row},{cell} '
+                    # 8 рядів і клітинок на полі
                     m_data.my_field[row][cell] = 8
+                    # наслідування класу Animation для картинки анімацій і задаємо параметри
                     image = m_animations.Animation(
                             progression = "Noke",
                             name = 'fire',
@@ -469,56 +618,91 @@ def fire():
                             width= 55.7,
                             height=55.7
                         )
+                    # до списку вибухів додаємо картинку, ряд і клітинку
                     m_data.list_explosions.append([image,row,cell])
+    # якщо текст не дорвнює вогню
     if text != 'fire:':
+        # додаємо символ ';' до змінної необхідного для відправки
         need_to_send.append(';' + text)
     # return text
+# функція для виграшу та поразки
 def win_lose(text_for_send):
+    '''
+        >>> Відповідає за виграш та програш
+    '''
+    # робимо змінну необхідної для відправки глобальною
     global need_to_send
+    # змінна да_ні
     yes_no = True
-
+    # цикл для корабля в ворожих кораблях
     for ship in m_data.enemy_ships:
         print(ship in m_data.enemy_ships, not ship.explosion)
+        # якщо немає вибуху корабля
         if not ship.explosion:
-        #     pass
         # elif :
+            # змінна да_ні змінюється на False
             yes_no = False
+    # перевірка да_ні і ворожих кораблів
     if yes_no and m_data.enemy_ships:
+        # зміна кольору
         m_transform.color = (25,255,25)
+        # зміна типу переходу
         m_transform.type_transform = 0
+        # перехід на вікно перемоги
         m_data.progression = "win"
         # нове досягнення
         m_achievements.achievement('Like a Clap of Hands')
+        # змінна може
         can= True
+        # цикл для рядів на полі
         for row in m_data.my_field:
+            # цикл для клітинок в ряду
             for cell in row:
+                # перевірка клітинок
                 if cell == 6 or cell == 8:
+                    # не може
                     can = False
+                    # зупинка
                     break 
+        # умова для досягнення
         if can:
             # нове досягнення
             m_achievements.achievement('Total Domination')
+        # додається перемога
         m_data.read_data['wins']+= 1
+        # записується в дату
         m_data.reading_data(m_data.read_data,'date.txt')
+        # якщо ьільше ніж 2 перемоги, то
         if m_data.read_data['wins'] > 2:
             # нове досягнення
             m_achievements.achievement('Smells Like Victory')
+            #
             if m_data.read_data['wins'] > 49:
                 # нове досягнення
                 m_achievements.achievement('True Cossack')
-                # 0/0 = капибара 
+        # перевірка наявних монет 
         if m_data.coins == 200:
             # нове досягнення
             m_achievements.achievement('Need More Gold!')
+        #
         elif m_data.coins == 190:
             # нове досягнення
             m_achievements.achievement("Big Spender")
+        # до тексту для відправки додається програш
         text_for_send += ";lose:?????"
+    # перевірка тексту для відправки
     if text_for_send:
+        # змінна додати
         add = ''
+        # якщо хід не змінюється
         if not m_data.turn:
+            # пропуск ходу
             add = ';pass:'
+        # перевірка необхідного для відправки
         if need_to_send:
+            # до тексту додаємо символ ';'
             text_for_send +=';' + ";".join(need_to_send)
+            # список для необхідного для відправки
             need_to_send = []
+        # відправляємо все в клієнта
         m_client.send(text_for_send + add)

@@ -17,6 +17,9 @@ import modules.attack as m_attack
 # import modules.server as m_server
 from modules.ships import Ship,fill_field
 def stroke(screen,rect:pygame.Rect,color = (0,0,0),width = 5,multiplier_x = 1,multiplier_y = 1):
+    '''
+        >>> Малює обведення
+    '''
     pygame.draw.line(screen,color,
                      (int(rect.x*multiplier_x),int(rect.y*multiplier_y)),
                      (int((rect.x+rect.width)*multiplier_x),int(rect.y*multiplier_y)),int(width*multiplier_x))
@@ -29,8 +32,12 @@ def stroke(screen,rect:pygame.Rect,color = (0,0,0),width = 5,multiplier_x = 1,mu
     pygame.draw.line(screen,color,
                      (int((rect.x)*multiplier_x),int((rect.y+rect.height)*multiplier_y)),
                      (int(rect.x*multiplier_x),int(rect.y*multiplier_y)),int(width*multiplier_x))
+
 # класс з кнопками
 class Button(Image):
+    '''
+        >>> Додає параметри до класу зображень
+    '''
     # метод з створенням параметрів
     def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65, color = (0, 0, 0),rotate = 0):
         # задаємо параметри в класс зображень
@@ -54,6 +61,10 @@ class Button(Image):
         self.current_size = self.size
     # метод з кнопкою старт
     def button_start(self, event):
+        '''
+            >>> Створює кнопку старт
+            >>> Перевіряє чи кнопка натиснута
+        '''
         if type(event) == pygame.event.Event:
 
             pos = event.pos
@@ -93,6 +104,7 @@ class Button(Image):
                 size_ship = "1"
                 m_data.enemy_ships = []
                 m_data.all_ships = []
+                # Створення списку, у якому зберігаеться усе наше поле
                 m_data.my_field = [
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -328,14 +340,14 @@ class Button(Image):
                     #     print(row)
     # метод відображення поверхні на головному окні
     def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
+        '''
+            >>> Відображає картинку на екрані
+        '''
         # якщо картинка задана 
         self.rect = pygame.Rect(x,y,width,height)
         if self.name != "":
             # відображення картинки 
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
-        # задання розміру для тексту 
-        
-        
         if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
             self.current_size= int((self.size*(multiplier_y/2)))
@@ -392,6 +404,9 @@ class Button(Image):
 
 # button = Button()
 class Input(Image):
+    '''
+        >>> Додає параметри до картинки
+    '''
     def __init__(self, width: int, height: int,x = 0,y = 0, name = "", progression = "menu", color = (0,0,0), text = "ip: ", list = "0123456789."):
         self.start_width = width 
         self.start_height = height 
@@ -407,6 +422,9 @@ class Input(Image):
         self.size = 65 
         self.current_size = self.size
     def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
+        '''
+            >>> Відображає картинку на екрані
+        '''
         if self.name != "":
             # відображення картинки
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
@@ -435,6 +453,9 @@ class Input(Image):
         # print(e-s,'input')
         # відображення тексту на екрані
     def activate(self, event):
+        '''
+            >>> Відповідає за виділення поля ввода
+        '''
         # rect = pygame.Rect(self.x,self.y,self.width,self.height)
         if self.rect.collidepoint(event.pos):
             self.enter = True
@@ -443,25 +464,37 @@ class Input(Image):
             self.enter = False
         # print(self.enter)
     def edit(self,event):
+        '''
+            >>> Редагує текст
+        '''
         if self.enter:
             key = pygame.key.name(event.key)
             if event.key == pygame.K_BACKSPACE and self.TEXT != "ip: ":
-                # Убирает последний символ текста 
+                # прибирає останній символ текста 
                 self.TEXT = self.TEXT[:-1]
             elif key in self.list or self.list != "0123456789." and len(key) == 1:
-                # Добавляет символ который был нажат пользователем
+                # 
                 self.TEXT += key
 
         self.RENDER_TEXT = self.FONT.render(self.TEXT, True, self.COLOR)
 class Auto(Image):
+    '''
+        >>> Випадково розставляє кораблі
+    '''
     def __init__(self, width: int, height: int, x: int, y: int, name='', progression: str = "pre-game"):
         super().__init__(width, height, x, y, name, progression)
         self.rect = pygame.Rect(x,y,width,height)
         m_data.list_blits["pre-game"].append(self)
     def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
+        '''
+            >>> Відображає кнопку на екрані
+        '''
         self.rect = pygame.Rect(x,y,width,height)
         # pygame.draw.rect(screen,(255,25,25),self.rect)
     def randomship(self, cor):
+        '''
+            >>> Випадково розставляє кораблі
+        '''
         if self.rect.collidepoint(cor):
             count = 0
             count_ships = 0  

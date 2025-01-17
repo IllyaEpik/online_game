@@ -19,19 +19,22 @@ import modules.animations as m_animations
 # m_achievements.achievement('Glory to Air Defense')
 # m_achievements.achievement('Big Spender')
 # m_achievements.achievement('Pants on Fire')
-# клас для налаштування головного вікна
 threading.Thread(target=m_animations.play_animation,daemon=True).start()
+# клас для налаштування головного вікна
 class Screen():
+    '''
+        >>> Налаштовує головне вікно
+    '''
     # ініціалізуємо screen
     def __init__(self):
         size = pygame.display.Info()
-        # создаємо таймер
+        # створюємо таймер
         self.clock = pygame.time.Clock()
         # вказуємо ширину
         self.WIDTH= size.current_w * 0.75
         # вказуємо висоту
         self.HEIGHT = size.current_h * 0.75
-        # создаємо екран
+        # створюємо екран
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT),pygame.RESIZABLE)
         self.counter = 0
 
@@ -42,6 +45,9 @@ class Screen():
         pygame.display.set_icon(icon)
     # функція запуску
     def run(self):
+        '''
+            >>> Запускає гру
+        '''
         # m_data.progression = 'lose'
         # запускаємо гру
         game = True
@@ -195,26 +201,46 @@ class Screen():
                         ship.jump_cor[1] = -20
                         ship.jump_cor[3] = True
                         ship.x = 805
-                        # print('hoho')
                     # саме відображення кораблів
-                    # print(sprite.x,sprite.y,sprite.width,sprite.height,multiplier_x,multiplier_y,ship.name)
-                    # print(sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y,ship.name)
                     ship.blit(self.screen,ship.x*multiplier_x,ship.y*multiplier_y,ship.width*multiplier_x,ship.height*multiplier_y,multiplier_x,multiplier_y)
             start_time,end_time = 0,0
             if m_data.progression == "game":
                 for rocket in m_data.list_rockets:
-                    x = (725+55.7*rocket[2]) * multiplier_x
-                    sprite = rocket[0]
-                    sprite.blit(self.screen,
-                                sprite.x*multiplier_x,
-                                sprite.y*multiplier_y,
-                                sprite.width*multiplier_x,
-                                sprite.height*multiplier_y,
-                                multiplier_x,multiplier_y)
-                    if rocket[0].x*multiplier_x + rocket[0].height*multiplier_x > x:
-                        rocket[3]()
-                        m_data.list_rockets.remove(rocket)
-                        
+                    try:
+                        if rocket[0].name != 'weapons/line_rocket':
+                            x = (725+55.7*rocket[2]) * multiplier_x
+                            sprite = rocket[0]
+                            sprite.blit(self.screen,
+                                        sprite.x*multiplier_x,
+                                        sprite.y*multiplier_y,
+                                        sprite.width*multiplier_x,
+                                        sprite.height*multiplier_y,
+                                        multiplier_x,multiplier_y)
+                            if rocket[0].x*multiplier_x + rocket[0].width*multiplier_x > x:
+                                rocket[3]()
+                                m_data.list_rockets.remove(rocket)
+                        else:
+                            
+                            sprite = rocket[0]
+                            sprite.blit(self.screen,
+                                        sprite.x*multiplier_x,
+                                        sprite.y*multiplier_y,
+                                        sprite.width*multiplier_x,
+                                        sprite.height*multiplier_y,
+                                        multiplier_x,multiplier_y)
+                            for count in range(10):
+                                x = (725+55.7*count) * multiplier_x
+                                if rocket[0].x*multiplier_x + rocket[0].width*multiplier_x > x:
+                                    last = 0
+                                    if str(m_data.enemy_field[rocket[1]][count]) in '1234' or count == 9:
+                                        last = 1
+                                    rocket[2](rocket[1],count,last)
+                                    if last:
+                                        m_data.list_rockets.remove(rocket)
+                                        m_data.attack = None
+                                        break
+                    except Exception as error:
+                        print(error)
 
                 count = 0
                 list_to_delete = []

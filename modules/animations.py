@@ -11,6 +11,11 @@ import time
 
 # програє анімацію
 def play_animation():
+    '''
+        >>> Програє анімації
+        >>> Видаляє анімації
+    '''
+    # Поки є правдою 
     while True:
         # створення списку для видалення
         list_to_delete = []
@@ -33,9 +38,15 @@ def play_animation():
         time.sleep(0.1)
 # клас для роботи з зображенням
 class Animation():
+    '''
+        >>> Додає параметри для зображень анімацій
+        >>> Оновлює зображення для анімацій 
+    '''
     # ініціалізуємо зображення
     def __init__(self, width: int, height: int, x: int, y: int, name = '', progression: str = "None", rotate = 0,count_animations = 1,end = 'repeat',max_time= 0): 
         # переносимо параметри в змінні
+        if name == 'explosion':
+            end = 'static'
         self.opasity = 255
         self.width = width
         self.height = height
@@ -44,7 +55,7 @@ class Animation():
         self.name = name
         self.progression = progression
         self.rotate = rotate
-        # создаємо змінну self.image
+        # створюємо список
         self.images = []
         self.count_animations = count_animations
         self.different = 1
@@ -61,6 +72,9 @@ class Animation():
         m_data.list_animations.append(lambda:self.animate())
     # метод для програвання анімації
     def animate(self):
+        '''
+             >>> Перевіряє час програвання анімацій
+        '''
         # превіряє час проогравання анімації  
         if self.time <= 0:
             # додаємо параметри 
@@ -88,6 +102,10 @@ class Animation():
             self.different = 1
     # метод який оновлює наше зображення
     def update_image(self):
+        '''
+            >>> Завантажує зображення за вказаним шляхлм
+            >>> Змінює розмір зображення
+        '''
         try:
             # завантажуємо зображення з вказаного нам шляху
             self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../animations/{self.name}/{self.name}_0.png"))
@@ -107,6 +125,9 @@ class Animation():
     #     screen.blit(self.image, (self.x, self.y))
     # метод для відображення на екрані
     def blit(self,screen,x,y,width,height,multiplier_x,multiplier_y):
+        '''
+            >>> Відображає картинку на екрані
+        '''
         # перевіряємо отриману ширину і висоту
         try:
             if self.image.get_width() != int(width) or self.image.get_height() != int(height):
@@ -146,9 +167,9 @@ class Animation():
 
 def move(rocket,count = 50):
     try:
-        while not len(m_data.list_rockets) and not (rocket in m_data.list_rockets[-1]) and m_data.progression == 'game':
-            print('hhhhhhhhhhhhhooooooooooooooooooooooooooooooooooooooooosssssssssssse')
+        while len(m_data.list_rockets) and (rocket in m_data.list_rockets[-1]) and m_data.progression == 'game':
             
+            print('hhhhhhhhhhhhhooooooooooooooooooooooooooooooooooooooooosssssssssssse')
             rocket.x += count
             time.sleep(0.01)
     except:

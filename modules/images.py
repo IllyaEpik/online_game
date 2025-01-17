@@ -10,6 +10,9 @@ import modules.data as m_data
 import modules.main_window as main_window
 # клас для роботи з зображенням
 class Image():
+    '''
+        >>> Задаємо параметри до зображення
+    '''
     # ініціалізуємо зображення
     def __init__(self, width: int, height: int, x: int, y: int, name = '', progression: str = "menu", rotate = 0, edit = True): 
         # переносимо параметри в змінні
@@ -35,9 +38,13 @@ class Image():
         self.update_image()
     # создаємо метод який оновлює наше зображення
     def update_image(self):
+        '''
+            >>> Завантажує зображення за вказаним шляхом
+            >>> Змінює розмір зображення
+        '''
         try:
             # завантажуємо зображення з вказаного нам шляху
-            print('SSSSSSSSSSSSSSSOSSSSSSSSSSSS')
+            print('SSSSSSSSSSSSSSSOSSSSSSSSSSSS',self.name)
             self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
             self.image = pygame.transform.rotate(self.image, self.rotate)
             
@@ -61,6 +68,9 @@ class Image():
     #     screen.blit(self.image, (self.x, self.y))
     # метод для відображення на екрані
     def blit(self,screen,x,y,width,height,multiplier_x,multiplier_y):
+        '''
+            >>> Відображуємо картинку на екрані
+        '''
         # перевіряємо отриману ширину і висоту
         # s = pygame.time.get_ticks()
         # self.image = self.main_image

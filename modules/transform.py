@@ -36,6 +36,9 @@ count_types = 0
 end = 0
 # функція для трансформації екрану
 def transform(screen,multiplier_x,multiplier_y):
+    '''
+        >>> Трансформує екран
+    '''
     # робимо змінні глобальними
     global type_transform,color,progression
     # умова якщо екран нікуди не переходить
@@ -54,6 +57,9 @@ def transform(screen,multiplier_x,multiplier_y):
     #     transform_opasity(screen)
 # функція для трансформування екрану в прямокутну форму   
 def transform_rect(screen,multiplier_x,multiplier_y):
+    '''
+        >>> Змінює розмір прямокутника під час анімації переходу
+    '''
     # робить змінні глобальними
     global size,type_transform,color
     # додає до розміру 25

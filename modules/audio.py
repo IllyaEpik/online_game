@@ -11,6 +11,10 @@ pygame.mixer.init()
 # pygame.mixer.music.set_volume(0.5)
 # створення класу для роботи з аудіо
 class Audio():
+    '''
+        >>> Додає фонову музику
+        >>> Встановлює гучність для звуку
+    '''
     # ініцілізуємо клас аудіо 
     def __init__(self, name: str, loops: int = -1,volume = 0.5,max_time = "any"): 
         # створюємо змінні
@@ -27,17 +31,30 @@ class Audio():
             # додаємо довжину звуку
             max_time = self.audio.get_length()
     # метод для відтворення аудіо
-    def play(self):
+    def play(self, volume = 0.5):
+        '''
+            >>> Починає музику
+            
+        '''
         try:
             # зупиняємо музику
             self.stoped = False
             # відтворюємо музику
+            self.audio.set_volume(volume)
             self.audio.play(loops= self.loops)
         except:
             # якщо буде помилка при завантаженні, виводимо повідомлення про помилку
             print("Error: audio")
     # метод для зупинки звуку
+
     def stop(self):
+        '''
+            >>> Зупиняє звук
+            >>> Задає зупинки між звуками
+            >>> Додає звук до досягнень
+            >>> Додає звук для вибуху
+            >>> Зупиняє музику
+        '''
         # зупинка звуку
         self.audio.stop()
         # задаємо для зуптнки звуку значення True 
