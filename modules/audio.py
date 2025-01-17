@@ -48,6 +48,7 @@ achievement = Audio('achievement',max_time=2, loops=0)
 radar = Audio('radar', loops=0)
 # задаємо саундтрек для доріжки звуку
 track = Audio('Soundtrack')
+buying = Audio('buying',0)
 # перевіряємо чи не дорівнює звук значенню False
 if m_data.read_data["sound"] != "False":
     # граємо звукову доріжку

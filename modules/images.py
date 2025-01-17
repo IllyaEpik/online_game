@@ -21,6 +21,8 @@ class Image():
         self.name = name
         self.progression = progression
         self.rotate = rotate
+        self.row = None
+        self.cell = None
         # создаємо змінну self.image
         self.image = None
         # self.select_image = None

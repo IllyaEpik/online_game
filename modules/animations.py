@@ -1,25 +1,35 @@
 '''
     >>> Відповідяє за створення анімації - класс Animation
-    >>> Програє анімації під час гри
+    >>> Програє анімації під час гри - функція play_animation
 '''
 # імпортуємо модуль pygame , os
 import pygame, os
 #імпртуємо модуль modules.data як m_data
 import modules.data as m_data
-import modules.main_window as main_window
+import modules.images as m_images
 import time
+
+# програє анімацію
 def play_animation():
     while True:
-        # print('play')
-
+        # створення списку для видалення
         list_to_delete = []
-        
+        # бере довжину списку з функціями всіх анімацій
         for count in range(len(m_data.list_animations)):
-            if m_data.list_animations[count]():
-                list_to_delete.append(m_data.list_animations[count])
-        
+            try:
+                # програє кожну анімацію 
+                if m_data.list_animations[count]():
+                    # додає значення в список 
+                    list_to_delete.append(count)
+            except:
+                list_to_delete.append(count)
+        # змінює порядок елементів в списку на протилежний
+        list_to_delete.reverse()
+        # для кількості в списку list_to_delete
         for count in list_to_delete:
-            del m_data.list_animations[-(count+1)]
+            # видаляє анімацію
+            del m_data.list_animations[count]
+        # зупиняється на 0.1 секунди
         time.sleep(0.1)
 # клас для роботи з зображенням
 class Animation():
@@ -47,24 +57,36 @@ class Animation():
         self.end = end
         # оновлюємо наше зображення
         self.update_image()
+        # додає анімацію до циклу програвання анімацій
         m_data.list_animations.append(lambda:self.animate())
+    # метод для програвання анімації
     def animate(self):
-        
+        # превіряє час проогравання анімації  
         if self.time <= 0:
+            # додаємо параметри 
             self.time = self.max_time
             self.count += self.different
         else:
+            # віднімаємо 1 від часу 
             self.time -= 1
+        # якщо кілість дорівнює кількості анімацій з -1 то
         if self.count == self.count_animations-1:
+            # якщо кінець дорівнює static
             if self.end == 'static':
+                # повертає значення True
                 return True
+            # якщо кінець дорівнює repeat
             elif self.end == 'repeat':
+                # кількості дорівює 0 
                 self.count = 0
             else:
+                # кількість змінюється на -1
                 self.different = -1
+        # превіряє час проогравання анімації 
         elif self.count <= 0:
+            # кількість змінюється на -1
             self.different = 1
-    # создаємо метод який оновлює наше зображення
+    # метод який оновлює наше зображення
     def update_image(self):
         try:
             # завантажуємо зображення з вказаного нам шляху
@@ -121,3 +143,13 @@ class Animation():
             
         except Exception as error:
             print('hhaaa',error)
+
+def move(rocket,count = 50):
+    try:
+        while not len(m_data.list_rockets) and not (rocket in m_data.list_rockets[-1]) and m_data.progression == 'game':
+            print('hhhhhhhhhhhhhooooooooooooooooooooooooooooooooooooooooosssssssssssse')
+            
+            rocket.x += count
+            time.sleep(0.01)
+    except:
+        pass

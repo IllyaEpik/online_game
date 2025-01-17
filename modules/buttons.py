@@ -50,6 +50,7 @@ class Button(Image):
         self.FONT = pygame.font.SysFont("algerian", size)
         self.rect = pygame.Rect(x,y,width,height)
         self.size = size 
+        self.start_size = size
         self.current_size = self.size
     # метод з кнопкою старт
     def button_start(self, event):
@@ -147,6 +148,7 @@ class Button(Image):
                         if m_data.cost_data[m_data.select_weapon] <= m_data.coins:
                             m_data.coins -= m_data.cost_data[m_data.select_weapon]
                             m_achievements.achievement('Hooked')
+                            m_audio.buying.play()
                             if 'Energetic' == m_data.select_weapon:
                                 m_data.buffs.append(['Energetic'])
                                 # m_client.send('buff:Energetic')
@@ -262,6 +264,7 @@ class Button(Image):
                     print(description_.TEXT)
             elif self.function and 'weapons' in self.function:
                 # buff
+                
                 description.TEXT = m_data.weapon_data[self.function.split('/')[1]][self.function.split('/')[2]].split(' ') +['                ', '           ']
                 m_data.select_weapon = self.function.split('/')[2]
                 print(description.TEXT)
@@ -331,13 +334,16 @@ class Button(Image):
             # відображення картинки 
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
         # задання розміру для тексту 
+        
+        
         if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
-            self.current_size= int((self.size*multiplier_y))
+            self.current_size= int((self.size*(multiplier_y/2)))
             # self.size = int((self.size*multiplier_y))
         elif self.current_size != int((self.size*multiplier_x)) and multiplier_x <= multiplier_y:
-            self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_x)))
+            self.FONT = pygame.font.SysFont("algerian", int((self.size*(multiplier_x))))
             self.current_size = int((self.size*multiplier_x))
+            
         if type(self.TEXT) == type(""):
             size = self.FONT.size(self.TEXT) 
             # задаємо y для тексту
@@ -349,7 +355,6 @@ class Button(Image):
             render = self.FONT.render(self.TEXT,True,self.COLOR)
             render.set_alpha(self.opasity)
             screen.blit(render, (x, y))
-            self.render = render
             # print(render,self.render)
             self.last_text = self.TEXT
             # print('hoh')
@@ -357,7 +362,9 @@ class Button(Image):
             #     screen.blit(self.render, (x, y))
             # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
         elif type(self.TEXT) == type([]):
+                
             count = 0
+            # while True:
             for text in self.TEXT:
                 if multiplier_x > multiplier_y:
                     self.FONT = pygame.font.SysFont("algerian", int((40*multiplier_y)))
@@ -366,10 +373,9 @@ class Button(Image):
                 height = self.FONT.size(text)[1]
                 size = self.FONT.size(text) 
                 y = (self.rect.y+10+height*count) * multiplier_y
-                # задаємо x для тексту
+                # задаємо x для тексту 
                 x = (self.rect.x)*multiplier_x
                 # відображення тексту на екрані
-                # print((self.rect.x+10))
                 render = self.FONT.render(text,True,(0,0,0))
                 render.set_alpha(self.opasity)
                 screen.blit(render, (self.rect.x, y))
@@ -608,13 +614,14 @@ radar = Button(y = 514, x = 167, width= 140, height= 140, progression= "shop", t
 Energetic = Button(y = 514, x = 319, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/Energetic")
 Air_Defence = Button(y = 514, x = 469, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/Air_Defence")
 list_weapons = [homing_rocket,rocket_3x3,line_rocket,fire_rocket,Energetic,radar,Air_Defence,Anti_fire]
+
 m_data.list_blits['shop'] += list_weapons+[coins,buy,description]
 if m_data.client_server == "server":
     server.COLOR =(40,2,255)
 if m_data.client_server == "client":
     client.COLOR =(40,2,255)
 your_turn = Button(width= 272, height= 66, x= 133, y= 712, text= "your step", progression= "", color=(0, 0, 255),size=50)
-opponent_turn = Button(width= 350, height= 66, x= 800, y= 712, text= "opponent`s step", progression= "", color = (255, 0, 0),size=50)
+opponent_turn = Button(width= 350, height= 66, x= 800, y= 712, text= "enemy step", progression= "", color = (255, 0, 0),size=50)
 
 m_data.list_blits["game"].append(your_nickname)
 m_data.list_blits["game"].append(enemy_nickname)

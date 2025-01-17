@@ -58,6 +58,8 @@ list_achievements = []
 list_animations = []
 list_for_radar = []
 buffs = []
+
+list_rockets = []
 my_buffs = []
 # achievements_data = [
 #     {

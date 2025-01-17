@@ -202,6 +202,20 @@ class Screen():
                     ship.blit(self.screen,ship.x*multiplier_x,ship.y*multiplier_y,ship.width*multiplier_x,ship.height*multiplier_y,multiplier_x,multiplier_y)
             start_time,end_time = 0,0
             if m_data.progression == "game":
+                for rocket in m_data.list_rockets:
+                    x = (725+55.7*rocket[2]) * multiplier_x
+                    sprite = rocket[0]
+                    sprite.blit(self.screen,
+                                sprite.x*multiplier_x,
+                                sprite.y*multiplier_y,
+                                sprite.width*multiplier_x,
+                                sprite.height*multiplier_y,
+                                multiplier_x,multiplier_y)
+                    if rocket[0].x*multiplier_x + rocket[0].height*multiplier_x > x:
+                        rocket[3]()
+                        m_data.list_rockets.remove(rocket)
+                        
+
                 count = 0
                 list_to_delete = []
                 for buff in m_data.my_buffs:
