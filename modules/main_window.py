@@ -16,9 +16,6 @@ import modules.transform as m_transform
 import modules.audio as m_audio
 import modules.achievements as m_achievements
 import modules.animations as m_animations
-# m_achievements.achievement('Glory to Air Defense')
-# m_achievements.achievement('Big Spender')
-# m_achievements.achievement('Pants on Fire')
 threading.Thread(target=m_animations.play_animation,daemon=True).start()
 # клас для налаштування головного вікна
 class Screen():
@@ -55,7 +52,6 @@ class Screen():
         
         # налаштування розміра дісплея
         size = pygame.display.Info()
-        # m_data.progression = 'shop'
         # поки гра триває
         while game:
             size1 = self.screen.get_size()
@@ -63,10 +59,7 @@ class Screen():
             HEIGHT= size1[1]
             multiplier_x = (WIDTH / 100) / (1280 / 100)
             multiplier_y = (HEIGHT / 100) / (832 / 100)
-            # print(width2)
-            # print(size,size1)
             # цикл всіх подій
-            # if self.counter == 5:
             for event in pygame.event.get():
                 # якщо вікно зачинено то 
 
@@ -151,18 +144,10 @@ class Screen():
                         
                         m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
                         m_buttons.music.x = m_buttons.nickname.width + 50
-                        # else:
-                            # object.width = object.start_width
-                            # object.update_image()
             m_buttons.coins.TEXT = f"{m_data.coins}"
             # цикл відображення всього що є в списку
-            s = pygame.time.get_ticks()
             for sprite in m_data.list_blits[m_data.progression]:
-                # print(sprite.name)
                 # відображення елементу
-                # print(sprite)
-                # if m_data.progression == 'shop':
-                #     print(sprite.x,sprite.y,sprite.name)
                 sprite.blit(self.screen,
                                  sprite.x*multiplier_x,
                                  sprite.y*multiplier_y,
@@ -170,14 +155,12 @@ class Screen():
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
             
-            e = pygame.time.get_ticks()
             if m_data.progression == "menu" and m_audio.track.stoped:
                 pygame.draw.line(self.screen,(255,50,50),
                                  (m_buttons.music.x*multiplier_x,m_buttons.music.y*multiplier_y,),
                                  (m_buttons.music.x*multiplier_x + m_buttons.music.width*multiplier_x,m_buttons.music.y*multiplier_y + m_buttons.music.height*multiplier_y),10)
             # якщо знаходимось не в меню то
             if m_data.list_achievements != []:
-            # for achievement in m_data.list_achievements:
                 achievement = m_data.list_achievements[0]
                 achievement.move()
                 achievement.blit(self.screen,multiplier_x,multiplier_y)
@@ -203,7 +186,6 @@ class Screen():
                         ship.x = 805
                     # саме відображення кораблів
                     ship.blit(self.screen,ship.x*multiplier_x,ship.y*multiplier_y,ship.width*multiplier_x,ship.height*multiplier_y,multiplier_x,multiplier_y)
-            start_time,end_time = 0,0
             if m_data.progression == "game":
                 for rocket in m_data.list_rockets:
                     try:
@@ -240,14 +222,11 @@ class Screen():
                                         m_data.attack = None
                                         break
                     except Exception as error:
-                        print(error)
+                        pass
 
                 count = 0
                 list_to_delete = []
                 for buff in m_data.my_buffs:
-                    # 59, 115
-                    # try:
-                    
                     if buff[0] == 'Air_Defence':
                         if str(m_data.my_field[buff[1]][buff[2]]) in '05':
                             m_images.air_defence.blit(self.screen,
@@ -259,9 +238,6 @@ class Screen():
                     count +=1
                 for delete in list_to_delete:
                     del m_data.my_buffs[delete]
-                    # except:
-                    #     pass
-                start_time = pygame.time.get_ticks()
 
                 for sprite in m_data.list_explosions:
                     sprite = sprite[0]
@@ -271,8 +247,6 @@ class Screen():
                                 sprite.width*multiplier_x,
                                 sprite.height*multiplier_y,
                                 multiplier_x,multiplier_y)
-                end_time = pygame.time.get_ticks()
-                # print(end_time-start_time,'attack',len(m_data.list_explosions))
                 if m_data.time_for_radar:
                     for sprite in m_data.list_for_radar:
                         pygame.draw.circle(self.screen,(50,255,50),((sprite.x+sprite.width/2)*multiplier_x,(sprite.y+sprite.height/2)*multiplier_y),10,25)
@@ -281,13 +255,10 @@ class Screen():
                     if m_data.turn:
                         m_buttons.opponent_turn.COLOR = (140, 140, 140)
                         m_buttons.your_turn.COLOR = (0, 0, 255)
-                        # sprite = m_buttons.opponent_turn_gray
-                        # m_buttons.opponent_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     else:
                         m_buttons.opponent_turn.COLOR = (255, 0, 0)
                         m_buttons.your_turn.COLOR = (140, 140, 140)
-                        # sprite = m_buttons.your_turn_gray
-                        # m_buttons.your_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                        
                     sprite = m_buttons.shop
                     m_buttons.shop.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     sprite = m_buttons.your_turn
@@ -297,19 +268,7 @@ class Screen():
                 else:
                     wait = m_buttons.wait
                     wait.blit(self.screen,wait.x*multiplier_x,wait.y*multiplier_y,wait.width*multiplier_x,wait.height*multiplier_y,multiplier_x,multiplier_y)
-            # elif m_data.progression == 'shop':
-            #     square = pygame.Surface((m_buttons.description.rect.width,m_buttons.description.rect.height))
-            #     square.fill((255, 255, 255))
-            #     square.set_alpha(200)
-            #     self.screen.blit(square,m_buttons.description.rect)
-            #     m_buttons.stroke(self.screen,m_buttons.description.rect,(0,0,0),5)
-            #     sprite = m_buttons.description
-            #     m_buttons.description.blit(self.screen,
-            #                      sprite.x*multiplier_x,
-            #                      sprite.y*multiplier_y,
-            #                      sprite.width*multiplier_x,
-            #                      sprite.height*multiplier_y,
-            #                      multiplier_x,multiplier_y)
+
             elif m_data.progression == 'achievements':
                 square = pygame.Surface((m_buttons.description_.rect.width,m_buttons.description_.rect.height))
                 square.fill((255, 255, 255))
@@ -342,6 +301,5 @@ class Screen():
             m_transform.transform(self,multiplier_x,multiplier_y)
             # фпс
             self.clock.tick(60)
-            # print(int(self.clock.get_fps()),e-s,len(m_data.list_blits[m_data.progression]),end_time-start_time)
 # створення екземпляру классу
 screen = Screen()

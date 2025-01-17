@@ -25,10 +25,8 @@ class Ship(m_images.Image):
     def __init__(self, x: int, y: int, name='1', row=0, cell=0, field_cor=[59, 115], rotate=0, add=True):
         # Розміри корабля залежать від його імені (перший символ - це кількість клітин корабля)
         self.width = int(name[0]) * 50
-        # print(self.width)
         self.height = 50
         self.explosion = False
-        # print(self.height)
         # Викликаємо конструктор батьківського класу (Image) для ініціалізації зображення
         super().__init__(self.width, self.height, x, y, name, "F", rotate)
         # Встановлюємо нові координати для корабля на полі
@@ -42,7 +40,6 @@ class Ship(m_images.Image):
                     m_data.my_field[row][cell + count] = int(name[0])
                 else:
                     m_data.my_field[row + count][cell] = int(name[0])
-        # print(self.y)
         # Ініціалізація деяких змінних
         self.select = False  # Перевірка, чи вибрано корабель
         self.row = row
@@ -54,8 +51,6 @@ class Ship(m_images.Image):
         self.field = pygame.Rect(field_cor, (10 * 55.7, 10 * 55.7))
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.celled = None
-    # def jump(self, x = 5,y = 100):
-    #     self.x 
     # Метод для перевірки, чи можна поставити корабель
     def check_enemy(self):
         '''
@@ -80,36 +75,24 @@ class Ship(m_images.Image):
             else:
                 try:
                     for cell in cells:
-                        print(cell,0)
-                        print(m_data.list_explosions)
                         list = m_data.list_explosions
                         list.reverse()
-                        print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhssssssssssssssssssssssssssssssssssssssssssssssssssssss')
-                        print(list)
                         count = 0
 
                         for explosion in list:
-                            print(explosion,count,'troll')
                             if explosion[1] == cell[0] and explosion[2] == cell[1]:
                                 del m_data.list_explosions[count]
                             count += 1
-                except Exception as error:
-                    for c in range(222):
-                        print(error)
+                except Exception as error:pass
                 self.explosion = True
 
                 m_data.all_ships.append(self)
                 if str(self.name) == '4':
                     m_achievements.achievement('Titanic')
                 m_attack.need_to_send.append(f"explosion:{self.row},{self.cell}")
-                # m_client.send()
-                
-
-                # print(cells)
                 for celll in cells:
                     row = celll[0]
                     cell = celll[1]
-                    # print(row, cell)
                     fill_field(field)
                     check(field=field, row=row + 1, cell=cell + 1, values=[5, 7])
                     check(field=field, row=row - 1, cell=cell - 1, values=[5, 7])
@@ -137,7 +120,6 @@ class Ship(m_images.Image):
                         if cell == 4:
                             cell = 0
             self.name = self.name[0] + "_select"
-            # print('eqw')
         else:
             self.place(event.pos, multiplier_x, multiplier_y)
             self.select = False
@@ -149,7 +131,6 @@ class Ship(m_images.Image):
         '''
             >>> Обертає кораблі
         '''
-        # print(2132132312123123231213231)
         # Очищаємо місце для нового положення корабля на полі
         for count in range(int(self.name[0])):
             if self.rotate % 180 == 0:
@@ -193,7 +174,6 @@ class Ship(m_images.Image):
             >>> Зміщує кораблі на нову позицію
         '''
         if self.select:
-            # print(self.field.collidepoint(pos))
             for row in range(10):
                 for cell in range(10):
                     yes_no = False
@@ -231,15 +211,12 @@ class Ship(m_images.Image):
                             fill_field(m_data.my_field)
                     except:
                         pass
-                        # print("капибара")
                     if yes_no:
                         rect = pygame.Rect(
                             self.field_cor[0] + cell * 55.7*multiplier_x,
                             self.field_cor[1] + row * 55.7*multiplier_y,
                             55.7, 55.7)
                         if rect.collidepoint(pos):
-                            # print(m_data.cells,self.celled)
-                            # print()
                             for count in range(int(self.name[0])):
                                 if self.rotate % 180 == 0:
                                     m_data.my_field[self.row][self.cell + count] = 0
@@ -260,11 +237,9 @@ class Ship(m_images.Image):
                                     m_data.my_field[row + count][cell] = int(self.name[0])
                             self.select = False
                             fill_field(m_data.my_field)
-                            # print(m_data.cells,self.celled)
                             return True
             count = 0
             for cell1 in m_data.cells[self.name[0]]:
-                # print(cell1)
                 if not cell1[0]:
                     cell1[0] = True
                     self.x = cell1[1][0]
@@ -274,20 +249,11 @@ class Ship(m_images.Image):
                             m_data.my_field[self.row][self.cell + count1] = 0
                         else:
                             m_data.my_field[self.row + count1][self.cell] = 0
-                    # m_data.my_field[self.row][self.cell] = 0 
                     self.celled = count
                     self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-                    # for row in m_data.my_field:
-                    #     print(row)      
                     break
                 count += 1 
         fill_field(m_data.my_field)
-        for row in m_data.my_field:
-            print(row)
-        # print(m_data.cells)
-
-        # for row in m_data.my_field:
-        #     print(row)
 # Функція перевірки на полі для кожної клітинки
 def check(field, row, cell, values=[0, 5]):
     '''
@@ -299,7 +265,6 @@ def check(field, row, cell, values=[0, 5]):
             if field[row][cell] == values[0]:
                 field[row][cell] = values[1]
                 if values[1] == 7:
-                    # print(11)
                     image = m_images.Image(
                         progression="Noke",
                         name="miss",

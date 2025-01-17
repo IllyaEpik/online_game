@@ -66,9 +66,6 @@ def attack_for_cell(row,cell):
         m_achievements.achievement('It’s a Hit!')
         # список для вибухів
         explosions = []
-        # цикл для радів на ворожому полі
-        for row2 in m_data.enemy_field:
-            print(row2,'the best')
         # цикл для ворожих кораблів
         for ship in m_data.enemy_ships:
             # перевіряє ворожий корабль
@@ -101,7 +98,7 @@ def attack_for_cell(row,cell):
                 # до списку додається значення 'game' і прибирається минулиц вибух
                 m_data.list_blits['game'].remove(ex)
             except:
-                print('reoeroreoreoreooeroeroreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+                pass
     # інакше промах на воожому полі
     elif str(m_data.enemy_field[row][cell]) in list_miss:
         # нове досягнення
@@ -300,11 +297,6 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                     # перевірка на колізію
 
                     if rect.collidepoint(pos) and str(m_data.enemy_field[row][cell]) in attack_list:
-                        print(row,cell)
-                        print(str(m_data.my_field[row][cell]), attack_list,1230913281203871980398989)
-                        # for rows in m_data.enemy_field:
-                        #     print(rows)
-                        # 6 - explosion 7 - miss
                         # якщо атака ракетою 3x3
                         if m_data.attack == 'rocket_3x3':
                             # текст: атака
@@ -317,9 +309,6 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                 for row_3x3 in range(3):
                                     # цикл для ракети 3х3
                                     for cell_3x3 in range(3):
-                                        # для кількосі в діапазоні
-                                        for count in range(5):
-                                            print(row_3x3,cell_3x3,row+row_3x3,cell+cell_3x3)
                                         # перевірка ракети в клітинках 3х3
                                         if -1 < row+row_3x3-1 < 10 and -1 < cell+cell_3x3-1 < 10:
                                             # атака для клітинок
@@ -343,31 +332,6 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                 pass
                         # атака дінійною ракетою  
                         elif m_data.attack == 'line_rocket':
-                            # # функція вогню
-                            # fire()
-                            # # текст: атака
-                            # text = 'attack:'
-                            # # для клітинок в діапазоні
-                            # for cell in range(10):
-                            #     # розташування ворожого корабля
-                            #     ship = str(m_data.enemy_field[row][cell])
-                            #     # атака в клітинках
-                            #     name = attack_for_cell(row,cell)
-                            #     # текст ряду, клітинки і назва
-                            #     text += f"{row},{cell},{name}"
-                            #     # текст для відправки: атака 
-                            #     text_for_send+= f"attack:{row},{cell},{name};"
-                            #     # якщо корабель в клітинках
-                            #     if ship in '1234':
-                            #         # зуптнка
-                            #         break
-                            #     print(m_data.enemy_field[row][cell])
-                            # # до тексту для відправки додаємо символ ';'
-                            # text_for_send+= ';' + text + ';'
-                            # # до тексту з пропуском додаємо символ ';'
-                            # text_for_send+= 'pass:' + ';'
-                            # # атака
-                            # m_data.attack = None
                             fire()
                             # функція для атаки
                             def atta(row,cell,last = 0):
@@ -384,15 +348,12 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                     # виграш або програш 
                                     # win_lose(f"attack:{row},{cell},{name}")
                                     if last:
-                                        for c in range(292):
-                                            print(m_data.list_rockets[-1][-1])
                                         win_lose(m_data.list_rockets[-1][-1]+f"{row},{cell},{name}")
+                                        # звук вибуху
                                         m_audio.explosion.play() 
                                     else:
                                         # m_data.list_rockets[-1][-1]+=f"{row},{cell},{name} "
                                         win_lose(f"attack:{row},{cell},{name},0")
-                                        print('HHHHA')
-                                    # звук вибуху
                                 
                             # змінна для тимчасового збереження рядка   
                             ok = row
@@ -475,7 +436,6 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                             m_data.rect_for_radar = pygame.Rect(x,y,width,height)
                             # список для радару
                             m_data.list_for_radar = []
-                            print(start_row,start_cell,end_row,end_cell)
                             # звук радару
                             m_audio.radar.play()
                             # цикл для ряду
@@ -498,7 +458,6 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                                                 'explosion',
                                                                 progression='Noke')
                                                                 )
-                                                print('hallo')
                             # ставимо час для роботи радару 5 секунд
                             m_data.time_for_radar = 5
                             # запускаємо час дії радару
@@ -580,22 +539,8 @@ def fire():
                                     if -1 < (cell_fire + cell-1) < 10:
                                         # перевіряємо вибухи на полі в списку вибухів
                                         if str(m_data.my_field[row+row_fire-1][cell+cell_fire-1]) in list_explosion:
-                                            # with open(os.path.abspath(__file__+'/../../data/output.txt')) as file:
-                                            #     text += file.read()
-                                            # for r in m_data.my_field:
-                                            #     text += str(r)+'\n'
-                                            # with open(os.path.abspath(__file__+'/../../data/output.txt'),'w') as file:
-                                            #     file.write(text+'\n'+f"{m_data.my_field[row+row_fire-1][cell+cell_fire-1]},{row+row_fire-1},{cell+cell_fire-1}")
-                                            # for count in range(1000):
-                                            #     print(m_data.my_field[row+row_fire-1][cell+cell_fire-1],row+row_fire-1,cell+cell_fire-1)
                                             # 9 рядів і клітинок на полі
                                             m_data.my_field[row+row_fire-1][cell+cell_fire-1] = 9
-
-                        # m_data.my_field[row][cell] = 6
-                        # for explosion in m_data.list_explosions:
-                            # if explosion[0].name == 'fire' and explosion[1] == row and explosion[2] == cell:
-                            #     explosion[0].name == 'explosion'
-                            #     explosion[0].update_image()
     # цикл для рядів
     for row in range(10):
         # якщо на полі є 9 рядів
@@ -636,7 +581,6 @@ def win_lose(text_for_send):
     yes_no = True
     # цикл для корабля в ворожих кораблях
     for ship in m_data.enemy_ships:
-        print(ship in m_data.enemy_ships, not ship.explosion)
         # якщо немає вибуху корабля
         if not ship.explosion:
         # elif :

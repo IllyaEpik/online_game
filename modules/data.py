@@ -181,7 +181,6 @@ def reading_data(dict,filename):
                     dict[name] = data[count]
                 count+=1
     except Exception as error:
-        print(error)
         text = ''
         count = 0
         for name in dict:
@@ -201,10 +200,8 @@ for achievement in achievements_data:
     except:
         with open(path+type+'achievements'+type+name+'.txt', "w") as file:
             file.write('False')
-print(read_data)
-# server.COLOR = (0,0,0)
-# client.COLOR = (0,0,0)
-# self.COLOR =(40,2,255)
+
+
 # створення словника у якому містяться всі картинки для кожної стадії гри
 list_blits = {
     "menu": [],

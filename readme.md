@@ -58,7 +58,6 @@
 - pip3 install pygame
 11. Активувати гру за допомогою команди:
 - python3 main.py
-
 * Для того щоб підєднатися по сеті:
 12. Заходимо в гру
 
@@ -110,20 +109,22 @@
 11. Launch the game using the command:  
 - python main.py 
 
-
-
-
 ## структура проекту / project structure:
 * Перше вікно: введення IP-адреси/First window: IP address input
 * Друге вікно: етап розташування кораблів/Second window: ship placement stage
 * Третє вікно: етап битви/Third window: battle stage
 * Четверте вікно: результат гри (програш чи перемога)/Fourth window: game result (lose or victory)
+* П'яте вікно: екран магазину / Fifth window: shop window
+* Шосте вікно: екран з досягненнями / Sixth window: achievement window
 
 ### повний опис файлів / a full description of files:
 
 #### Online_game/modules/main_window.py: створення головну екрану гри / create a main screen of game
 
 ```python
+'''
+    >>> Створює головне вікно - класс Screen
+'''
 # імпортуємо модуль pygame
 import pygame, threading, os
 # ініціалізуємо pygame
@@ -138,21 +139,23 @@ import modules.attack as m_attack
 import modules.transform as m_transform
 import modules.audio as m_audio
 import modules.achievements as m_achievements
-# m_achievements.achievement('Glory to Air Defense')
-# m_achievements.achievement('Big Spender')
-# m_achievements.achievement('Pants on Fire')
-# 
+import modules.animations as m_animations
+threading.Thread(target=m_animations.play_animation,daemon=True).start()
+# клас для налаштування головного вікна
 class Screen():
+    '''
+        >>> Налаштовує головне вікно
+    '''
     # ініціалізуємо screen
     def __init__(self):
         size = pygame.display.Info()
-        # создаємо таймер
+        # створюємо таймер
         self.clock = pygame.time.Clock()
         # вказуємо ширину
         self.WIDTH= size.current_w * 0.75
         # вказуємо висоту
         self.HEIGHT = size.current_h * 0.75
-        # создаємо екран
+        # створюємо екран
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT),pygame.RESIZABLE)
         self.counter = 0
 
@@ -163,24 +166,24 @@ class Screen():
         pygame.display.set_icon(icon)
     # функція запуску
     def run(self):
+        '''
+            >>> Запускає гру
+        '''
         # m_data.progression = 'lose'
-        # задаємо правдиве значення грі
+        # запускаємо гру
         game = True
         self.counter += 1
         
-        # цикл поки гра активна
+        # налаштування розміра дісплея
         size = pygame.display.Info()
-        # m_data.progression = 'shop'
+        # поки гра триває
         while game:
             size1 = self.screen.get_size()
             WIDTH = size1[0]
             HEIGHT= size1[1]
             multiplier_x = (WIDTH / 100) / (1280 / 100)
             multiplier_y = (HEIGHT / 100) / (832 / 100)
-            # print(width2)
-            # print(size,size1)
             # цикл всіх подій
-            # if self.counter == 5:
             for event in pygame.event.get():
                 # якщо вікно зачинено то 
 
@@ -251,7 +254,7 @@ class Screen():
                         m_transform.type_transform = None
                         m_transform.size = 0
                 if event.type == pygame.KEYDOWN and m_data.progression == "menu":
-                    # додає символи до input
+                    # додає символи в event
                     m_buttons.input.edit(event)
                     m_buttons.nickname.edit(event)
                     for object in [m_buttons.nickname]:
@@ -265,30 +268,23 @@ class Screen():
                         
                         m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
                         m_buttons.music.x = m_buttons.nickname.width + 50
-                        # else:
-                            # object.width = object.start_width
-                            # object.update_image()
             m_buttons.coins.TEXT = f"{m_data.coins}"
             # цикл відображення всього що є в списку
             for sprite in m_data.list_blits[m_data.progression]:
-                # print(sprite.name)
                 # відображення елементу
-                # print(sprite)
-                # if m_data.progression == 'shop':
-                #     print(sprite.x,sprite.y,sprite.name)
                 sprite.blit(self.screen,
                                  sprite.x*multiplier_x,
                                  sprite.y*multiplier_y,
                                  sprite.width*multiplier_x,
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
+            
             if m_data.progression == "menu" and m_audio.track.stoped:
                 pygame.draw.line(self.screen,(255,50,50),
                                  (m_buttons.music.x*multiplier_x,m_buttons.music.y*multiplier_y,),
                                  (m_buttons.music.x*multiplier_x + m_buttons.music.width*multiplier_x,m_buttons.music.y*multiplier_y + m_buttons.music.height*multiplier_y),10)
             # якщо знаходимось не в меню то
             if m_data.list_achievements != []:
-            # for achievement in m_data.list_achievements:
                 achievement = m_data.list_achievements[0]
                 achievement.move()
                 achievement.blit(self.screen,multiplier_x,multiplier_y)
@@ -312,18 +308,49 @@ class Screen():
                         ship.jump_cor[1] = -20
                         ship.jump_cor[3] = True
                         ship.x = 805
-                        # print('hoho')
                     # саме відображення кораблів
-                    # print(sprite.x,sprite.y,sprite.width,sprite.height,multiplier_x,multiplier_y,ship.name)
-                    # print(sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y,ship.name)
                     ship.blit(self.screen,ship.x*multiplier_x,ship.y*multiplier_y,ship.width*multiplier_x,ship.height*multiplier_y,multiplier_x,multiplier_y)
             if m_data.progression == "game":
+                for rocket in m_data.list_rockets:
+                    try:
+                        if rocket[0].name != 'weapons/line_rocket':
+                            x = (725+55.7*rocket[2]) * multiplier_x
+                            sprite = rocket[0]
+                            sprite.blit(self.screen,
+                                        sprite.x*multiplier_x,
+                                        sprite.y*multiplier_y,
+                                        sprite.width*multiplier_x,
+                                        sprite.height*multiplier_y,
+                                        multiplier_x,multiplier_y)
+                            if rocket[0].x*multiplier_x + rocket[0].width*multiplier_x > x:
+                                rocket[3]()
+                                m_data.list_rockets.remove(rocket)
+                        else:
+                            
+                            sprite = rocket[0]
+                            sprite.blit(self.screen,
+                                        sprite.x*multiplier_x,
+                                        sprite.y*multiplier_y,
+                                        sprite.width*multiplier_x,
+                                        sprite.height*multiplier_y,
+                                        multiplier_x,multiplier_y)
+                            for count in range(10):
+                                x = (725+55.7*count) * multiplier_x
+                                if rocket[0].x*multiplier_x + rocket[0].width*multiplier_x > x:
+                                    last = 0
+                                    if str(m_data.enemy_field[rocket[1]][count]) in '1234' or count == 9:
+                                        last = 1
+                                    rocket[2](rocket[1],count,last)
+                                    if last:
+                                        m_data.list_rockets.remove(rocket)
+                                        m_data.attack = None
+                                        break
+                    except Exception as error:
+                        pass
+
                 count = 0
                 list_to_delete = []
                 for buff in m_data.my_buffs:
-                    # 59, 115
-                    # try:
-                    
                     if buff[0] == 'Air_Defence':
                         if str(m_data.my_field[buff[1]][buff[2]]) in '05':
                             m_images.air_defence.blit(self.screen,
@@ -335,9 +362,7 @@ class Screen():
                     count +=1
                 for delete in list_to_delete:
                     del m_data.my_buffs[delete]
-                    # except:
-                    #     pass
-                # start_time = pygame.time.get_ticks()
+
                 for sprite in m_data.list_explosions:
                     sprite = sprite[0]
                     sprite.blit(self.screen,
@@ -346,8 +371,6 @@ class Screen():
                                 sprite.width*multiplier_x,
                                 sprite.height*multiplier_y,
                                 multiplier_x,multiplier_y)
-                # end_time = pygame.time.get_ticks()
-                # print(end_time-start_time,'attack',len(m_data.list_explosions))
                 if m_data.time_for_radar:
                     for sprite in m_data.list_for_radar:
                         pygame.draw.circle(self.screen,(50,255,50),((sprite.x+sprite.width/2)*multiplier_x,(sprite.y+sprite.height/2)*multiplier_y),10,25)
@@ -356,13 +379,10 @@ class Screen():
                     if m_data.turn:
                         m_buttons.opponent_turn.COLOR = (140, 140, 140)
                         m_buttons.your_turn.COLOR = (0, 0, 255)
-                        # sprite = m_buttons.opponent_turn_gray
-                        # m_buttons.opponent_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     else:
                         m_buttons.opponent_turn.COLOR = (255, 0, 0)
                         m_buttons.your_turn.COLOR = (140, 140, 140)
-                        # sprite = m_buttons.your_turn_gray
-                        # m_buttons.your_turn_gray.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                        
                     sprite = m_buttons.shop
                     m_buttons.shop.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     sprite = m_buttons.your_turn
@@ -372,19 +392,7 @@ class Screen():
                 else:
                     wait = m_buttons.wait
                     wait.blit(self.screen,wait.x*multiplier_x,wait.y*multiplier_y,wait.width*multiplier_x,wait.height*multiplier_y,multiplier_x,multiplier_y)
-            elif m_data.progression == 'shop':
-                square = pygame.Surface((m_buttons.description.rect.width,m_buttons.description.rect.height))
-                square.fill((255, 255, 255))
-                square.set_alpha(200)
-                self.screen.blit(square,m_buttons.description.rect)
-                m_buttons.stroke(self.screen,m_buttons.description.rect,(0,0,0),5)
-                sprite = m_buttons.description
-                m_buttons.description.blit(self.screen,
-                                 sprite.x*multiplier_x,
-                                 sprite.y*multiplier_y,
-                                 sprite.width*multiplier_x,
-                                 sprite.height*multiplier_y,
-                                 multiplier_x,multiplier_y)
+
             elif m_data.progression == 'achievements':
                 square = pygame.Surface((m_buttons.description_.rect.width,m_buttons.description_.rect.height))
                 square.fill((255, 255, 255))
@@ -421,9 +429,13 @@ class Screen():
 screen = Screen()
 ```
 
-
 #### Online_game/modules/attack.py: створення механіки атаки кораблів / creation of ship attack mechanics
 ```python
+'''
+    >>> Відповідає за атаку кораблей
+    >>> Перевіряє чи відбулась атака
+    >>> Відповідає за роботу зброї
+'''
 # імпортуємо необхідні модулі
 import pygame,random, time, threading,os
 import modules.data as m_data
@@ -432,37 +444,61 @@ import modules.clients_server as m_client
 import modules.audio as m_audio
 import modules.achievements as m_achievements
 import modules.transform as m_transform
+import modules.animations as m_animations
 # список клітинок без кораблів
 list_miss = "05"
 # список клітинок з кораблями
 list_explosion = "1234"
+attack_list = '012345'
+# функція для атаки кораблів в клітинках
 def attack_for_cell(row,cell):
+    '''
+        >>> Відповідає за вибух кораблів
+    '''
+    # змінна з назвою
     name = None
+    # наслідування класа Image для картинки і задання параметрів для неї
     image = m_images.Image(
-            progression = "game",
+            progression = "Noke",
             name = "",
             x = 725+55.7*cell,
             y = 115+55.7*row ,
             width= 55.7,
             height=55.7,
     )
+    # для вибуху кораблів на ворожому полі
     if str(m_data.enemy_field[row][cell]) in list_explosion:
+        # вибухи кораблів на ворожому полі
         m_data.enemy_field[row][cell] = 6
-        image.name = 'explosion'
+        # наслідування класа Animation для анімації і задання параметрів для неї
+        image = m_animations.Animation(progression = "Noke",
+            x = 725+55.7*cell,
+            y = 115+55.7*row ,
+            width= 55.7,
+            name = 'explosion',
+            height=55.7)
+        # назва змінюється на виьух
         name = "explosion"
+        # для атаки з використанням вогненної ракети
         if m_data.attack == 'fire_rocket':
-            image.name = 'fire'
+            # назва змінюється на вогонь
             name = 'fire'
+            # назва картинки змінюється на вогонь
+            image.name = 'fire'
+            # вибух корабля на ворожому полі
             m_data.enemy_field[row][cell] = 8
+            # атака
             m_data.attack = None
-        # відправляє закодовані данні
+        # додає монети за атаку
         m_data.coins += 10
+        # оновлює картинки
         image.update_image()
+        # додає параметри до списку з вибухами
         m_data.list_explosions.append([image, row, cell])
+        # додає досягнення гравцю
         m_achievements.achievement('It’s a Hit!')
+        # список для вибухів
         explosions = []
-        for row2 in m_data.enemy_field:
-            print(row2,'the best')
         # цикл для ворожих кораблів
         for ship in m_data.enemy_ships:
             # перевіряє ворожий корабль
@@ -479,128 +515,209 @@ def attack_for_cell(row,cell):
                 elif ship.rotate %180 != 0 and m_data.enemy_field[ship.row+count][ship.cell] != int(ship.name[0]):
                     # додається клітинка
                     cells.append([ship.row+count, ship.cell])
-            # 
+            # назва корабля повинна дорівнювати довжині клітинок
             if int(ship.name) == len(cells):
-                # 
+                # для вибухів в списку вибухів
                 for explosion in m_data.list_explosions:
-                    #
+                    # цикл для клітинок
                     for celll in cells:
-                        #
+                        # якщо вибухи дорівнюють клітинкам то
                         if explosion[1] == celll[0] and explosion[2] == celll[1]:
-                            #
+                            # до вибухів додається 0
                             explosions.append(explosion[0])
-        
+        # цикл минулих для вибухів
         for ex in explosions:
             try:
-                #
+                # до списку додається значення 'game' і прибирається минулиц вибух
                 m_data.list_blits['game'].remove(ex)
-                
             except:
-                # 
-                print('reoeroreoreoreooeroeroreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-    #
+                pass
+    # інакше промах на воожому полі
     elif str(m_data.enemy_field[row][cell]) in list_miss:
-        #
+        # нове досягнення
         m_achievements.achievement('Missed Shot')
+        # для атаки вогненної ракети
         if m_data.attack == 'fire_rocket':
+            # атака
             m_data.attack = None
+        # промах на ворожому полі
         m_data.enemy_field[row][cell] = 7
-        #
+        # зміна назви на промах
         name = "miss"
+        # зміна назви картинки на промах
         image.name = 'miss'
+        # оновлення картинки
         image.update_image()
-        #
+        # зміна ходу
         m_data.turn = False
-        #
+        # додає параметри до списку з вибухами
+        m_data.list_explosions.append([image, row, cell])
+    # повертає назву
     return name
-
+# функція для часу радара
 def timer_for_radar():
+    '''
+        >>> Відповідає за час роботи(таймер) радару
+    '''
+    # поки радар працює
     while m_data.time_for_radar:
+        # від часу віднімається 1 секунда
         m_data.time_for_radar -= 1
+        # пауза на 1 секунду
         time.sleep(1)
+    # якщо не має ходу
     if not m_data.turn:
+        # відправляє пропуск в m_client
         m_client.send("pass:")
+# список для відправки всього необхідного
 need_to_send = []
 # метод з атакою
 def attack(pos: tuple,multiplier_x,multiplier_y):
+    '''
+        >>> Відповідає за атаку кораблів зі зброєю
+    '''
     # створення глобальних змінних
     global list_miss, list_explosion
-    # умова для повора кораблів
-    
     # blits = True
+    # текст для відправки
     text_for_send = ''
-    if m_data.turn and m_data.connected:
-        
-        # цикл для ряду
+    # зміна ходу і підключення
+    if m_data.turn and m_data.connected and not m_data.list_rockets:
+        # цикл для атаки самонаводящою ракетою
         if m_data.attack == 'homing_rocket':
+            # функція з вогнем
             fire()
+            # список кораблів
             list_ships = []
+            # для кораблів на ворожому полі
             for ship in m_data.enemy_ships:
+                # якщо не кораблі в всіх кораблях то
                 if not ship in m_data.all_ships:
+                    # до списку кораблів додається корабель
                     list_ships.append(ship)
-            
+            # головний корабель, його поворот і довжина списку кораблів
             main_ship = list_ships[random.randint(0,len(list_ships)-1)]
+            # головна клітинка і віднімання 1 значення від корабля
             main_cell = random.randint(0,int(main_ship.name)-1)
+            # головний ряд
             main_row = main_ship.row
+            # поворот кораблів
             rotate_ship = main_ship.rotate
+            # перевірка розвороту корабля
             if rotate_ship % 180 == 0:
+                # головна клітинка додається до головного корабля
                 main_cell += main_ship.cell
                 # name = attack_for_cell(main_ship.row,main_cell + main_ship.cell)
                 # m_client.send(f"attack:{ main_ship.row},{main_cell + main_ship.cell},{name}".encode())
             else:
+                # головна клітинка додається до головного корабля
                 main_row += main_cell
-                m_achievements.achievement('Closed Skies')
+                # нове досягнення
+                # головна клітинка дорівнює головному кораблю
                 main_cell = main_ship.cell
+            # наявнісь ефектів
             for buff in m_data.buffs:
+                # якщо ефект протиповітряної оборони
                 if buff[0] == 'Air_Defence':
+                    # список клітинок
                     list_cells = []
+                    # ефект в ряду
                     buff_row = int(buff[1])
+                    # ефект в клітинці
                     buff_cell = int(buff[2])
+                    # для ракети в ряд
                     for row_air in range(5):
+                        # для ракети по клітинкам
                         for cell_air in range(5):
+                            # до ефекту в ряд додається ракета в ряд
                             row = buff_row + row_air-2
+                            # до ефекту по клітинкам додається ракета по клітинкам
                             cell = buff_cell + cell_air-2
+                            # перевірка значення в ряду і клітинці
                             if -1 < row < 10 and -1 < cell < 10:
+                                # до списку клітинок додаються параметри: ряд і клітинка
                                 list_cells.append([row,cell])
+                    # для клітинок в повітрі в списку клітинок 
                     for cell_for_air in list_cells:
+                        # якщо клітинки мають однакові значення
                         if main_row == cell_for_air[0] and main_cell == cell_for_air[1]:
+                            # в ряду ефект в ряд
                             main_row = buff_row
+                            # в клітинці ефект в клітинку
+                            m_achievements.achievement('Closed Skies')
                             main_cell = buff_cell
+                            # видалення ефекту
                             m_data.buffs.remove(buff)
             # if can_attack:
-            name = attack_for_cell(main_row,main_cell)
-            text_for_send+=f"attack:{main_row},{main_cell},{name};"
-            # if name: 
-            m_data.attack = None
-            m_data.turn = False
-            for buff in m_data.buffs:
-                if buff[0] == 'Energetic':
-                    m_data.turn = True
-            if not m_data.turn:
-                text_for_send+= 'pass:;'
+            def atta(main_row,main_cell):
+                '''
+                    >>> Відповідає за хід після атаки
+                '''
+                # функція атаки для клітинок
+                name = attack_for_cell(main_row,main_cell)
+                # текст для відправки: атака
+                text_for_send = f"attack:{main_row},{main_cell},{name};"
+                # if name: 
+                # атака
+                m_data.attack = None
+                # зміна ходу
+                m_data.turn = False
+                # для ефекту в ефектах
+                for buff in m_data.buffs:
+                    # якщо ефект енергетик
+                    if buff[0] == 'Energetic':
+                        # зміна ходу
+                        m_data.turn = True
+                # якщо не має ходу
+                if not m_data.turn:
+                    # текст для відправки: пропуск
+                    text_for_send+= 'pass:'
+                win_lose(text_for_send) 
+                m_audio.explosion.play()
+            
+            m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*main_row,f'weapons/homing_rocket','Noke',0),main_row,main_cell,lambda:atta(main_row,main_cell),0))
+            try:
+                #
+                threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
+            except:
+                pass
             ## 59, 115
-            m_audio.explosion.play()
+            # звук вибуху
+        # атака протиповітряної оборони
         elif m_data.attack == 'Air_Defence':
+            # функція вогню
             fire()
+            # цикл для ряду
             for row in range(10):
                 # цикл для клітинки
                 for cell in range(10):
+                    # створюємо хіт-бокс
                     rect = pygame.Rect((59+55.7*cell) * multiplier_x, 
                                     (115+55.7*row) * multiplier_y,
                                     55.7 * multiplier_x,
                                     55.7 * multiplier_y)
                     # перевірка на колізію
                     if rect.collidepoint(pos) and str(m_data.my_field[row][cell]) in '05':
+                        # до моїх ефектів додається протиповітряна оборона
                         m_data.my_buffs.append(['Air_Defence',row,cell])
+                        # текст для відправки: ефект протиповітряної оборони
                         text_for_send+=f'buff:Air_Defence,{row},{cell};'
+                        # атака
                         m_data.attack = None
+                        # зміна ходу
                         m_data.turn = False
+                        # цикл для ефекту в ефектах
                         for buff in m_data.buffs:
+                            # якщо ефект енергетик
                             if buff[0] == 'Energetic':
+                                # зміна ходу
                                 m_data.turn = True
+                        # якщо не має ходу
                         if not m_data.turn:
+                            # текст для відправки: пропуск
                             text_for_send+='pass:;'
         else:
+            #
             for row in range(10):
                 # цикл для клітинки
                 for cell in range(10):
@@ -611,88 +728,162 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                     55.7 * multiplier_x,
                                     55.7 * multiplier_y)
                     # перевірка на колізію
-                    if rect.collidepoint(pos):
-                        # for rows in m_data.enemy_field:
-                        #     print(rows)
-                        # 6 - explosion 7 - miss
-                        # змінна ім'я зі значенням нічого
+
+                    if rect.collidepoint(pos) and str(m_data.enemy_field[row][cell]) in attack_list:
+                        # якщо атака ракетою 3x3
                         if m_data.attack == 'rocket_3x3':
-                            text = 'attack:'
-                            for row_3x3 in range(3):
-                                for cell_3x3 in range(3):
-                                    for count in range(5):
-                                        print(row_3x3,cell_3x3,row+row_3x3,cell+cell_3x3)
-                                    if -1 < row+row_3x3-1 < 10 and -1 < cell+cell_3x3-1 < 10:
-                                        name = attack_for_cell(row+row_3x3-1,cell+cell_3x3-1)
-                                        text += f'{row+row_3x3-1},{cell+cell_3x3-1},{name} '
-                            text_for_send+= text + ';'
-                            m_data.attack = None
-                            fire()
-                            
+                            # текст: атака
+                            def atta(row,cell):
+                                '''
+                                    >>> Відповідає за атаку ракетою 3x3
+                                '''
+                                text = 'attack:'
+                                # цикл для ракети 3х3
+                                for row_3x3 in range(3):
+                                    # цикл для ракети 3х3
+                                    for cell_3x3 in range(3):
+                                        # перевірка ракети в клітинках 3х3
+                                        if -1 < row+row_3x3-1 < 10 and -1 < cell+cell_3x3-1 < 10:
+                                            # атака для клітинок
+                                            name = attack_for_cell(row+row_3x3-1,cell+cell_3x3-1)
+                                            # текст для ракети 3х3 в ряду і клітинці
+                                            text += f'{row+row_3x3-1},{cell+cell_3x3-1},{name},1 '
+                                # до тексту додаємо символ ";"
+                                # атака
+                                m_data.attack = None
+                                # функція вогню
+                                fire()
+                                m_audio.explosion.play(1)
+                                win_lose(text + ';')
+                            # змінна для тимчасового збереження рядка   
+                            ok,ok1 = row,cell 
+                            m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*row,f'weapons/rocket_3x3','Noke',0),ok,ok1,lambda:atta(ok,ok1),0))
+                            try:
+                                #
+                                threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
+                            except:
+                                pass
+                        # атака дінійною ракетою  
                         elif m_data.attack == 'line_rocket':
                             fire()
-                            text = 'attack:'
-                            for cell in range(10):
-                                ship = str(m_data.enemy_field[row][cell])
+                            # функція для атаки
+                            def atta(row,cell,last = 0):
+                                '''
+                                    >>> Відповідає за атаку в клітинках
+                                '''
+                                # функція вогню
+                                # даємо назву - атака для клітинок
                                 name = attack_for_cell(row,cell)
-                                text += f"{row},{cell},{name}"
-                                if ship in '1234':
-                                    break
-                                print(m_data.enemy_field[row][cell])
-                            text_for_send+= text + ';'
-                            text_for_send+= 'pass:' + ';'
-                            m_data.attack = None
+                                # змінна текст
+                                text = ''
+                                # якщо назва - атака для клітинок
+                                if name: 
+                                    # виграш або програш 
+                                    # win_lose(f"attack:{row},{cell},{name}")
+                                    if last:
+                                        win_lose(m_data.list_rockets[-1][-1]+f"{row},{cell},{name}")
+                                        # звук вибуху
+                                        m_audio.explosion.play() 
+                                    else:
+                                        # m_data.list_rockets[-1][-1]+=f"{row},{cell},{name} "
+                                        win_lose(f"attack:{row},{cell},{name},0")
+                                
+                            # змінна для тимчасового збереження рядка   
+                            ok = row
+                            
+                            # до списку ракет додаємо параметри
+                            m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*row,f'weapons/line_rocket','Noke',0),ok,atta,'pass;attack:'))
+                            try:
+                                # запуск списку ракет, їх анімація
+                                threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
+                            except:
+                                pass
                                 # elif str(m_data.enemy_field[row][cell]) in '05':
+                        # атака радаром
                         elif m_data.attack == 'radar':
-
+                            # функція вогню
                             fire()
+                            # нове досягнення
                             m_achievements.achievement('used radar')
+                            # змінюємо ширину
                             width = 55.7 * multiplier_x
+                            # змінюємо висоту
                             height = 55.7 * multiplier_y
+                            # змінюємо розташування по x
                             x = (725+55.7*cell) * multiplier_x
+                            # змінюємо розташування по y
                             y = (115+55.7*row) * multiplier_y
+                            # задаємо початок клітинок
                             start_cell = cell
+                            # задаємо початок рядів
                             start_row = row
+                            # задаємо кінець клітинок
                             end_cell = cell
+                            # задаємо кінець рядів
                             end_row = row
+                            # перевіряємо розташування рядів
                             if row > 1:
+                                # змінюємо параметри ширини, x і початку ряду
                                 width += 55.7 * multiplier_x *2
                                 x -= 55.7 * multiplier_x *2
                                 start_row -= 2
+                            # перевіряємо розташування рядів
                             elif row == 1:
+                                # змінюємо параметри ширини, x і початку ряду
                                 width += 55.7 * multiplier_x
                                 x -= 55.7 * multiplier_x
                                 start_row -= 1
+                            # перевіряємо розташування рядів
                             if row < 8:
+                                # змінюємо параметри ширини і кінця ряду
                                 width += 55.7 * multiplier_x*2
                                 end_row += 2
+                            # перевіряємо розташування рядів
                             elif row == 8:
+                                # змінюємо параметри ширини і кінця ряду
                                 width += 55.7 * multiplier_x
                                 end_row += 1
+                            # перевіряємо розташування клітинок
                             if cell < 8:
+                                # змінюємо параметри висоти і кінця клітинок
                                 height += 55.7 * multiplier_y*2
                                 end_cell += 2
+                            # перевіряємо розташування клітинок
                             elif cell == 8:
+                                # змінюємо параметри висоти і кінця клітинок
                                 height += 55.7 * multiplier_y
                                 end_cell += 1
+                            # перевіряємо розташування клітинок
                             if cell > 1:
+                                # змінюємо параметри висоти, y і початку клітинок
                                 start_cell -=2
                                 height += 55.7 * multiplier_y*2
                                 y -= 55.7 * multiplier_y * 2 
+                            # перевіряємо розташування клітинок
                             elif cell == 1:
+                                # змінюємо параметри висоти, y і початку клітинок
                                 start_cell -=1
                                 height += 55.7 * multiplier_y
                                 y -= 55.7 * multiplier_y
+                            # поле для радару
                             m_data.rect_for_radar = pygame.Rect(x,y,width,height)
+                            # список для радару
                             m_data.list_for_radar = []
-                            print(start_row,start_cell,end_row,end_cell)
+                            # звук радару
                             m_audio.radar.play()
+                            # цикл для ряду
                             for row2 in range(10):
+                                # цикл для клітинки
                                 for cell2 in range(10):
+                                    # перевірка першого і останнього ряда
                                     if row2 >= start_row and row2 <= end_row:
+                                        # перевірка першої клітинки і останньої
                                         if cell2 >= start_cell and cell2 <= end_cell:
+                                            # перевірка розташування кораблів на ворожому полі
                                             if str(m_data.enemy_field[row2][cell2]) in '1234':
+                                                # додаємо до списку з радаром:
                                                 m_data.list_for_radar.append(
+                                                    # наслідуємо клас Image і задаємо параметри
                                                     m_images.Image(55.7,
                                                                 55.7,
                                                                 725+55.7*cell2,
@@ -700,68 +891,104 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                                                 'explosion',
                                                                 progression='Noke')
                                                                 )
-                                                print('hallo')
-
+                            # ставимо час для роботи радару 5 секунд
                             m_data.time_for_radar = 5
+                            # запускаємо час дії радару
                             threading.Thread(target= timer_for_radar,daemon = True).start()
+                            # атакуємо
                             m_data.attack = None
+                            # змінюємо ход
                             m_data.turn = False
+                            # для ефекту в ефектах
                             for buff in m_data.buffs:
+                                # якщо ефект - енергетик
                                 if buff[0] == 'Energetic':
+                                    # дозволяємо ходити
                                     m_data.turn = True
                         
                         else:
-                            fire()
-                            name = attack_for_cell(row,cell)
-                            text = ''
-                            
-                            if name: 
-                                text_for_send+= f"attack:{row},{cell},{name};"
-                                #
-                                m_audio.explosion.play()
-        
+                            # функція для атаки
+                            def atta(row,cell):
+                                '''
+                                    >>> Відповідає за атаку по клітинкам
+                                '''
+                                # функція вогню
+                                fire()
+                                # даємо назву - атака для клітинок
+                                name = attack_for_cell(row,cell)
+                                # змінна текст
+                                text = ''
+                                # якщо назва - атака для клітинок
+                                if name: 
+                                    # виграш або програш                                  
+                                    win_lose(f"attack:{row},{cell},{name}")
+                                    # звук вибуху
+                                    m_audio.explosion.play()
+                            # змінна для тимчасового збереження рядка   
+                            ok,ok1 = row,cell
+                            # створення назви для звичайної ракети
+                            name_for_rocket = 'standart_rocket'
+                            # якщо атака вогняною ракетою, то
+                            if m_data.attack == 'fire_rocket':
+                                # назва ракети змінюється на вогняну ракету
+                                name_for_rocket = 'fire_rocket'
+                            # до списку ракет додаємо параметри
+                            m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*row,f'weapons/{name_for_rocket}','Noke',0),ok,ok1,lambda:atta(ok,ok1),0))
+                            try:
+                                # запуск списку ракет, їх анімація
+                                threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
+                            except:
+                                pass
 
         # if text != 'fire:':
         #     text_for_send+= ';'+text
         
-        
+        # функція для перемоги і програшу
         win_lose(text_for_send)
+# функція для вогню
 def fire():
+    '''
+        >>> Відповідає за горіння кораблів
+    '''
+    # робимо змінну необхідної для відправки глобальною
     global need_to_send
+    # текст для вогню
     text = 'fire:'
+    # цикл для перевірки рядів
     for row in range(10):
+            # перевіряємо ряди на полі
             if 8 in m_data.my_field[row]:
+                # цикл для перевірки клітинок
                 for cell in range(10):
+                    #  перевіряємо кількість ряди на полі
                     if m_data.my_field[row][cell] == 8:
+                        # цикл для вогню в ряд
                         for row_fire in range(3):
+                            # цикл для вогню в клітинках
                             for cell_fire in range(3):
+                                # перевіряємо ряди і вогонь в рядах
                                 if -1 < (row_fire + row-1) < 10:
+                                    # перевіряємо клітинки і вогонь в клітинках 
                                     if -1 < (cell_fire + cell-1) < 10:
+                                        # перевіряємо вибухи на полі в списку вибухів
                                         if str(m_data.my_field[row+row_fire-1][cell+cell_fire-1]) in list_explosion:
-                                            # with open(os.path.abspath(__file__+'/../../data/output.txt')) as file:
-                                            #     text += file.read()
-                                            # for r in m_data.my_field:
-                                            #     text += str(r)+'\n'
-                                            # with open(os.path.abspath(__file__+'/../../data/output.txt'),'w') as file:
-                                            #     file.write(text+'\n'+f"{m_data.my_field[row+row_fire-1][cell+cell_fire-1]},{row+row_fire-1},{cell+cell_fire-1}")
-                                            # for count in range(1000):
-                                            #     print(m_data.my_field[row+row_fire-1][cell+cell_fire-1],row+row_fire-1,cell+cell_fire-1)
+                                            # 9 рядів і клітинок на полі
                                             m_data.my_field[row+row_fire-1][cell+cell_fire-1] = 9
-
-                        # m_data.my_field[row][cell] = 6
-                        # for explosion in m_data.list_explosions:
-                            # if explosion[0].name == 'fire' and explosion[1] == row and explosion[2] == cell:
-                            #     explosion[0].name == 'explosion'
-                            #     explosion[0].update_image()
-    
+    # цикл для рядів
     for row in range(10):
+        # якщо на полі є 9 рядів
         if 9 in m_data.my_field[row]:
+            # цикл для клітинок
             for cell in range(10):
+                # якщо на полі 9 рядів і клітинок
                 if m_data.my_field[row][cell] == 9:
+                    # до тексту записується ряд і клітинка
                     text += f'{row},{cell} '
+                    # 8 рядів і клітинок на полі
                     m_data.my_field[row][cell] = 8
-                    image = m_images.Image(
-                            progression = "game",
+                    # наслідування класу Animation для картинки анімацій і задаємо параметри
+                    image = m_animations.Animation(
+                            progression = "Noke",
                             name = 'fire',
                             x = 59+55.7*cell,
                             y = 115+55.7*row,
@@ -769,58 +996,101 @@ def fire():
                             width= 55.7,
                             height=55.7
                         )
+                    # до списку вибухів додаємо картинку, ряд і клітинку
                     m_data.list_explosions.append([image,row,cell])
+    # якщо текст не дорвнює вогню
     if text != 'fire:':
+        # додаємо символ ';' до змінної необхідного для відправки
         need_to_send.append(';' + text)
     # return text
+# функція для виграшу та поразки
 def win_lose(text_for_send):
+    '''
+        >>> Відповідає за виграш та програш
+    '''
+    # робимо змінну необхідної для відправки глобальною
     global need_to_send
+    # змінна да_ні
     yes_no = True
-
+    # цикл для корабля в ворожих кораблях
     for ship in m_data.enemy_ships:
-        print(ship in m_data.enemy_ships, not ship.explosion)
+        # якщо немає вибуху корабля
         if not ship.explosion:
-        #     pass
         # elif :
+            # змінна да_ні змінюється на False
             yes_no = False
+    # перевірка да_ні і ворожих кораблів
     if yes_no and m_data.enemy_ships:
+        # зміна кольору
         m_transform.color = (25,255,25)
+        # зміна типу переходу
         m_transform.type_transform = 0
+        # перехід на вікно перемоги
         m_data.progression = "win"
+        # нове досягнення
         m_achievements.achievement('Like a Clap of Hands')
+        # змінна може
         can= True
+        # цикл для рядів на полі
         for row in m_data.my_field:
+            # цикл для клітинок в ряду
             for cell in row:
+                # перевірка клітинок
                 if cell == 6 or cell == 8:
+                    # не може
                     can = False
+                    # зупинка
                     break 
+        # умова для досягнення
         if can:
+            # нове досягнення
             m_achievements.achievement('Total Domination')
+        # додається перемога
         m_data.read_data['wins']+= 1
+        # записується в дату
         m_data.reading_data(m_data.read_data,'date.txt')
+        # якщо ьільше ніж 2 перемоги, то
         if m_data.read_data['wins'] > 2:
+            # нове досягнення
             m_achievements.achievement('Smells Like Victory')
+            #
             if m_data.read_data['wins'] > 49:
+                # нове досягнення
                 m_achievements.achievement('True Cossack')
-                # 0/0 = капибара 
+        # перевірка наявних монет 
         if m_data.coins == 200:
+            # нове досягнення
             m_achievements.achievement('Need More Gold!')
+        #
         elif m_data.coins == 190:
+            # нове досягнення
             m_achievements.achievement("Big Spender")
+        # до тексту для відправки додається програш
         text_for_send += ";lose:?????"
+    # перевірка тексту для відправки
     if text_for_send:
+        # змінна додати
         add = ''
+        # якщо хід не змінюється
         if not m_data.turn:
-            add = ';iDontHave:'
+            # пропуск ходу
+            add = ';pass:'
+        # перевірка необхідного для відправки
         if need_to_send:
+            # до тексту додаємо символ ';'
             text_for_send +=';' + ";".join(need_to_send)
+            # список для необхідного для відправки
             need_to_send = []
+        # відправляємо все в клієнта
         m_client.send(text_for_send + add)
 ```
 
-
 #### Online_game/modules/buttons.py: створення необхідних кнопок для застосунку / сreation of necessary buttons for the application
 ```python
+'''
+    >>> Відповідяє за створення всіх кнопок - клас Button
+    >>> Відповідає за функції при натисканні кнопок - метод button_start 
+'''
 # імпорт чужих модулів для роботи
 import pygame , socket, os
 import threading, random
@@ -836,6 +1106,9 @@ import modules.attack as m_attack
 # import modules.server as m_server
 from modules.ships import Ship,fill_field
 def stroke(screen,rect:pygame.Rect,color = (0,0,0),width = 5,multiplier_x = 1,multiplier_y = 1):
+    '''
+        >>> Малює обведення
+    '''
     pygame.draw.line(screen,color,
                      (int(rect.x*multiplier_x),int(rect.y*multiplier_y)),
                      (int((rect.x+rect.width)*multiplier_x),int(rect.y*multiplier_y)),int(width*multiplier_x))
@@ -848,8 +1121,12 @@ def stroke(screen,rect:pygame.Rect,color = (0,0,0),width = 5,multiplier_x = 1,mu
     pygame.draw.line(screen,color,
                      (int((rect.x)*multiplier_x),int((rect.y+rect.height)*multiplier_y)),
                      (int(rect.x*multiplier_x),int(rect.y*multiplier_y)),int(width*multiplier_x))
+
 # класс з кнопками
 class Button(Image):
+    '''
+        >>> Додає параметри до класу зображень
+    '''
     # метод з створенням параметрів
     def __init__(self, fun = None, width = 100, height = 100, x= 0, y= 0, name = "", progression = "menu", text: str ="Button", size = 65, color = (0, 0, 0),rotate = 0):
         # задаємо параметри в класс зображень
@@ -861,14 +1138,22 @@ class Button(Image):
         self.Y = y
         self.function = fun
         self.TEXT = text  
+        self.render = None
+        self.last_text = None
         self.activate = 0
         # створюємо параметри
         self.COLOR = color
         self.FONT = pygame.font.SysFont("algerian", size)
         self.rect = pygame.Rect(x,y,width,height)
         self.size = size 
+        self.start_size = size
+        self.current_size = self.size
     # метод з кнопкою старт
     def button_start(self, event):
+        '''
+            >>> Створює кнопку старт
+            >>> Перевіряє чи кнопка натиснута
+        '''
         if type(event) == pygame.event.Event:
 
             pos = event.pos
@@ -907,6 +1192,7 @@ class Button(Image):
                 size_ship = "1"
                 m_data.enemy_ships = []
                 m_data.all_ships = []
+                # Створення списку, у якому зберігаеться усе наше поле
                 m_data.my_field = [
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -962,6 +1248,7 @@ class Button(Image):
                         if m_data.cost_data[m_data.select_weapon] <= m_data.coins:
                             m_data.coins -= m_data.cost_data[m_data.select_weapon]
                             m_achievements.achievement('Hooked')
+                            m_audio.buying.play()
                             if 'Energetic' == m_data.select_weapon:
                                 m_data.buffs.append(['Energetic'])
                                 # m_client.send('buff:Energetic')
@@ -991,7 +1278,7 @@ class Button(Image):
                                 m_transform.type_transform = random.randint(0,m_transform.count_types)
                                 m_data.progression = "game"
                 except:
-                    print('hhhhhhhhhhhhhhhhhhhho')
+                    pass
             elif self.function == 'shop':
                 m_transform.type_transform = random.randint(0,m_transform.count_types)
                 if m_data.progression == 'shop':
@@ -1044,7 +1331,6 @@ class Button(Image):
             elif self.function and 'set_achievement' in self.function:
                 description_.TEXT = (self.name.split('/')[1]+': '+m_data.achievements_data[self.function.split('/')[1]]['description']).split(' ') +['                ', '           ']
                 m_data.select_weapon = self.name.split('/')[1]
-                print(description_.TEXT)
                 size = description_.FONT.size(" ".join(description_.TEXT))
                 if size[0] < description_.rect.width:
                     description_.TEXT = [" ".join(description_.TEXT)]
@@ -1053,7 +1339,6 @@ class Button(Image):
                     text = ''
                     
                     for text_for in description_.TEXT:
-                        print(description_.rect.width)
                         size = description_.FONT.size(text+text_for)
                         if size[0] < description_.rect.width:
                             text += text_for + ' '
@@ -1074,25 +1359,31 @@ class Button(Image):
                         elif description_.TEXT[-1] == text_for:
                             list_text.append(text)
                     description_.TEXT =  list_text
-                    print(description_.TEXT)
             elif self.function and 'weapons' in self.function:
                 # buff
-                description.TEXT = m_data.weapon_data[self.function.split('/')[1]][self.name.split('/')[1]].split(' ') +['                ', '           ']
-                m_data.select_weapon = self.name.split('/')[1]
-                print(description.TEXT)
+                
+                description.TEXT = m_data.weapon_data[self.function.split('/')[1]][self.function.split('/')[2]].split(' ') +['                ', '           ']
+                m_data.select_weapon = self.function.split('/')[2]
+                multiplers = [
+                    self.rect.width/self.width,
+                    self.rect.height/self.height
+                ]
+                if multiplers[0] > multiplers[1]:
+                    description.FONT = pygame.font.SysFont("algerian", int((40*multiplers[1])))
+                else:
+                    description.FONT = pygame.font.SysFont("algerian", int((40*multiplers[0])))
                 size = description.FONT.size(" ".join(description.TEXT))
-                if size[0] < description.rect.width:
+                if size[0] < description.width*multiplers[0]:
                     description.TEXT = [" ".join(description.TEXT)]
                 elif len(description.TEXT)-2:
                     list_text = []
                     text = ''
                     
                     for text_for in description.TEXT:
-                        print(description.rect.width)
                         size = description.FONT.size(text+text_for)
-                        if size[0] < description.rect.width:
+                        if size[0] < description.width*multiplers[0]:
                             text += text_for + ' '
-                        elif size[0] > description.rect.width:
+                        elif size[0] > description.width*multiplers[0]:
                             list_text.append(text)
                             text = text_for + ' '
                         elif description.TEXT[-1] == text_for + ' ':
@@ -1101,20 +1392,16 @@ class Button(Image):
                         pass
                     else:
                         size = description.FONT.size(text+text_for)
-                        if size[0] < description.rect.width:
+                        if size[0] < description.width*multiplers[0]:
                             text += text_for
-                        elif size[0] > description.rect.width:
+                        elif size[0] > description.width*multiplers[0]:
                             list_text.append(text)
                             list_text.append(text_for)
                         elif description.TEXT[-1] == text_for:
                             list_text.append(text)
-                    description.TEXT = [self.name.split('/')[1]+': '] +  list_text
-                    print(description.TEXT)
-                    # print(description.TEXT)
+                    description.TEXT = [self.function.split('/')[2]+': '] +  list_text
             else:
                 if m_data.client_server and nickname.TEXT:
-                    # for sprite in m_data.all_ships:
-                    #     print(sprite.x,sprite.y,sprite.width,sprite.height,multiplier_x,multiplier_y,ship.name)
                     # записання ip
                     ip = input.TEXT.split(": ")
                     del ip[0]
@@ -1127,34 +1414,43 @@ class Button(Image):
                     # перехід в пре-гру"
                     m_transform.type_transform = random.randint(0,m_transform.count_types)
                     m_data.progression = "pre-game"
-                    # if event.key == pygame.K_c:
-                    # for row in m_data.my_field:
-                    #     print(row)
     # метод відображення поверхні на головному окні
     def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
+        '''
+            >>> Відображає картинку на екрані
+        '''
         # якщо картинка задана 
         self.rect = pygame.Rect(x,y,width,height)
         if self.name != "":
             # відображення картинки 
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
-        # задання розміру для тексту 
-        if multiplier_x > multiplier_y:
+        if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
-        else:
-            self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_x)))
+            self.current_size= int((self.size*(multiplier_y/2)))
+            # self.size = int((self.size*multiplier_y))
+        elif self.current_size != int((self.size*multiplier_x)) and multiplier_x <= multiplier_y:
+            self.FONT = pygame.font.SysFont("algerian", int((self.size*(multiplier_x))))
+            self.current_size = int((self.size*multiplier_x))
+            
         if type(self.TEXT) == type(""):
             size = self.FONT.size(self.TEXT) 
             # задаємо y для тексту
             y = y + height/2-size[1]/2
             # задаємо x для тексту
             x = x + width/2-size[0]/2
-            # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
+            # if self.TEXT != self.last_text:
+                # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
             render = self.FONT.render(self.TEXT,True,self.COLOR)
             render.set_alpha(self.opasity)
             screen.blit(render, (x, y))
+            self.last_text = self.TEXT
+            # else:
+            #     screen.blit(self.render, (x, y))
             # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
         elif type(self.TEXT) == type([]):
+                
             count = 0
+            # while True:
             for text in self.TEXT:
                 if multiplier_x > multiplier_y:
                     self.FONT = pygame.font.SysFont("algerian", int((40*multiplier_y)))
@@ -1163,10 +1459,9 @@ class Button(Image):
                 height = self.FONT.size(text)[1]
                 size = self.FONT.size(text) 
                 y = (self.rect.y+10+height*count) * multiplier_y
-                # задаємо x для тексту
+                # задаємо x для тексту 
                 x = (self.rect.x)*multiplier_x
                 # відображення тексту на екрані
-                # print((self.rect.x+10))
                 render = self.FONT.render(text,True,(0,0,0))
                 render.set_alpha(self.opasity)
                 screen.blit(render, (self.rect.x, y))
@@ -1183,6 +1478,9 @@ class Button(Image):
 
 # button = Button()
 class Input(Image):
+    '''
+        >>> Додає параметри до картинки
+    '''
     def __init__(self, width: int, height: int,x = 0,y = 0, name = "", progression = "menu", color = (0,0,0), text = "ip: ", list = "0123456789."):
         self.start_width = width 
         self.start_height = height 
@@ -1196,19 +1494,26 @@ class Input(Image):
         self.rect = pygame.Rect(x,y,width,height)
         self.list = list
         self.size = 65 
-
+        self.current_size = self.size
     def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
+        '''
+            >>> Відображає картинку на екрані
+        '''
         if self.name != "":
             # відображення картинки
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
+        # s = pygame.time.get_ticks()
         # задання розміру для тексту
         self.rect = pygame.Rect(x,y,width,height)
         if self.list == 'any':
             self.x = 42
-        if multiplier_x > multiplier_y:
+        if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
-        else:
+            self.current_size= int((self.size*multiplier_y))
+            # self.size = int((self.size*multiplier_y))
+        elif self.current_size != int((self.size*multiplier_x)) and multiplier_x <= multiplier_y:
             self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_x)))
+            self.current_size = int((self.size*multiplier_x))
         size = self.FONT.size(self.TEXT)
         # задаємо y для тексту
         y = y + height/2-size[1]/2
@@ -1220,33 +1525,45 @@ class Input(Image):
         self.rect = pygame.Rect(x,y,width,height)
         # відображення тексту на екрані
     def activate(self, event):
-        # rect = pygame.Rect(self.x,self.y,self.width,self.height)
+        '''
+            >>> Відповідає за виділення поля ввода
+        '''
         if self.rect.collidepoint(event.pos):
             self.enter = True
-            print('hallok')
         else:
             self.enter = False
-        # print(self.enter)
     def edit(self,event):
+        '''
+            >>> Редагує текст
+        '''
         if self.enter:
             key = pygame.key.name(event.key)
             if event.key == pygame.K_BACKSPACE and self.TEXT != "ip: ":
-                # Убирает последний символ текста 
+                # прибирає останній символ текста 
                 self.TEXT = self.TEXT[:-1]
             elif key in self.list or self.list != "0123456789." and len(key) == 1:
-                # Добавляет символ который был нажат пользователем
+                # 
                 self.TEXT += key
 
         self.RENDER_TEXT = self.FONT.render(self.TEXT, True, self.COLOR)
 class Auto(Image):
+    '''
+        >>> Випадково розставляє кораблі
+    '''
     def __init__(self, width: int, height: int, x: int, y: int, name='', progression: str = "pre-game"):
         super().__init__(width, height, x, y, name, progression)
         self.rect = pygame.Rect(x,y,width,height)
         m_data.list_blits["pre-game"].append(self)
     def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
+        '''
+            >>> Відображає кнопку на екрані
+        '''
         self.rect = pygame.Rect(x,y,width,height)
         # pygame.draw.rect(screen,(255,25,25),self.rect)
     def randomship(self, cor):
+        '''
+            >>> Випадково розставляє кораблі
+        '''
         if self.rect.collidepoint(cor):
             count = 0
             count_ships = 0  
@@ -1334,9 +1651,6 @@ class Auto(Image):
                 except:
                     pass
                 if count_ships == 1 or count > 1000:
-                    for row1 in m_data.my_field:
-                        print(row1)
-
                     break
             if count > 1000:
                 self.randomship(cor)
@@ -1350,13 +1664,13 @@ if m_data.read_data["nickname"] != "":
     nick = m_data.read_data["nickname"]
 if "." in m_data.read_data["ip"]:
     ip1 = m_data.read_data["ip"]
-button_start = Button(width = 402 , height = 120, x = 435, y = 343, name = "", text= "start")
+button_start = Button(width = 402 , height = 120, x = 435, y = 370, name = "", text= "start")
 m_data.list_blits["menu"].append(button_start)
 
 input = Input(width = 496, height = 148, x = 387 , y = 568, name = "button_start", text = f"ip: {ip1}")
 nickname = Input(x= 42, y= 43, width= 281, height= 84, name = "button_start", text = nick, list = "any")
 ip = Button(x = 981, y = 59, width = 281, height = 84, name = "button_start", text = m_client.ip, size = 50)
-for object in [input, nickname, ip]:
+for object in [nickname, ip]:
     size = object.FONT.size(object.TEXT)
     if object.width - size[0] - 10 < 0:
         width = -(object.width - size[0] - 10)
@@ -1365,9 +1679,9 @@ for object in [input, nickname, ip]:
         object.update_image()
 text_ip = Button(x = ip.x, y = 10, width = ip.width, height = 45, text = "user ip", size = 50)
 m_data.list_blits["menu"].append(text_ip)
-auto = Auto(width= 170, height= 58, x= 665, y= 610)
-rotate = Button(fun= 'ship',  width = 225, height = 58, x= 886, y= 611, name = "", progression= "pre-game", text= "")
-play = Button(x = 1000, y = 720, name = "", fun= 'play', width = 170, height = 60, text = "")
+auto = Auto(width= 179, height= 79, x= 794, y= 587)
+rotate = Button(fun= 'ship',  width = 222, height = 68, x= 1000, y= 600, name = "", progression= "pre-game", text= "")
+play = Button(x = 900, y = 720, name = "", fun= 'play', width = 200, height = 65, text = "")
 revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "win", fun= "win_lose")
 out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text = "", fun = "check")
 m_data.list_blits["pre-game"].extend([rotate,play])
@@ -1375,36 +1689,38 @@ m_data.list_blits["pre-game"].extend([rotate,play])
 # out = Button(height = 80, width = 518, x = 0, y = 712, progression = "lose", text = "", fun = "check")
 music =Button(width = 76,height = 72,x = nickname.width + 50, y = 45, text = "", fun = "music", name =  "music")
 client = Button(width= 281, height= 100, name= "button_start", text= "client", x= 42, y= 600, fun= "c_s:client")  
-shop = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+110, y= 725, fun= "shop",progression="NONE")
-shop_ = Button(width= 281, height= 90, name= "button_start", text= "back to game", x= 15, y= 15, fun= "shop",progression='shop', size = 40)
+shop = Button(width= 281, height= 90, name= "button_start", text= "shop", x= 387+60, y= 725, fun= "shop",progression="NONE")
+shop_ = Button(width= 321, height= 145, name= "", text= "", x= 0, y= 0, fun= "shop",progression='shop', size = 40)
 achievements = Button(width= 500, height= 90, name= "button_start", text= "achievements", x= 387, y= 725, fun= "achievements",progression="menu")
 achievements_ = Button(width= 281, height= 90, name= "button_start", text= "back to menu", x= 960, y= 15, fun= "achievements",progression='achievements', size = 40)
 server = Button(width= 281, height= 100, name= "button_start", text= "server", x= 981, y= 600, fun= "c_s:server")
 wait = Button(width= 1280, x = 0, y = 712, height= 59, text = "wait", progression= "game")
 enemy_nickname = Button(y = 10, x = 1000, width= 200, height= 40, size = 40)
 your_nickname = Button(y = 10, x = 20, width= 200, height= 40, size = 40)
-coins = Button(y = 30, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "0", name = "button_start")
-description = Button(y = 150, x = 950, width= 300, height= 533, size = 20, progression= "shop", text = "select item")
+coins = Button(y = 30, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "0", name = "")
+# coin = Button(y = 50, x = 970, width= 50, height= 50, size = 0, progression= "shop", text = "", name = "duplone")
+description = Button(y = 175, x = 950, width= 300, height= 533, size = 20, progression= "shop", text = "select item")
 description_ = Button(y = 150, x = 950, width= 300, height= 533, size = 20, progression= "achievements", text = "select achievement")
-buy = Button(y = 533+150+25, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "buy", name = "button_start",fun='buy')
+buy = Button(y = 696, x = 957, width= 321, height= 145, size = 40, progression= "shop", text = "", name = "",fun='buy')
 # m_data.list_blits["shop"].append(description)
-homing_rocket = Button(y = 103, x = 267, width= 88, height= 179, progression= "shop", text = "", name = "weapons/homing_rocket", fun = "weapons/rockets")
-line_rocket= Button(y = 110, x = 423, width= 79, height= 180, progression= "shop", text = "", name = "weapons/line_rocket", fun = "weapons/rockets")
-rocket_3x3 = Button(y = 110, x = 577, width= 84, height= 180, progression= "shop", text = "", name = "weapons/rocket_3x3", fun = "weapons/rockets")
-fire_rocket = Button(y = 110, x = 767, width= 63, height= 215, progression= "shop", text = "", name = "weapons/fire_rocket", fun = "weapons/rockets")
+homing_rocket = Button(y = 235, x = 15, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/rockets/homing_rocket")
+line_rocket= Button(y = 235, x = 167, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/rockets/line_rocket")
+fire_rocket = Button(y = 235, x = 319, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/rockets/fire_rocket")
+rocket_3x3 = Button(y = 235, x = 469, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/rockets/rocket_3x3")
 
-Energetic = Button(y = 415, x = 267, width= 65, height= 128, progression= "shop", text = "", name = "weapons/Energetic", fun = "weapons/buff")
-radar = Button(y = 413, x = 423, width= 131, height= 132, progression= "shop", text = "", name = "weapons/radar", fun = "weapons/buff")
-Air_Defence = Button(y = 391, x = 577, width= 186, height= 176, progression= "shop", text = "", name = "weapons/Air_Defence", fun = "weapons/buff")
-Anti_fire = Button(y = 391, x = 767, width= 184, height= 185, progression= "shop", text = "", name = "weapons/Anti_fire", fun = "weapons/buff")
-
+Anti_fire = Button(y = 514, x = 15, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/Anti_fire")
+radar = Button(y = 514, x = 167, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/radar")
+Energetic = Button(y = 514, x = 319, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/Energetic")
+Air_Defence = Button(y = 514, x = 469, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/buff/Air_Defence")
 list_weapons = [homing_rocket,rocket_3x3,line_rocket,fire_rocket,Energetic,radar,Air_Defence,Anti_fire]
+
+m_data.list_blits['shop'] += list_weapons+[coins,buy,description]
 if m_data.client_server == "server":
     server.COLOR =(40,2,255)
 if m_data.client_server == "client":
     client.COLOR =(40,2,255)
-your_turn = Button(width= 272, height= 66, x= 133, y= 712, text= "your step", progression= "", color=(0, 0, 255))
-opponent_turn = Button(width= 350, height= 66, x= 772, y= 712, text= "opponent`s step", progression= "", color = (255, 0, 0))
+your_turn = Button(width= 272, height= 66, x= 133, y= 712, text= "your step", progression= "", color=(0, 0, 255),size=50)
+opponent_turn = Button(width= 350, height= 66, x= 800, y= 712, text= "enemy step", progression= "", color = (255, 0, 0),size=50)
 
 m_data.list_blits["game"].append(your_nickname)
 m_data.list_blits["game"].append(enemy_nickname)
@@ -1420,6 +1736,15 @@ for achievement_code in m_data.achievements_data:
 
 #### Online_game/modules/ships.py: створення механік кораблів, грального поля / development of mechanics for ships and the game field
 ```python
+'''
+    >>> Відображає кораблі на полі - клас Ship
+    >>> Розміщує кораблі за координатами - параметри x, y
+    >>> Перевіряє чи можна поставити корабель - метод check_enemy
+    >>> Обертає кораблі - метод rotate_ship
+    >>> Переміщує кораблі на нову позицію - метод place
+    >>> Робить перевірку кожної клітинки - функція check
+    >>> Очищує поле - функція clear_field
+'''
 # імпортуємо файли
 import modules.images as m_images
 import modules.data as m_data
@@ -1429,16 +1754,17 @@ import modules.achievements as m_achievements
 # імпортуємо модуль pygame
 import pygame,random
 
-# создаемо з Кораблями
+# створює кораблі
 class Ship(m_images.Image):
+    '''
+        >>> Створює кораблі
+    '''
     # Ініціалізація корабля, параметри координат, розміри та орієнтація
     def __init__(self, x: int, y: int, name='1', row=0, cell=0, field_cor=[59, 115], rotate=0, add=True):
         # Розміри корабля залежать від його імені (перший символ - це кількість клітин корабля)
         self.width = int(name[0]) * 50
-        # print(self.width)
         self.height = 50
         self.explosion = False
-        # print(self.height)
         # Викликаємо конструктор батьківського класу (Image) для ініціалізації зображення
         super().__init__(self.width, self.height, x, y, name, "F", rotate)
         # Встановлюємо нові координати для корабля на полі
@@ -1452,7 +1778,6 @@ class Ship(m_images.Image):
                     m_data.my_field[row][cell + count] = int(name[0])
                 else:
                     m_data.my_field[row + count][cell] = int(name[0])
-        # print(self.y)
         # Ініціалізація деяких змінних
         self.select = False  # Перевірка, чи вибрано корабель
         self.row = row
@@ -1464,10 +1789,11 @@ class Ship(m_images.Image):
         self.field = pygame.Rect(field_cor, (10 * 55.7, 10 * 55.7))
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.celled = None
-    # def jump(self, x = 5,y = 100):
-    #     self.x 
     # Метод для перевірки, чи можна поставити корабель
     def check_enemy(self):
+        '''
+            >>> Перевіряє чи ми потрапили в ворожий корабель чи ні  
+        '''
         yes_no = 0
         field = m_data.enemy_field
         cells = []
@@ -1479,26 +1805,32 @@ class Ship(m_images.Image):
             elif self.rotate % 180 != 0 and m_data.enemy_field[self.row + count][self.cell] != int(self.name[0]):
                 cells.append([self.row + count, self.cell])
                 yes_no += 1
-                
-        # Якщо перевірка пройдена успішно, оновлюємо поле
+
+        # Якщо перевірка пройдена успішно, оновлюємо поле 
         if yes_no == int(self.name[0]):
             if self in m_data.all_ships:
                 pass
             else:
+                try:
+                    for cell in cells:
+                        list = m_data.list_explosions
+                        list.reverse()
+                        count = 0
+
+                        for explosion in list:
+                            if explosion[1] == cell[0] and explosion[2] == cell[1]:
+                                del m_data.list_explosions[count]
+                            count += 1
+                except Exception as error:pass
                 self.explosion = True
 
                 m_data.all_ships.append(self)
                 if str(self.name) == '4':
                     m_achievements.achievement('Titanic')
                 m_attack.need_to_send.append(f"explosion:{self.row},{self.cell}")
-                # m_client.send()
-                
-
-                # print(cells)
                 for celll in cells:
                     row = celll[0]
                     cell = celll[1]
-                    # print(row, cell)
                     fill_field(field)
                     check(field=field, row=row + 1, cell=cell + 1, values=[5, 7])
                     check(field=field, row=row - 1, cell=cell - 1, values=[5, 7])
@@ -1511,6 +1843,9 @@ class Ship(m_images.Image):
 
     # Метод активації корабля при натисканні
     def activate(self, event, multiplier_x=1, multiplier_y=1):
+        '''
+            >>> Виділяє корабель при натисканні на нього
+        '''
         if self.rect.collidepoint(event.pos):
             self.select = True
             if random.randint(0,50) == 0 and ship.name[0] == '4':
@@ -1523,7 +1858,6 @@ class Ship(m_images.Image):
                         if cell == 4:
                             cell = 0
             self.name = self.name[0] + "_select"
-            # print('eqw')
         else:
             self.place(event.pos, multiplier_x, multiplier_y)
             self.select = False
@@ -1532,7 +1866,9 @@ class Ship(m_images.Image):
         self.update_image()
     # Метод для обертання корабля
     def rotate_ship(self):
-        # print(2132132312123123231213231)
+        '''
+            >>> Обертає кораблі
+        '''
         # Очищаємо місце для нового положення корабля на полі
         for count in range(int(self.name[0])):
             if self.rotate % 180 == 0:
@@ -1572,8 +1908,10 @@ class Ship(m_images.Image):
 
     # Метод для зміщення корабля на нову позицію
     def place(self, pos, multiplier_x=1, multiplier_y=1):
+        '''
+            >>> Зміщує кораблі на нову позицію
+        '''
         if self.select:
-            # print(self.field.collidepoint(pos))
             for row in range(10):
                 for cell in range(10):
                     yes_no = False
@@ -1611,15 +1949,12 @@ class Ship(m_images.Image):
                             fill_field(m_data.my_field)
                     except:
                         pass
-                        # print("капибара")
                     if yes_no:
                         rect = pygame.Rect(
                             self.field_cor[0] + cell * 55.7*multiplier_x,
                             self.field_cor[1] + row * 55.7*multiplier_y,
                             55.7, 55.7)
                         if rect.collidepoint(pos):
-                            # print(m_data.cells,self.celled)
-                            # print()
                             for count in range(int(self.name[0])):
                                 if self.rotate % 180 == 0:
                                     m_data.my_field[self.row][self.cell + count] = 0
@@ -1640,11 +1975,9 @@ class Ship(m_images.Image):
                                     m_data.my_field[row + count][cell] = int(self.name[0])
                             self.select = False
                             fill_field(m_data.my_field)
-                            # print(m_data.cells,self.celled)
                             return True
             count = 0
             for cell1 in m_data.cells[self.name[0]]:
-                # print(cell1)
                 if not cell1[0]:
                     cell1[0] = True
                     self.x = cell1[1][0]
@@ -1654,37 +1987,38 @@ class Ship(m_images.Image):
                             m_data.my_field[self.row][self.cell + count1] = 0
                         else:
                             m_data.my_field[self.row + count1][self.cell] = 0
-                    # m_data.my_field[self.row][self.cell] = 0 
                     self.celled = count
                     self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-                    # for row in m_data.my_field:
-                    #     print(row)      
                     break
                 count += 1 
         fill_field(m_data.my_field)
-        # print(m_data.cells)
-
-        # for row in m_data.my_field:
-        #     print(row)
 # Функція перевірки на полі для кожної клітинки
 def check(field, row, cell, values=[0, 5]):
+    '''
+        >>> Перевіряє клітинки на полі
+    '''
     if row != -1 and -1 != cell:
         if row != 10 and 10 != cell:
             # Перевірка значення в клітинці
             if field[row][cell] == values[0]:
                 field[row][cell] = values[1]
                 if values[1] == 7:
-                    # print(11)
                     image = m_images.Image(
-                        progression="game",
+                        progression="Noke",
                         name="miss",
                         x=725 + 55.7 * cell,
                         y=115 + 55.7 * row,
                         width=55.7,
                         height=55.7
                     )
+                    image.update_image()
+                    if image:
+                        m_data.list_explosions.append((image,row,cell))
 # Заповнюємо поле
 def fill_field(field: list):
+    '''
+        >>> Заповнює поле
+    '''
     clear_field(field)
     for row in range(10):
         for cell in range(10):
@@ -1701,6 +2035,9 @@ def fill_field(field: list):
                 check(field=field, row=row, cell=cell - 1)
 # Очищаємо поле від певних значень
 def clear_field(field):
+    '''
+        >>> Очищує поле
+    '''
     for row in range(10):
         for cell in range(10):
             if field[row][cell] == 5:
@@ -1722,10 +2059,16 @@ for count in range(10):
 fill_field(m_data.my_field)
 # Додаємо корабель на нову позицію
 ship.place((1, 1))
+
 ```
 
 #### Online_game/modules/images.py: файл для роботи з зображеннями / file for working with images
 ```python
+'''
+    >>> Працює з зображеннями - клас Image
+    >>> Оновлюємо зображення - метод update_image
+    >>> Відображує картинки на екрані - метод blit
+'''
 # імпортуємо модуль pygame , os
 import pygame, os
 #імпртуємо модуль modules.data як m_data
@@ -1733,6 +2076,9 @@ import modules.data as m_data
 import modules.main_window as main_window
 # клас для роботи з зображенням
 class Image():
+    '''
+        >>> Задаємо параметри до зображення
+    '''
     # ініціалізуємо зображення
     def __init__(self, width: int, height: int, x: int, y: int, name = '', progression: str = "menu", rotate = 0, edit = True): 
         # переносимо параметри в змінні
@@ -1744,14 +2090,24 @@ class Image():
         self.name = name
         self.progression = progression
         self.rotate = rotate
+        self.row = None
+        self.cell = None
         # создаємо змінну self.image
-        self.image = None 
+        self.image = None
+        # self.select_image = None
+        # self.main_image = None
+        # self.current_select = 0
+        self.last_name = None
         # вказуємо чи можемо ми редагувати зображення
         self.edit_image = True
         # оновлюємо наше зображення
         self.update_image()
     # создаємо метод який оновлює наше зображення
     def update_image(self):
+        '''
+            >>> Завантажує зображення за вказаним шляхом
+            >>> Змінює розмір зображення
+        '''
         try:
             # завантажуємо зображення з вказаного нам шляху
             self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
@@ -1769,7 +2125,7 @@ class Image():
                 m_data.list_blits[self.progression].append(self)
         except :
             # якщо сталась помилка при завантаженні зображення - ми пишемемо її
-            print("Error: image",self.name)
+            pass
     # создаємо метод який відображє наше зображення
     # def blit(self, screen):
 
@@ -1777,33 +2133,44 @@ class Image():
     #     screen.blit(self.image, (self.x, self.y))
     # метод для відображення на екрані
     def blit(self,screen,x,y,width,height,multiplier_x,multiplier_y):
+        '''
+            >>> Відображуємо картинку на екрані
+        '''
         # перевіряємо отриману ширину і висоту
+        # s = pygame.time.get_ticks()
+        # self.image = self.main_image
+        # if self.current_select:
+        #     self.image = self.
         try:
-            if self.image.get_width() != int(width) or self.image.get_height() != int(height):
-                print(self.image.get_width(), width, self.image.get_height(), height)
-                # завантажуємо картинку
-                self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
-                # перевертаємо картинку
-                self.image = pygame.transform.rotate(self.image, self.rotate)
-                # перевіряємо оберт екрану
-                if self.rotate % 180 == 0:
-                    # змінює масштаб
-                    self.image = pygame.transform.scale(self.image, (width, height))
-                    # задаємо розмір квадрату 
-                    self.rect = pygame.Rect(x,y,width,height)
-                    # малює прозорість зображення
-                    self.image.set_alpha(self.opasity)
-                else:
-                    # задаємо інший масштаб картинки
-                    self.image = pygame.transform.scale(self.image, (self.height * multiplier_x, self.width * multiplier_y))
-                    # задаємо інший розмір квадрату
-                    self.rect = pygame.Rect(x,y,self.height * multiplier_x, self.width * multiplier_y)
-                    # малює прозорість зображення
-                    self.image.set_alpha(self.opasity)
+            if self.name != self.last_name or self.image.get_width() != int(width) or self.image.get_height() != int(height) :
+                if self.rotate == 0 or self.image.get_width() != int(self.height*multiplier_x) or self.image.get_height() != int(self.width*multiplier_y) or self.name != self.last_name:
+                    
+                    # завантажуємо картинку
+                    self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
+                    # перевертаємо картинку
+                    self.image = pygame.transform.rotate(self.image, self.rotate)
+                    # перевіряємо оберт екрану
+                    if self.rotate % 180 == 0:
+                        # змінює масштаб
+                        self.image = pygame.transform.scale(self.image, (width, height))
+                        # задаємо розмір квадрату 
+                        self.rect = pygame.Rect(x,y,width,height)
+                        # малює прозорість зображення
+                        # self.image.set_alpha(self.opasity)
+                    else:
+                        # задаємо інший масштаб картинки
+                        self.image = pygame.transform.scale(self.image, (self.height*multiplier_x, self.width*multiplier_y))
+                        # задаємо інший розмір квадрату
+                        self.rect = pygame.Rect(x,y,height, width)
+                        # малює прозорість зображення
+                        # self.image.set_alpha(self.opasity)
+                    self.last_name = self.name
             # відображення зображення на екрані
             screen.blit(self.image, (x, y))
         except:
-            print('hhaaa')
+            pass
+        # e = pygame.time.get_ticks()
+        # if e-s:
 # задаємо параметри для фону 
 background = Image(width = 1280, height = 851, x = 0, y = 0, name = "background")
 # задаємо параметри для фону магазину
@@ -1817,10 +2184,6 @@ play_field = Image(width = 1280, height = 835, x = 0, y = 0, name = "play_field"
 lose = Image(width = 1280, height = 852, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
 # задаємо параметри для екрану перемоги
 win = Image(width = 1280, height = 852, x = 0, y = 0, name = "win", progression = "win", edit = False)
-# задаємо параметри для іконок ракет
-rockets_icon = Image(width = 130, height = 130, x = 50, y = 180, name = "weapons/rockets_icon", progression = "shop")
-# задаємо параметри для серця
-hearts = Image(width = 130, height = 130, x = 50, y = 410, name = "weapons/hearts", progression = "shop")
 # задаємо параметри для екрану досягнень
 background_achievements = Image(width = 1280, height = 851, x = 0, y = 0, name = "achievements", progression = "achievements")
 # задаємо параметри для протиповітряної охорони
@@ -1829,6 +2192,10 @@ air_defence = Image(55.7,55.7,-999,-99,'weapons/Air_Defence',progression='None')
 
 #### Online_game/modules/audio.py: файл для роботи зі звуком / file for working with sound
 ```python
+'''
+    >>> Програє звуки і музику
+    >>> Зупиняє звук і музику
+'''
 # імпортуємо модулі 
 import pygame, os 
 import modules.data as m_data
@@ -1838,6 +2205,10 @@ pygame.mixer.init()
 # pygame.mixer.music.set_volume(0.5)
 # створення класу для роботи з аудіо
 class Audio():
+    '''
+        >>> Додає фонову музику
+        >>> Встановлює гучність для звуку
+    '''
     # ініцілізуємо клас аудіо 
     def __init__(self, name: str, loops: int = -1,volume = 0.5,max_time = "any"): 
         # створюємо змінні
@@ -1854,17 +2225,30 @@ class Audio():
             # додаємо довжину звуку
             max_time = self.audio.get_length()
     # метод для відтворення аудіо
-    def play(self):
+    def play(self, volume = 0.5):
+        '''
+            >>> Починає музику
+            
+        '''
         try:
             # зупиняємо музику
             self.stoped = False
             # відтворюємо музику
+            self.audio.set_volume(volume)
             self.audio.play(loops= self.loops)
         except:
             # якщо буде помилка при завантаженні, виводимо повідомлення про помилку
-            print("Error: audio")
+            pass
     # метод для зупинки звуку
+
     def stop(self):
+        '''
+            >>> Зупиняє звук
+            >>> Задає зупинки між звуками
+            >>> Додає звук до досягнень
+            >>> Додає звук для вибуху
+            >>> Зупиняє музику
+        '''
         # зупинка звуку
         self.audio.stop()
         # задаємо для зуптнки звуку значення True 
@@ -1875,6 +2259,7 @@ achievement = Audio('achievement',max_time=2, loops=0)
 radar = Audio('radar', loops=0)
 # задаємо саундтрек для доріжки звуку
 track = Audio('Soundtrack')
+buying = Audio('buying',0)
 # перевіряємо чи не дорівнює звук значенню False
 if m_data.read_data["sound"] != "False":
     # граємо звукову доріжку
@@ -1885,6 +2270,10 @@ explosion = Audio('blas',0)
 
 #### Online_game/modules/data.py: файл у якому зберігається змінні / file for storing variables
 ```python
+'''
+    >>> Працює з словниками та списками
+    >>> Зберігає данні та налаштування гри
+'''
 import os 
 type = "/"
 path = __file__.split("/")
@@ -1931,16 +2320,18 @@ weapon_data = {
         "Anti_fire":f"This buff cost:{cost_data['Anti_fire']} and enables the player to extinguish a ship after it has been hit by a fire missile."
     }
 }
-#     "fire_rocket":2,
-#     "Anti_fire":10,
+
 select_weapon = None
 attack = None
 time_for_radar = 0
 rect_for_radar = None
 coins = 0
 list_achievements = []
+list_animations = []
 list_for_radar = []
 buffs = []
+
+list_rockets = []
 my_buffs = []
 # achievements_data = [
 #     {
@@ -2062,7 +2453,6 @@ def reading_data(dict,filename):
                     dict[name] = data[count]
                 count+=1
     except Exception as error:
-        print(error)
         text = ''
         count = 0
         for name in dict:
@@ -2082,10 +2472,8 @@ for achievement in achievements_data:
     except:
         with open(path+type+'achievements'+type+name+'.txt', "w") as file:
             file.write('False')
-print(read_data)
-# server.COLOR = (0,0,0)
-# client.COLOR = (0,0,0)
-# self.COLOR =(40,2,255)
+
+
 # створення словника у якому містяться всі картинки для кожної стадії гри
 list_blits = {
     "menu": [],
@@ -2120,7 +2508,7 @@ for count in range(10):
     enemy_field.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     my_field.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 # Створеня змінної, у якій ми говоримо треба чи ні повернути корабель
-turn = True
+turn = False
 client_server = read_data["client_server"]
 revenge = False
 # Створеня словника, у якому міститься стандартне розташування всіх кораблів
@@ -2150,6 +2538,9 @@ cells = {
 
 #### Online_game/modules/clients_server.py: файл який відповідає за роботу клієнту та серверу для гри по мережі / file responsible for the client and server functionality in a networked game
 ```python
+'''
+    >>> Працює з підключенням клієнта та сервера - змінна client_server
+'''
 # імпортуємо необхідні модулі
 import modules.data as m_data 
 import modules.ships as m_ships
@@ -2157,58 +2548,37 @@ import modules.images as m_images
 import modules.buttons as m_buttons
 import modules.transform as m_transform
 import modules.achievements as m_achievements
+import modules.audio as m_audio
 import socket,random,os
-
+import modules.animations as m_animations
 # створюємо функцію для відправкм даних на сервер
 def send(data:bytes):
+    '''
+        >>> Відправляє закодовані данні
+    '''
     # відправляємо дані серверу
-    # if m_data.client_server == "server":
-        # server1[0].sendall(data)
-        # m_server.send(data)
-    # else:
     try:
         # відпровляємо закодовані данні
-        client.sendall(data+[';'.encode()][0])
+        client.sendall([';'.encode()][0]+data+[';'.encode()][0])
     except:
         # відпровляємо закодовані данні
-        client.sendall(f"{data};".encode())
+        client.sendall(f";{data};".encode())
 # отримує ім'я хоста 
 hostname = socket.gethostname()
 # Повертає IP адрессу по імені хосту 
 ip = socket.gethostbyname(hostname)
-print(ip)
-# import http.client
-# conn = http.client.HTTPConnection('ifconfig.me')
-# conn.request('GET','/')
-# print(conn)
-# conn = conn.getresponse('ip')
-# print(conn)
-import requests
 
-def get_external_ip():
-    try:
-        response = requests.get("https://api.ipify.org?format=json") # или https://ifconfig.me/ip
-        response.raise_for_status() # Проверка на ошибки HTTP
-        ip_data = response.json()
-        return ip_data['ip']
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка при получении внешнего IP: {e}")
-        return None
-
-external_ip = get_external_ip()
-if external_ip:
-    print(f"Внешний IP-адрес: {external_ip}")
-ip = external_ip
 # створюємо сокет клієнту
 client_server = socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
-# socket.socket(family = socket.AF_INET, type = socket.SOCK_STREAM)
 # функція для активації
 count = 0
 def activate():
+        '''
+            >>> Під'єднуємо клієнта і сервера
+        '''
     # робимо змінну глобальною
-    global client,count
-    try:
-
+        global client,count
+    # try:
         # перевіряємо чи не відбувається хід супротивника
         if not m_data.revenge:
             # виводимо ім'я на поле
@@ -2220,271 +2590,275 @@ def activate():
             # перевіряємо чи клієнт на сервері
             if m_data.client_server == "server":
                 # зв'язує клієнта з ip і портом
-                client_server.bind(("0.0.0.0", 8800))
+                client_server.bind(('0.0.0.0', 8800))
                 # Функція listen активує очікування підключення користувача
                 client_server.listen()
+                m_data.turn = random.randint(0,1)
+                if not m_data.turn:
+                    ships+=';pass:'
                 # Підтверджуємо з'єднання від клієнту
                 client = client_server.accept()[0]
                 # перевіряємо з'єднання
-                m_data.connected = True 
-                # цикл для повторів классу range
-                for c in range(1000):
-                    print('HELLO server')
+                m_data.connected = True
             # перевіряємо чи клієнт знаходиться в клієнті
             if m_data.client_server == "client":
                 # підключаємо кліента до сервера
                 client = client_server
                 # під'єднуємо клієнта по ip і порту
                 client.connect((m_data.ip, 8800))
-                # цикл для повторів классу range
-                for c in range(1000):
-                    print('HELLO client')
                 
-                print("it is cool", m_data.ip)
-            # визиваємо функцію для відправки даних на сервер
-            # send(f"".encode())
-            # цикл для повторів классу range
-            for count in range(1000):
-                print('good')
             # надаємо підключенню значення True
             m_data.connected = True 
             # надаємо ходу супротивника значення True
             m_data.revenge = True
-            # відправляємо закодані данні 
+            # визиваємо функцію для відправки даних на сервер
             send(ships.encode())
             # перевіряємо чи не закінчена гра
+            client_data = ''
             while not m_data.end:
-                try:
-                    # Отримання данних кліенту та декодування їх
-                    client_data = client.recv(1024).decode()
-                    print(client_data)
-                    # розділяємо рядки сиволом ";"
-                    raw_data = client_data.split(";")
-                    # створюємо змінну текст зі значенням str
-                    text1 = ''
-                    # перевіряємо ряди 
-                    for client_data in raw_data:
-                        # перевіряємо клієнт дату
-                        if client_data:
-                            # створюємо змінну текст зі значенням str
-                            text1 = ''
-                            # Перетворення данних на список розділяючи символом :
-                            data = client_data.split(":")
-                            # якщо в даті нічого не маємо
-                            if 'iDontHave' in data[0]:
-                                #змінюємо значення перевороту на True
-                                m_data.turn = True
-                            # перевіряємо наявність ім'я на полі
-                            if "field_nickname" in data[0]:
-                                # текст нікнейму такий самий як твій нікнейм
-                                m_buttons.your_nickname.TEXT = m_buttons.nickname.TEXT
-                                print(m_buttons.enemy_nickname.TEXT, data[1])
-                                # текст нікнейму супротивника дорівнює значенню в даті
-                                m_buttons.enemy_nickname.TEXT = data[1]
-                                print(m_buttons.enemy_nickname.TEXT, data[1])
-                                # друге значення зі списку буде розділен за пробілами
-                                data = data[2].split(" ")
-                                # Для кожного корабля у списку данних
-                                for ship in data:
-                                    # Розділення кожного корабля по комі
-                                    splited_data = ship.split(",")
-                                    # Якщо розділенні данні кораблів не пусті
-                                    if splited_data != [""]:
-                                        try:
-                                            print('create ship')
-                                            print(splited_data)
-                                            # створюеться екземпляр класу корабля з переданими параметрами
-                                            ship = m_ships.Ship(x = 724,y = 115,
-                                                        field_cor = (724,115),
-                                                        name  = splited_data[0],
-                                                        row = int(splited_data[1]),
-                                                        cell = int(splited_data[2]),
-                                                        rotate = int(splited_data[3]),
-                                                        add = False)
-                                            
-                                            # Для кожного корабля первірка
-                                            for count in range(int(ship.name[0])):
-                                                # Якщо корабль було повернуто
-                                                if ship.rotate % 180 == 0:
-                                                    # Додаємо його частини в поле противника по рядку
-                                                    m_data.enemy_field[ship.row][ship.cell+count] = int(ship.name[0])
-                                                else:
-                                                    # Додаємо його частини в поле противника по стовпцю
-                                                    m_data.enemy_field[ship.row+count][ship.cell] = int(ship.name[0])
-                                            
-                                            # Додаємо корабель до списку кораблів противника
-                                            m_data.enemy_ships.append(ship)
-                                        except:
-                                            pass
-                                # для рядів на ворожнечому полі
-                                for row in m_data.enemy_field:
-                                    print(row)
-                                        
-                                print(data)
-                                print("nickname" in data[0],"nickname", data[0])
-                            # Перевіряємо чи є "buff" в даті
-                            elif "buff" in data[0]:
-                                # додаємо "buff" в дату
-                                m_data.buffs.append(data[1].split(','))
-                            # Перевіряємо чи є "remove_buff" в даті
-                            elif "remove_buff" in data[0]:
-                                # видаляємо "buff" з дати
-                                m_data.buffs.remove(data[1].split(','))
-                            # Перевіряємо чи є "Anti_fire" в даті
-                            elif 'Anti_fire' in data[0]:
-                                # для повторів рядів
-                                for row in range(10):
-                                    # якщо 8 в ряду поля супротивника
-                                    if 8 in m_data.enemy_field[row]:
-                                        # для повторів клітинок 
-                                        for cell in range(10):
-                                            # перевіряємо кількість рядів і клітинок
-                                            if m_data.enemy_field[row][cell] == 8:
-                                                # змінюємо кількість рядів і клітинок
-                                                m_data.enemy_field[row][cell] = 6
-                                # вибух у списку вибуху                  
-                                for explosion in m_data.list_explosions:
-                                    # перевіряє чи вибух перетворюється на вогонь
-                                    if explosion[0].name == 'fire' and explosion[0].x > 724:
-                                        # записує 'explosion' в вибух
-                                        explosion[0].name = 'explosion'
-                                        # відновлює картинку вибуху
-                                        explosion[0].update_image()
-                            # записуємо атаку в дату
-                            elif "attack" in data[0]:
-                                # додає до пробіл до списку атак 
-                                list_attacks = data[1].split(" ")
-                                # для атак в списку атак
-                                for attack in list_attacks:
+                # Отримання данних кліенту та декодування їх
+                client_data = client.recv(1024).decode()
+                # розділяємо рядки сиволом ";"
+
+                raw_data = client_data.split(";")
+                # створюємо змінну текст зі значенням str
+                text1 = ''
+                list_to_del = []
+                # перевіряємо ряди 
+                for counter in range(len(raw_data)):
+                    # перевіряємо клієнт дату
+                    if raw_data[counter]:
+                        # створюємо змінну текст зі значенням str
+                        text1 = ''
+                        # Перетворення данних на список розділяючи символом :
+                        data = raw_data[counter].split(":")
+                        # перевіряємо наявність ім'я на полі
+                        if "field_nickname" in data[0]:
+                            list_to_del.append(counter)
+                            # текст нікнейму такий самий як твій нікнейм
+                            m_buttons.your_nickname.TEXT = m_buttons.nickname.TEXT
+                            # текст нікнейму супротивника дорівнює значенню в даті
+                            m_buttons.enemy_nickname.TEXT = data[1]
+                            
+                            # друге значення зі списку буде розділен за пробілами
+                            data = data[2].split(" ")
+                            # Для кожного корабля у списку данних
+                            for ship in data:
+                                # Розділення кожного корабля по комі
+                                splited_data = ship.split(",")
+                                # Якщо розділенні данні кораблів не пусті
+                                if splited_data != [""]:
                                     try:
-                                        # додаємо "," до атаки
-                                        pos = attack.split(",")
-                                        # записуємо функції до змінних
-                                        pos = [int(pos[0]), int(pos[1]),pos[2]]
-                                        # Перевірка, чи атака була промахом
-                                        if pos[2] == "miss":
-                                            # Передаємо хід гравцю
-                                            m_data.turn = True
-                                            # Позначаємо промах на полі
-                                            m_data.my_field[pos[0]][pos[1]] = 7
-                                            print("MISS")
-                                        # перевіряємо чи корабель горить
-                                        elif pos[2] == "fire":
-                                            # Позначаємо промах на полі
-                                            m_data.my_field[pos[0]][pos[1]] = 8
+                                        # створюеться екземпляр класу корабля з переданими параметрами
+                                        ship = m_ships.Ship(x = 724,y = 115,
+                                                    field_cor = (724,115),
+                                                    name  = splited_data[0],
+                                                    row = int(splited_data[1]),
+                                                    cell = int(splited_data[2]),
+                                                    rotate = int(splited_data[3]),
+                                                    add = False)
+                                        
+                                        # Для кожного корабля первірка
+                                        for count in range(int(ship.name[0])):
+                                            # Якщо корабль було повернуто
+                                            if ship.rotate % 180 == 0:
+                                                # Додаємо його частини в поле противника по рядку
+                                                m_data.enemy_field[ship.row][ship.cell+count] = int(ship.name[0])
+                                            else:
+                                                # Додаємо його частини в поле противника по стовпцю
+                                                m_data.enemy_field[ship.row+count][ship.cell] = int(ship.name[0])
+                                        
+                                        # Додаємо корабель до списку кораблів противника
+                                        m_data.enemy_ships.append(ship)
+                                    except:
+                                        pass
+                        # Перевіряємо чи є "buff" в даті
+                        elif "buff" in data[0]:
+                            # додаємо "buff" в дату
+                            m_data.buffs.append(data[1].split(','))
+                            list_to_del.append(counter)
+                        # Перевіряємо чи є "remove_buff" в даті
+                        elif "remove_buff" in data[0]:
+                            # видаляємо "buff" з дати
+                            m_data.buffs.remove(data[1].split(','))
+                            list_to_del+=[counter]
+                        # Перевіряємо чи є "Anti_fire" в даті
+                        elif 'Anti_fire' in data[0]:
+                            list_to_del.append(counter)
+                            # для повторів рядів
+                            for row in range(10):
+                                # якщо 8 в ряду поля супротивника
+                                if 8 in m_data.enemy_field[row]:
+                                    # для повторів клітинок 
+                                    for cell in range(10):
+                                        # перевіряємо кількість рядів і клітинок
+                                        if m_data.enemy_field[row][cell] == 8:
+                                            # змінюємо кількість рядів і клітинок
+                                            m_data.enemy_field[row][cell] = 6
+                            # вибух у списку вибуху                  
+                            for explosion in m_data.list_explosions:
+                                # перевіряє чи вибух перетворюється на вогонь
+                                if explosion[0].name == 'fire' and explosion[0].x > 724:
+                                    # записує 'explosion' в вибух
+                                    explosion[0].name = 'explosion'
+                                    # відновлює картинку вибуху
+                                    explosion[0].update_image()
+                        # записуємо атаку в дату
+                        elif "attack" in data[0]:
+                            # додає до пробіл до списку атак 
+                            list_attacks = data[1].split(" ")
+                            # для атак в списку атак
+                            for attack in list_attacks:
+                                try:
+                                    # додаємо "," до атаки
+                                    pos = attack.split(",")
+                                    
+                                    
+                                    # записуємо функції до змінних
+                                    volume = 0.5
+                                    try:
+                                        pos[3]
+                                        if pos[3] == '1':
+                                            volume = float(pos[3])
                                         else:
-                                            # Позначаємо влучання на полі
-                                            m_data.my_field[pos[0]][pos[1]] = 6
-                                        # Створюємо обект класа картинки, для відображення результату атаки, та передаємо параметри 
+                                            for c in range(1000):
+                                                print('YYYYYYYYYYYYYYYYYYYEEEEEEEEEEEEEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSSS')
+                                    except Exception as error:
+                                        
+                                        pass
+                                    pos = [int(pos[0]), int(pos[1]),pos[2]]
+
+                                    # Створюємо обект класа картинки, для відображення результату атаки, та передаємо параметри 
+                                    clas = m_animations.Animation
+                                    # Перевірка, чи атака була промахом
+                                    if pos[2] == "miss":
+                                        # Передаємо хід гравцю
+                                        m_data.turn = True
+                                        # Позначаємо промах на полі
+                                        m_data.my_field[pos[0]][pos[1]] = 7
+                                        clas = m_images.Image
+                                        pass
+                                    # перевіряємо чи корабель горить
+                                    elif pos[2] == "fire":
+                                        # Позначаємо промах на полі
+                                        m_data.my_field[pos[0]][pos[1]] = 8
+                                    else:
+                                        # Позначаємо влучання на полі
+                                        m_data.my_field[pos[0]][pos[1]] = 6
+                                    image = clas(
+                                        progression = "Noke",
+                                        name = pos[2],
+                                        x = 59+55.7*pos[1],
+                                        y = 115+55.7*pos[0],
+                                        width= 55.7,
+                                        height=55.7,
+                                    )
+                                    m_audio.explosion.play(volume)
+                                    # додаємо картинку до списку вибуху
+                                    m_data.list_explosions.append([image,pos[0],pos[1]])
+                                except Exception as error:
+                                    pass
+                            list_to_del.append(counter)
+                        # записуємо "pass" в дату
+                        elif "pass" in data[0]:
+                            # передаємо хід 
+                            m_data.turn = True
+                            list_to_del.append(counter)
+                        # перевіряємо наявність "fire" в даті
+                        if 'fire' in data[0]:
+                            try:
+                                # додає пробіл до ряду в даті
+                                raw_data1 = data[1].split(' ')
+                                # для клітинок в ряду
+                                for cells in raw_data1:
+                                    # чи є в клітинках щось
+                                    if cells:
+                                        # додаємо "," до клітинки
+                                        cells1 = cells.split(',')
+                                        # позначаємо промах для ворожнечого поля
+                                        m_data.enemy_field[int(cells1[0])][int(cells1[1])] = 8
+                                        # Створюємо обект класа картинки, для відображення вогню, та передаємо параметри 
                                         image = m_images.Image(
-                                            progression = "game",
-                                            name = pos[2],
-                                            x = 59+55.7*pos[1],
-                                            y = 115+55.7*pos[0],
-                                            width= 55.7,
-                                            height=55.7
+                                                progression = "game",
+                                                name = 'fire',
+                                                x = 725+55.7*int(cells1[1]),
+                                                y = 115+55.7*int(cells1[0]),
+                                                width= 55.7,
+                                                height=55.7
                                         )
                                         # додаємо картинку до списку вибуху
-                                        m_data.list_explosions.append([image,pos[0],pos[1]])
-                                    except Exception as error:
-                                        print(error)
-                            # записуємо "pass" в дату
-                            elif "pass" in data[0]:
-                                # передаємо хід 
-                                m_data.turn = True
-                            # перевіряємо наявність "fire" в даті
-                            if 'fire' in data[0]:
-                                
-                                try:
-                                    #
-                                    raw_data1 = data[1].split(' ')
-                                    # with open(os.path.abspath(__file__+'/../../data/output.txt')) as file:
-                                    #     text1 += file.read()
-                                    # with open(os.path.abspath(__file__+'/../../data/output.txt'),'w') as file:
-                                    #     file.write(text1+'\nfire: '+f"{raw_data1}")
-                                    # для клітинок в ряду
-                                    for cells in raw_data1:
-                                        # чи є в клітинках щось
-                                        if cells:
-                                            # додаємо "," до клітинки
-                                            cells1 = cells.split(',')
-                                            # позначаємо промах для ворожнечого поля
-                                            m_data.enemy_field[int(cells1[0])][int(cells1[1])] = 8
-                                            # Створюємо обект класа картинки, для відображення вогню, та передаємо параметри 
-                                            image = m_images.Image(
-                                                    progression = "game",
-                                                    name = 'fire',
-                                                    x = 725+55.7*int(cells1[1]),
-                                                    y = 115+55.7*int(cells1[0]),
-                                                    width= 55.7,
-                                                    height=55.7
-                                            )
-                                            # додаємо картинку до списку вибуху
-                                            m_data.list_explosions.append([image,int(cells1[0]),int(cells1[1])])
-                                            # дя кораблів в ворожих кораблях
-                                            for ship in m_data.enemy_ships:
-                                                # перевіряємо кораблі ворога
-                                                ship.check_enemy()
-                                except Exception as error:
-                                    # безпечно відкриває output/txt
-                                    with open(os.path.abspath(__file__+'/../../data/output.txt')) as file:
-                                        # до тексту додаємо файл для читання
-                                        text1 += file.read()
-                                    # безпечно відкриває output/txt 
-                                    with open(os.path.abspath(__file__+'/../../data/output.txt'),'w') as file:
-                                        # відкриває файл для написання
-                                        file.write(text1+'\n'+str(error))
-                                                    
-                            # Перевірка, чи відбувся вибух
-                            if "explosion" in data[0]:
-                                # в дату додає знак ","
-                                pos = data[1].split(",")
-                                print(pos)
-                                # try:
-                                # перевіряє довжин
-                                if len(pos[0]) > 1:
-                                    #
-                                    pos[0] = pos[0][0]
-                                # перевіряє довжину
-                                if len(pos[1]) > 1:
-                                    #
-                                    pos[1] = pos[1][0]
-                                #
-                                pos = [int(pos[0]), int(pos[1])]
-                                # except:
-                                # Перебираемо всі кораблі
-                                for ship in m_data.all_ships:
-                                    # Якщо це корабль противника пропускаємо
-                                    if ship in m_data.enemy_ships:
-                                        pass
-                                    # Якщо координати вибуху збігаються з позицією корабля,
-                                    elif ship.row == pos[0] and ship.cell == pos[1]:
-                                        # то відбуваеться вибух
-                                        ship.explosion = True
-                                        
-                                        
+                                        m_data.list_explosions.append([image,int(cells1[0]),int(cells1[1])])
+                                        # дя кораблів в ворожих кораблях
+                                        for ship in m_data.enemy_ships:
+                                            # перевіряємо кораблі ворога
+                                            ship.check_enemy()
+                            except Exception as error:
+                                # безпечно відкриває output/txt
+                                with open(os.path.abspath(__file__+'/../../data/output.txt')) as file:
+                                    # до тексту додаємо файл для читання
+                                    text1 += file.read()
+                                # безпечно відкриває output/txt 
+                                with open(os.path.abspath(__file__+'/../../data/output.txt'),'w') as file:
+                                    # відкриває файл для написання
+                                    file.write(text1+'\n'+str(error))
+                            list_to_del.append(counter)
+                                                
+                        # Перевірка, чи відбувся вибух
+                        if "explosion" in data[0]:
+                            # в дату додає знак ","
+                            pos = data[1].split(",")
+                            # перевіряє довжин
+                            if len(pos[0]) > 1:
+                                # залишає значення позиції таким самим
+                                pos[0] = pos[0][0]
+                            # перевіряє довжину
+                            if len(pos[1]) > 1:
+                                # змінює значення позиції
+                                pos[1] = pos[1][0]
+                            # записуємо функції до змінних
+                            pos = [int(pos[0]), int(pos[1])]
+                            # except:
+                            # Перебираемо всі кораблі
+                            for ship in m_data.all_ships:
+                                # Якщо це корабль противника пропускаємо
+                                if ship in m_data.enemy_ships:
+                                    pass
+                                # якщо координати вибуху збігаються з позицією корабля
+                                elif ship.row == pos[0] and ship.cell == pos[1]:
+                                    # то відбуваеться вибух
+                                    ship.explosion = True
+                                    
+                                    
+                            list_to_del.append(counter)
+                            # дата видаляється
                             
-                                del data[0]
-                            # Якщо відбуваеться програш
-                            elif "lose" in data[0]:
-                                # То стан гри змінюеться на виграш
-                                m_transform.color = (255,25,25)
-                                m_transform.type_transform = 0
-                                m_data.progression = "lose"
-                                m_achievements.achievement('Pants on Fire')
-                                del data[0]
-                            # Додаємо отримані дані від клієнта до списку даних противника
-                            m_data.enemy_data.append(client_data)
-                            print(client_data)
-                except:
-                    print('error:connect')
-    except:
-        count += 1
-        activate()
+                        # якщо відбуваеться програш
+                        elif "lose" in data[0]:
+                            # змінюємо колір трансформації
+                            m_transform.color = (255,25,25)
+                            #задаємо кількість типів трансформації
+                            m_transform.type_transform = 0
+                            # стан гри змінюеться на програш
+                            m_data.progression = "lose"
+                            # додається нове досягнення
+                            m_achievements.achievement('Pants on Fire')
+                            list_to_del.append(counter)
+                            # дата видаляється
+                try:
+                    for counts in list_to_del:
+                        del raw_data[-(counts+1)]
+                    client_data = ";".join(raw_data)
+                    pass
+                except Exception as error:
+                    pass
 ```
 
 #### Online_game/modules/transform.py: файл у якому реалізовані анімації переходів / file for transition animations
 ```python
+'''
+    >>> Відповідає за перехід між екранами - фунція transform
+    >>> Відповідає за анімацію переходу між екранами - функція transform_rect
+'''
 # імпортуємо рандомайзер
 import random
 # робимо імпорт pygame
@@ -2500,7 +2874,6 @@ import modules.achievements as m_achievements
 # змінна трансформації зі значенням нічого
 type_transform = None
 
-# 1280
 # задаємо ширину
 width = 1280
 # задаємо висоту
@@ -2513,12 +2886,13 @@ size = 0
 progression = None
 # задаємо число типів переходів
 count_types = 0
-# задаємо прозорість
-# opasity = 255
 # задаємо кінець
 end = 0
 # функція для трансформації екрану
 def transform(screen,multiplier_x,multiplier_y):
+    '''
+        >>> Трансформує екран
+    '''
     # робимо змінні глобальними
     global type_transform,color,progression
     # умова якщо екран нікуди не переходить
@@ -2533,17 +2907,18 @@ def transform(screen,multiplier_x,multiplier_y):
     elif type_transform == 0:
         # трансформуємо в прямокутну форму
         transform_rect(screen.screen,multiplier_x,multiplier_y)
-    # elif type_transform == 1:
-    #     transform_opasity(screen)
 # функція для трансформування екрану в прямокутну форму   
 def transform_rect(screen,multiplier_x,multiplier_y):
+    '''
+        >>> Змінює розмір прямокутника під час анімації переходу
+    '''
     # робить змінні глобальними
     global size,type_transform,color
     # додає до розміру 25
     size += 25
     # зміна розміру прямокутника при переході
     rect = pygame.Rect((640 - size/2*1.53846153846)*multiplier_x, (416 - size/2)*multiplier_y, size*multiplier_x*1.53846153846,size*multiplier_y)
-    # надаємо параметри для удару
+    # надаємо параметри для ходу
     m_buttons.stroke(screen,rect,
                      color,10)
     # оновлюємо перехід екрану
@@ -2554,10 +2929,16 @@ def transform_rect(screen,multiplier_x,multiplier_y):
         type_transform = None
         # змінюємо розмір на 0
         size = 0
+
 ```
 
 #### Online_game/modules/achievements.py: файл для реалізауції механіки досягнень / file for achievement mechanics
 ```python
+'''
+    >>> Додаємо список досягнень
+    >>> Перевіряєм їх наявність в гравця
+    >>> Виводимо доягнення на екран 
+'''
 # імпортуємо необхідні модулі
 import pygame, os, time, threading
 # з файлу дата імпортуємо дату
@@ -2575,12 +2956,16 @@ x = 1280
 
 # класс з досягненнями
 class achievement():
+    '''
+        >>> Перевіряє наявність досягнень
+        >>> Додає нові досягнення
+    '''
     # метод класу
     def __init__(self,name):
         # робимо змінні глобальними
         global x,y,width,height
         # перевіряємо чи не має досягнення
-        if m_data.achievements_data[name]['has'] == "False" or 1:
+        if m_data.achievements_data[name]['has'] == "False":
             # задаємо наявність досягнення
             if name != "Into the Sunset...":
                 yes_no = True
@@ -2646,7 +3031,7 @@ class achievement():
                     elif self.text[-1] == text_for:
                         # додаємо текст до списку
                         list_text.append(text)
-                # тукст дорівнює списку з текстом
+                # текст дорівнює списку з текстом
                 self.text = list_text
             # звук при отриманні досягнення   
             m_audio.achievement.play()
@@ -2664,6 +3049,9 @@ class achievement():
                 file.write('True')
     # метод для руху
     def move(self):
+        '''
+            >>> Відповідає за анімацію вилізання досягнення
+        '''
         # робимо змінні глобальними
         global x,y,width,height
         # перевіряємо чи не активований таймер
@@ -2688,6 +3076,9 @@ class achievement():
                     self.rect.x += 15
     # промальовуємо основу поверхності
     def blit(self,screen:pygame.Surface,multiplier_x,multiplier_y):
+        '''
+            >>> Трансформує масштаб картинки
+        '''
         # завантажуємо картинку
         self.img = pygame.image.load(os.path.abspath(f"{__file__}/../../images/achievements/{self.name}.png"))
         # трансформуємо масштаб
@@ -2734,6 +3125,9 @@ class achievement():
             count += 1
     # метод для таймеру
     def timer(self):
+        '''
+            >>> Відповідає за запуск і зупинку часу
+        '''
         # працює поки час не дорувнює 0
         while self.time != 0:
             # від часу віднімається 1

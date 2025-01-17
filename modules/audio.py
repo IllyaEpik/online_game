@@ -44,7 +44,7 @@ class Audio():
             self.audio.play(loops= self.loops)
         except:
             # якщо буде помилка при завантаженні, виводимо повідомлення про помилку
-            print("Error: audio")
+            pass
     # метод для зупинки звуку
 
     def stop(self):

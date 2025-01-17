@@ -44,7 +44,6 @@ class Image():
         '''
         try:
             # завантажуємо зображення з вказаного нам шляху
-            print('SSSSSSSSSSSSSSSOSSSSSSSSSSSS',self.name)
             self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
             self.image = pygame.transform.rotate(self.image, self.rotate)
             
@@ -60,7 +59,7 @@ class Image():
                 m_data.list_blits[self.progression].append(self)
         except :
             # якщо сталась помилка при завантаженні зображення - ми пишемемо її
-            print("Error: image",self.name)
+            pass
     # создаємо метод який відображє наше зображення
     # def blit(self, screen):
 
@@ -79,7 +78,6 @@ class Image():
         try:
             if self.name != self.last_name or self.image.get_width() != int(width) or self.image.get_height() != int(height) :
                 if self.rotate == 0 or self.image.get_width() != int(self.height*multiplier_x) or self.image.get_height() != int(self.width*multiplier_y) or self.name != self.last_name:
-                    print(self.image.get_width(), int(self.height*multiplier_x), 'or', self.image.get_height(), int(self.width*multiplier_y),self.name)
                     
                     # завантажуємо картинку
                     self.image = pygame.image.load(os.path.abspath(f"{__file__}/../../images/{self.name}.png"))
@@ -104,15 +102,14 @@ class Image():
             # відображення зображення на екрані
             screen.blit(self.image, (x, y))
         except:
-            print('hhaaa',self.name)
+            pass
         # e = pygame.time.get_ticks()
         # if e-s:
-        #     print(e-s,self.name)
 # задаємо параметри для фону 
 background = Image(width = 1280, height = 851, x = 0, y = 0, name = "background")
 # задаємо параметри для фону магазину
 background_shop = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_shop",progression='shop')
-background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_shop",progression='achievements')
+background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_achievements",progression='achievements')
 # задаємо параметри для грального поля
 playing_field = Image(width = 1280, height = 832, x = 0, y = 0, name = "playing_field", progression = "pre-game")
 # задаємо параметри для поля гри
@@ -121,10 +118,6 @@ play_field = Image(width = 1280, height = 835, x = 0, y = 0, name = "play_field"
 lose = Image(width = 1280, height = 852, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
 # задаємо параметри для екрану перемоги
 win = Image(width = 1280, height = 852, x = 0, y = 0, name = "win", progression = "win", edit = False)
-# задаємо параметри для іконок ракет
-# rockets_icon = Image(width = 130, height = 130, x = 50, y = 180, name = "weapons/rockets_icon", progression = "shop")
-# задаємо параметри для серця
-# hearts = Image(width = 130, height = 130, x = 50, y = 410, name = "weapons/hearts", progression = "shop")
 # задаємо параметри для екрану досягнень
 background_achievements = Image(width = 1280, height = 851, x = 0, y = 0, name = "achievements", progression = "achievements")
 # задаємо параметри для протиповітряної охорони

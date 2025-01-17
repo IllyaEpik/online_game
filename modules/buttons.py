@@ -73,7 +73,6 @@ class Button(Image):
         # якщо кнопка натиснута
         if self.rect.collidepoint(pos):
             if type(self.function) == type("123") and self.function.split(":")[0] == "c_s":
-                print(self.function.split(":")[1])
                 m_data.client_server = self.function.split(":")[1]
                 server.COLOR = (0,0,0)
                 client.COLOR = (0,0,0)
@@ -190,7 +189,7 @@ class Button(Image):
                                 m_transform.type_transform = random.randint(0,m_transform.count_types)
                                 m_data.progression = "game"
                 except:
-                    print('hhhhhhhhhhhhhhhhhhhho')
+                    pass
             elif self.function == 'shop':
                 m_transform.type_transform = random.randint(0,m_transform.count_types)
                 if m_data.progression == 'shop':
@@ -243,7 +242,6 @@ class Button(Image):
             elif self.function and 'set_achievement' in self.function:
                 description_.TEXT = (self.name.split('/')[1]+': '+m_data.achievements_data[self.function.split('/')[1]]['description']).split(' ') +['                ', '           ']
                 m_data.select_weapon = self.name.split('/')[1]
-                print(description_.TEXT)
                 size = description_.FONT.size(" ".join(description_.TEXT))
                 if size[0] < description_.rect.width:
                     description_.TEXT = [" ".join(description_.TEXT)]
@@ -252,7 +250,6 @@ class Button(Image):
                     text = ''
                     
                     for text_for in description_.TEXT:
-                        print(description_.rect.width)
                         size = description_.FONT.size(text+text_for)
                         if size[0] < description_.rect.width:
                             text += text_for + ' '
@@ -273,13 +270,11 @@ class Button(Image):
                         elif description_.TEXT[-1] == text_for:
                             list_text.append(text)
                     description_.TEXT =  list_text
-                    print(description_.TEXT)
             elif self.function and 'weapons' in self.function:
                 # buff
                 
                 description.TEXT = m_data.weapon_data[self.function.split('/')[1]][self.function.split('/')[2]].split(' ') +['                ', '           ']
                 m_data.select_weapon = self.function.split('/')[2]
-                print(description.TEXT)
                 multiplers = [
                     self.rect.width/self.width,
                     self.rect.height/self.height
@@ -296,7 +291,6 @@ class Button(Image):
                     text = ''
                     
                     for text_for in description.TEXT:
-                        print(description.width*multiplers[0])
                         size = description.FONT.size(text+text_for)
                         if size[0] < description.width*multiplers[0]:
                             text += text_for + ' '
@@ -317,12 +311,8 @@ class Button(Image):
                         elif description.TEXT[-1] == text_for:
                             list_text.append(text)
                     description.TEXT = [self.function.split('/')[2]+': '] +  list_text
-                    print(description.TEXT)
-                    # print(description.TEXT)
             else:
                 if m_data.client_server and nickname.TEXT:
-                    # for sprite in m_data.all_ships:
-                    #     print(sprite.x,sprite.y,sprite.width,sprite.height,multiplier_x,multiplier_y,ship.name)
                     # записання ip
                     ip = input.TEXT.split(": ")
                     del ip[0]
@@ -335,9 +325,6 @@ class Button(Image):
                     # перехід в пре-гру"
                     m_transform.type_transform = random.randint(0,m_transform.count_types)
                     m_data.progression = "pre-game"
-                    # if event.key == pygame.K_c:
-                    # for row in m_data.my_field:
-                    #     print(row)
     # метод відображення поверхні на головному окні
     def blit(self, screen,x,y,width,height,multiplier_x,multiplier_y):
         '''
@@ -367,9 +354,7 @@ class Button(Image):
             render = self.FONT.render(self.TEXT,True,self.COLOR)
             render.set_alpha(self.opasity)
             screen.blit(render, (x, y))
-            # print(render,self.render)
             self.last_text = self.TEXT
-            # print('hoh')
             # else:
             #     screen.blit(self.render, (x, y))
             # screen.blit(self.FONT.render(self.TEXT,True,self.COLOR), (x, y))
@@ -449,20 +434,15 @@ class Input(Image):
         render.set_alpha(self.opasity)
         screen.blit(render, (x, y))
         self.rect = pygame.Rect(x,y,width,height)
-        # e = pygame.time.get_ticks()
-        # print(e-s,'input')
         # відображення тексту на екрані
     def activate(self, event):
         '''
             >>> Відповідає за виділення поля ввода
         '''
-        # rect = pygame.Rect(self.x,self.y,self.width,self.height)
         if self.rect.collidepoint(event.pos):
             self.enter = True
-            print('hallok')
         else:
             self.enter = False
-        # print(self.enter)
     def edit(self,event):
         '''
             >>> Редагує текст
@@ -582,9 +562,6 @@ class Auto(Image):
                 except:
                     pass
                 if count_ships == 1 or count > 1000:
-                    for row1 in m_data.my_field:
-                        print(row1)
-
                     break
             if count > 1000:
                 self.randomship(cor)

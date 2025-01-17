@@ -117,7 +117,7 @@ class Animation():
                 self.image = pygame.transform.rotate(self.image, self.rotate)
         except :
             # якщо сталась помилка при завантаженні зображення - ми пишемемо її
-            print("Error: image",self.name)
+            pass
     # создаємо метод який відображє наше зображення
     # def blit(self, screen):
 
@@ -132,14 +132,11 @@ class Animation():
         try:
             if self.image.get_width() != int(width) or self.image.get_height() != int(height):
                 if self.rotate == 0 or self.image.get_width() != int(self.height*multiplier_x) or self.image.get_height() != int(self.width*multiplier_y):
-                    print(self.image.get_width(), int(width), 'or', self.image.get_height(), int(height),self.name)
                     # завантажуємо картинку
                     self.images = []
                     try:
                         for count in range(100):
-                            print(0)
                             self.image =  pygame.image.load(os.path.abspath(f"{__file__}/../../animations/{self.name}/{self.name}_{count}.png"))
-                            print(1)
                             # перевертаємо картинку
                             self.image = pygame.transform.rotate(self.image, self.rotate)
                             # перевіряємо оберт екрану
@@ -163,13 +160,12 @@ class Animation():
             screen.blit(self.images[self.count], (x, y))
             
         except Exception as error:
-            print('hhaaa',error)
+            pass
 
 def move(rocket,count = 50):
     try:
         while len(m_data.list_rockets) and (rocket in m_data.list_rockets[-1]) and m_data.progression == 'game':
             
-            print('hhhhhhhhhhhhhooooooooooooooooooooooooooooooooooooooooosssssssssssse')
             rocket.x += count
             time.sleep(0.01)
     except:
