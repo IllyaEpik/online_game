@@ -72,7 +72,7 @@ my_buffs = []
 list_achievements_view = {}
 achievements_data = {
     "Total Domination":{
-        'description':'win without a single hits',
+        'description':'Win without a single hits',
         'has':False,
         'tier':1
     },
@@ -91,9 +91,8 @@ achievements_data = {
         'has':False,
         'tier':1
     },
-
     "Need More Gold!":{
-        'description':'Accumulate 1000 tier',
+        'description':'Accumulate 200 coins ',
         'has':False,
         'tier':1
     },
@@ -107,12 +106,7 @@ achievements_data = {
         'has':False,
         'tier':1
     },
-    "Glory to Air Defense":{
-        'description':'Destroy an "homing rocket" using Air defense',
-        'has':False,
-        'tier':1
-    },
-    "Hooked":{
+    "Arm yourself":{
         'description':'Buy your first weapon in the shop',
         'has':False,
         'tier':1
@@ -129,11 +123,6 @@ achievements_data = {
     },
     "Titanic":{
         'description':'Sink the first four-deck ship',
-        'has':False,
-        'tier':1
-    },
-    "used radar":{
-        'description':'use an radar',
         'has':False,
         'tier':1
     },
@@ -159,11 +148,6 @@ achievements_data = {
     },
     "the bug":{
         'description':'Secret',
-        'has':False,
-        'tier':1
-    },
-    "True Cossack":{
-        'description':'Get 50 victories',
         'has':False,
         'tier':1
     }
@@ -210,11 +194,15 @@ list_blits = {
     "lose": [],
     "win": [],
     "shop": [],
-    "achievements":[]
+    "achievements":[],
+    "controls":[],
+    'sounds':[],
+    'keys':[]
 }
 # http://127.0.0.1/
 # Створення змінної, у якій ми будемо задавати потрібний єтап ігри
 progression = "menu"
+fire_attack = False
 # Створення змінної, у якій буде записуватись ip ворога
 ip = None
 # Створення списку, у якому будуть зберігатися усі данні ворога

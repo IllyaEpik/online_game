@@ -63,8 +63,22 @@ class Audio():
 achievement = Audio('achievement',max_time=2, loops=0)
 # додаємо звук для радару
 radar = Audio('radar', loops=0)
+name = '1'
+try:
+    with open(m_data.path+m_data.type+'music.txt', "r") as file:
+        text = file.read()
+        if 0 < int(text) < 5:
+            name = int(text)
+except Exception as error:
+    print(error)
+    with open(m_data.path+m_data.type+'music.txt', "w") as file:
+        file.write('1')
+
 # задаємо саундтрек для доріжки звуку
-track = Audio('Soundtrack')
+track = Audio(f'Soundtracks/{name}')
+# задаємо саундтрек для доріжки звуку
+# track_war = Audio('Soundtrack_war')
+# додаємо звук покупки
 buying = Audio('buying',0)
 # перевіряємо чи не дорівнює звук значенню False
 if m_data.read_data["sound"] != "False":

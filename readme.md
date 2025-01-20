@@ -116,6 +116,7 @@
 * Четверте вікно: результат гри (програш чи перемога)/Fourth window: game result (lose or victory)
 * П'яте вікно: екран магазину / Fifth window: shop window
 * Шосте вікно: екран з досягненнями / Sixth window: achievement window
+* Сьоме вікно: екран з налаштуваннями(Гарячі клавіші й різна музика) / Seventh window: Settings screen(Hot keys and different music)
 
 ### повний опис файлів / a full description of files:
 
@@ -126,11 +127,12 @@
     >>> Створює головне вікно - класс Screen
 '''
 # імпортуємо модуль pygame
-import pygame, threading, os
+import pygame, threading, os,random
 # ініціалізуємо pygame
 pygame.init()
 # імпортуємо наші модулі 
 import modules.data as m_data
+import modules.controls as m_controls
 import modules.buttons as m_buttons
 import modules.images as m_images
 import modules.clients_server as m_client
@@ -162,7 +164,7 @@ class Screen():
         # задаємо назву нашому екрану
         pygame.display.set_caption('online game')
         
-        icon = pygame.image.load(os.path.abspath(__file__ + "/../../images/icon_peaceful.png"))
+        icon = pygame.image.load(os.path.abspath(__file__ + "/../../images/icon.png"))
         pygame.display.set_icon(icon)
     # функція запуску
     def run(self):
@@ -199,8 +201,15 @@ class Screen():
                 # коли кнопка миші натиснута
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if m_transform.type_transform == None:
+                        for sprite in m_data.list_blits[m_data.progression]:
+                            # print(sprite.name)
+                            try:
+                                # if sprite.fun != '':
+                                sprite.button_start(event)
+                            except:
+                                pass
                         if m_data.progression in "winlose":
-                            m_buttons.revenge.button_start(event)
+                            # m_buttons.revenge.button_start(event)
                             if m_buttons.out.button_start(event):
                                 game = False
                                 m_data.end=True
@@ -209,29 +218,57 @@ class Screen():
                                     m_client.client.close()
                                 except:
                                     pass 
+                        if m_data.progression == 'keys':
+                            print(event.pos)
+                            if event.pos[0]< 800*multiplier_x:
+                                yes = 0
+                                for control in m_controls.list_controls:
+                                    # print(control[0].rect.collidepoint(event.pos),control[0].rect.x,control[0].rect.y,control[0].rect.width,control[0].rect.height,control[2])
+                                    if control[0].rect.collidepoint(event.pos):
+                                        control[1] = 1
+                                        control[0].COLOR = (50,50,255)
+                                        control[0].second_color = (0,0,0)
+                                        m_controls.text_edit(control[2])
+                                        yes = 1
+                                    else:
+                                        control[1] = 0
+                                        control[0].COLOR = (0,0,0)
+                                        control[0].second_color = (255,255,255)
+                                if not yes:
+                                    m_controls.text_edit(None)
+                                
+                            else:
+                                for control in m_controls.list_controls:
+                                    if control[1]:
+                                        for key in m_controls.list_keys:
+                                            control = key
+                                            if control[0].rect.collidepoint(event.pos):
+                                                control[1] = 1
+                                                control[0].COLOR = (50,50,255)
+                                                control[0].second_color = (0,0,0)
+                                            else:
+                                                control[1] = 0
+                                                control[0].COLOR = (0,0,0)
+                                                control[0].second_color = (255,255,255)
+                                        break
                         # якщо прогресс дорівнює меню то
                         if m_data.progression == "menu":
                             # вибір місця написання
                             m_buttons.input.activate(event) 
                             m_buttons.nickname.activate(event)
-                            m_buttons.music.button_start(event)
-                            m_buttons.client.button_start(event)
-                            m_buttons.server.button_start(event)
-                            m_buttons.achievements.button_start(event)
-                            # перехід в пре-гру етап
-                            m_buttons.button_start.button_start(event)
                         # якщо прогресс дорівнює пре-грі то
                         elif m_data.progression == 'achievements':
-                            m_buttons.achievements_.button_start(event)
+                            # m_buttons.achievements_.button_start(event)
                             for achievement in m_data.list_achievements_view:
                                 m_data.list_achievements_view[achievement].button_start(event)
                         if m_data.progression == "pre-game":
-                            # преходить в гру
-                            m_buttons.play.button_start(event)
+                            # m_buttons.music2.button_start(event)
+                            # # преходить в гру
+                            # m_buttons.play.button_start(event)
                             # автоматична розтановка кораблів
                             m_buttons.auto.randomship(event.pos)
                             # поворот кораблів
-                            m_buttons.rotate.button_start(event)
+                            # m_buttons.rotate.button_start(event)
 
                             # цикл всіх кораблів
                             for ship in m_data.all_ships:
@@ -239,13 +276,16 @@ class Screen():
                                 ship.activate(event, multiplier_x, multiplier_y)
                         # якщо прогресс дорівнює грі то
                         if m_data.progression == "game":
+                            if m_data.connected:
+                                m_buttons.shop.button_start(event)
+                            # m_buttons.music2.button_start(event)
                             # вибір місця атаки
                             m_attack.attack(event.pos,multiplier_x,multiplier_y)
-                            m_buttons.shop.button_start(event)
+                            # m_buttons.shop.button_start(event)
                             
                         elif m_data.progression == 'shop':
-                            m_buttons.shop_.button_start(event)
-                            m_buttons.buy.button_start(event)
+                            # m_buttons.shop_.button_start(event)
+                            # m_buttons.buy.button_start(event)
                             
                             for weapon in m_buttons.list_weapons:
                                 weapon.button_start(event=event)
@@ -253,22 +293,77 @@ class Screen():
                     else:
                         m_transform.type_transform = None
                         m_transform.size = 0
-                if event.type == pygame.KEYDOWN and m_data.progression == "menu":
-                    # додає символи в event
-                    m_buttons.input.edit(event)
-                    m_buttons.nickname.edit(event)
-                    for object in [m_buttons.nickname]:
-                        size = object.FONT.size(object.TEXT)
-                        # if object.width < size[0] - 10:
-                        width = -(object.start_width - size[0] - 10)
-                        object.width = width + object.start_width
-                        if object.width < object.start_width:
-                            object.width = object.start_width
-                        object.update_image()
-                        
-                        m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
-                        m_buttons.music.x = m_buttons.nickname.width + 50
+                if event.type == pygame.KEYUP:
+                    print(event.key, m_controls.controls['fire attack'])
+                    if m_data.progression == 'game' and event.key in m_controls.controls['fire attack']:
+                        m_data.fire_attack = False
+                        print('NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO')
+                if event.type == pygame.KEYDOWN:
+                    
+                    if m_data.progression == "menu":
+                        # додає символи в event
+                        m_buttons.input.edit(event)
+                        m_buttons.nickname.edit(event)
+                        for object in [m_buttons.nickname]:
+                            size = object.FONT.size(object.TEXT)
+                            # if object.width < size[0] - 10:
+                            width = -(object.start_width - size[0] - 10)
+                            object.width = width + object.start_width
+                            if object.width < object.start_width:
+                                object.width = object.start_width
+                            object.update_image()
+                            
+                            m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
+                            m_buttons.music.x = m_buttons.nickname.width + 50
+                    elif m_data.progression == 'keys':
+                        # print('yes')
+                        for control in m_controls.list_controls:
+                            if control[1]:
+                                # print('yes2')
+                                for key in m_controls.list_keys:
+                                    if key[1]:
+                                        # print('yes3')
+                                        m_controls.controls[control[2]][key[2]] = event.key
+                                        # print('yes4',event.key)
+                                        m_controls.text_edit(control[2])
+                    elif m_data.progression == 'pre-game' and event.key in m_controls.controls['rotate ship']:
+                        for ship in m_data.all_ships:
+                            # якщо корабль виділен
+                            if ship.select:
+                                # поворот корабля   
+                                ship.rotate_ship()
+                    elif m_data.progression == 'game':
+                        # rect = pygame.Rect((725+55.7*cell) * multiplier_x, 
+                        #             (115+55.7*row) * multiplier_y,
+                        #             55.7 * multiplier_x,
+                        #             55.7 * multiplier_y)
+                        if event.key in m_controls.controls['fire attack']:
+                            m_data.fire_attack = True
+                            print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhos')
+                        if event.key in m_controls.controls['random attack']:
+                            yes = 0
+                            for row in m_data.enemy_field:
+                                for cell in row:
+                                    if str(cell) in '012345':
+                                        yes = True
+                                        break
+                            if yes:
+                                while True:
+                                    row = random.randint(0,9)
+                                    cell = random.randint(0,9)
+                                    if str(m_data.enemy_field[row][cell]) in '012345':
+                                        print(row,cell,m_data.enemy_field[row][cell])
+                                        m_attack.attack([(726+55.7*cell)*multiplier_x,(115+55.7*row)*multiplier_y],multiplier_x,multiplier_y)
+                                        break
+
+            # if m_data.progression == 'game':
+            #     m_data.fire_attack = False
+            #     for key in pygame.key.get_pressed():
+            #         
+            #         if key in m_controls.controls['fire attack']:
+            #             m_data.fire_attack = True
             m_buttons.coins.TEXT = f"{m_data.coins}"
+            m_buttons.coins_.TEXT = f"{m_data.coins}"
             # цикл відображення всього що є в списку
             for sprite in m_data.list_blits[m_data.progression]:
                 # відображення елементу
@@ -278,11 +373,26 @@ class Screen():
                                  sprite.width*multiplier_x,
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
-            
-            if m_data.progression == "menu" and m_audio.track.stoped:
-                pygame.draw.line(self.screen,(255,50,50),
-                                 (m_buttons.music.x*multiplier_x,m_buttons.music.y*multiplier_y,),
-                                 (m_buttons.music.x*multiplier_x + m_buttons.music.width*multiplier_x,m_buttons.music.y*multiplier_y + m_buttons.music.height*multiplier_y),10)
+            if m_data.progression == 'keys':
+                
+                for key in m_controls.list_keys:
+                    sprite = key[0]
+
+                    sprite.blit(self.screen,
+                                 sprite.x*multiplier_x,
+                                 sprite.y*multiplier_y,
+                                 sprite.width*multiplier_x,
+                                 sprite.height*multiplier_y,
+                                 multiplier_x,multiplier_y)
+            if m_audio.track.stoped:
+                if m_data.progression == "menu":
+                    pygame.draw.line(self.screen,(255,50,50),
+                                    (m_buttons.music.x*multiplier_x,m_buttons.music.y*multiplier_y,),
+                                    (m_buttons.music.x*multiplier_x + m_buttons.music.width*multiplier_x,m_buttons.music.y*multiplier_y + m_buttons.music.height*multiplier_y),10)
+                elif 'game' in m_data.progression :
+                    pygame.draw.line(self.screen,(255,50,50),
+                                    (m_buttons.music2.x*multiplier_x,m_buttons.music2.y*multiplier_y,),
+                                    (m_buttons.music2.x*multiplier_x + m_buttons.music2.width*multiplier_x,m_buttons.music2.y*multiplier_y + m_buttons.music2.height*multiplier_y),10)
             # якщо знаходимось не в меню то
             if m_data.list_achievements != []:
                 achievement = m_data.list_achievements[0]
@@ -377,16 +487,21 @@ class Screen():
             
                 if m_data.connected:
                     if m_data.turn:
-                        m_buttons.opponent_turn.COLOR = (140, 140, 140)
-                        m_buttons.your_turn.COLOR = (0, 0, 255)
+                        m_buttons.opponent_turn.COLOR = (0, 0, 255)
+                        # m_buttons.your_turn.COLOR = ()
                     else:
                         m_buttons.opponent_turn.COLOR = (255, 0, 0)
-                        m_buttons.your_turn.COLOR = (140, 140, 140)
-                        
+                        # m_buttons.your_turn.COLOR = (140, 140, 140)
+                    # if m_data.turn:
+                    #     m_buttons.opponent_turn.COLOR = (140, 140, 140)
+                    #     m_buttons.your_turn.COLOR = (0, 0, 255)
+                    # else:
+                    #     m_buttons.opponent_turn.COLOR = (255, 0, 0)
+                    #     m_buttons.your_turn.COLOR = (140, 140, 140)
                     sprite = m_buttons.shop
                     m_buttons.shop.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
-                    sprite = m_buttons.your_turn
-                    m_buttons.your_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                    # sprite = m_buttons.your_turn
+                    # m_buttons.your_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     sprite = m_buttons.opponent_turn
                     m_buttons.opponent_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                 else:
@@ -395,8 +510,8 @@ class Screen():
 
             elif m_data.progression == 'achievements':
                 square = pygame.Surface((m_buttons.description_.rect.width,m_buttons.description_.rect.height))
-                square.fill((255, 255, 255))
-                square.set_alpha(200)
+                square.fill((0,0,0))
+                square.set_alpha(100)
                 self.screen.blit(square,m_buttons.description_.rect)
                 m_buttons.stroke(self.screen,m_buttons.description_.rect,(0,0,0),5)
                 sprite = m_buttons.description_
@@ -427,6 +542,7 @@ class Screen():
             self.clock.tick(60)
 # створення екземпляру классу
 screen = Screen()
+
 ```
 
 #### Online_game/modules/attack.py: створення механіки атаки кораблів / creation of ship attack mechanics
@@ -1794,33 +1910,50 @@ class Ship(m_images.Image):
         '''
             >>> Перевіряє чи ми потрапили в ворожий корабель чи ні  
         '''
+        # задємо значення 0 з
         yes_no = 0
+        #
         field = m_data.enemy_field
+        #
         cells = []
+        #
         for count in range(int(self.name[0])):
             # Перевіряємо горизонтальне або вертикальне розміщення корабля
             if self.rotate % 180 == 0 and m_data.enemy_field[self.row][self.cell + count] != int(self.name[0]):
+                #
                 cells.append([self.row, self.cell + count])
+                #
                 yes_no += 1
+            #
             elif self.rotate % 180 != 0 and m_data.enemy_field[self.row + count][self.cell] != int(self.name[0]):
+                #
                 cells.append([self.row + count, self.cell])
+                #
                 yes_no += 1
-
         # Якщо перевірка пройдена успішно, оновлюємо поле 
         if yes_no == int(self.name[0]):
+            #
             if self in m_data.all_ships:
                 pass
             else:
                 try:
+                    #
                     for cell in cells:
+                        #
                         list = m_data.list_explosions
+                        #
                         list.reverse()
+                        #
                         count = 0
-
+                        #
                         for explosion in list:
+                            #
                             if explosion[1] == cell[0] and explosion[2] == cell[1]:
+                                #
                                 del m_data.list_explosions[count]
+                            #
                             count += 1
+                
                 except Exception as error:pass
                 self.explosion = True
 
@@ -1951,9 +2084,9 @@ class Ship(m_images.Image):
                         pass
                     if yes_no:
                         rect = pygame.Rect(
-                            self.field_cor[0] + cell * 55.7*multiplier_x,
-                            self.field_cor[1] + row * 55.7*multiplier_y,
-                            55.7, 55.7)
+                            (self.field_cor[0] + cell * 55.7)*multiplier_x,
+                            (self.field_cor[1] + row * 55.7)*multiplier_y,
+                            55.7*multiplier_x, 55.7*multiplier_y)
                         if rect.collidepoint(pos):
                             for count in range(int(self.name[0])):
                                 if self.rotate % 180 == 0:
@@ -1979,6 +2112,8 @@ class Ship(m_images.Image):
             count = 0
             for cell1 in m_data.cells[self.name[0]]:
                 if not cell1[0]:
+                    if self.celled:
+                        cell1[self.celled] = False
                     cell1[0] = True
                     self.x = cell1[1][0]
                     self.y = cell1[1][1]
@@ -2102,6 +2237,12 @@ class Image():
         self.edit_image = True
         # оновлюємо наше зображення
         self.update_image()
+        if self.progression in m_data.list_blits:
+            if self in m_data.list_blits[self.progression]:
+                pass
+            else:
+                # ми додаємо в цей список наше зображення
+                m_data.list_blits[self.progression].append(self)
     # создаємо метод який оновлює наше зображення
     def update_image(self):
         '''
@@ -2118,11 +2259,7 @@ class Image():
                 self.image = pygame.transform.scale(self.image, (self.width, self.height))
                 self.image = pygame.transform.rotate(self.image, self.rotate)
             # пепевіряємо чи є наше зораження в  списку в якому все відображаться на екрані
-            if self in m_data.list_blits[self.progression]:
-                pass
-            else:
-                # ми додаємо в цей список наше зображення
-                m_data.list_blits[self.progression].append(self)
+            
         except :
             # якщо сталась помилка при завантаженні зображення - ми пишемемо її
             pass
@@ -2172,22 +2309,26 @@ class Image():
         # e = pygame.time.get_ticks()
         # if e-s:
 # задаємо параметри для фону 
-background = Image(width = 1280, height = 851, x = 0, y = 0, name = "background")
+background = Image(width = 1280, height = 832, x = 0, y = 0, name = "background")
 # задаємо параметри для фону магазину
 background_shop = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_shop",progression='shop')
-background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_shop",progression='achievements')
+background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_achievements",progression='achievements')
+background_keys_and_sounds = Image(progression='keys',width=1280,height= 832,name="background_keys_and_sounds",x=0,y=0)
+m_data.list_blits['sounds'].append(background_keys_and_sounds)
 # задаємо параметри для грального поля
 playing_field = Image(width = 1280, height = 832, x = 0, y = 0, name = "playing_field", progression = "pre-game")
 # задаємо параметри для поля гри
-play_field = Image(width = 1280, height = 835, x = 0, y = 0, name = "play_field", progression = "game")
+play_field = Image(width = 1280, height = 832, x = 0, y = 0, name = "play_field", progression = "game")
 # задаємо параметри для екрану програшу
-lose = Image(width = 1280, height = 852, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
+lose = Image(width = 1280, height = 832, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
 # задаємо параметри для екрану перемоги
-win = Image(width = 1280, height = 852, x = 0, y = 0, name = "win", progression = "win", edit = False)
+win = Image(width = 1280, height = 832, x = 0, y = 0, name = "win", progression = "win", edit = False)
 # задаємо параметри для екрану досягнень
-background_achievements = Image(width = 1280, height = 851, x = 0, y = 0, name = "achievements", progression = "achievements")
+background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "achievements", progression = "achievements")
+background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_controls", progression = "controls")
 # задаємо параметри для протиповітряної охорони
 air_defence = Image(55.7,55.7,-999,-99,'weapons/Air_Defence',progression='None')
+
 ```
 
 #### Online_game/modules/audio.py: файл для роботи зі звуком / file for working with sound
@@ -2259,6 +2400,9 @@ achievement = Audio('achievement',max_time=2, loops=0)
 radar = Audio('radar', loops=0)
 # задаємо саундтрек для доріжки звуку
 track = Audio('Soundtrack')
+# задаємо саундтрек для доріжки звуку
+track_war = Audio('Soundtrack_war')
+# додаємо звук покупки
 buying = Audio('buying',0)
 # перевіряємо чи не дорівнює звук значенню False
 if m_data.read_data["sound"] != "False":
@@ -2266,6 +2410,7 @@ if m_data.read_data["sound"] != "False":
     track.play()
 # додаємо звук для вибуху
 explosion = Audio('blas',0)
+
 ```
 
 #### Online_game/modules/data.py: файл у якому зберігається змінні / file for storing variables
@@ -2433,11 +2578,6 @@ achievements_data = {
         'description':'Secret',
         'has':False,
         'tier':1
-    },
-    "True Cossack":{
-        'description':'Get 50 victories',
-        'has':False,
-        'tier':1
     }
 }
 
@@ -2482,11 +2622,15 @@ list_blits = {
     "lose": [],
     "win": [],
     "shop": [],
-    "achievements":[]
+    "achievements":[],
+    "controls":[],
+    'sounds':[],
+    'keys':[]
 }
 # http://127.0.0.1/
 # Створення змінної, у якій ми будемо задавати потрібний єтап ігри
 progression = "menu"
+fire_attack = False
 # Створення змінної, у якій буде записуватись ip ворога
 ip = None
 # Створення списку, у якому будуть зберігатися усі данні ворога
@@ -2532,7 +2676,6 @@ cells = {
         [False, [805, 120]]
     ]
 }
-
 
 ```
 

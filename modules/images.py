@@ -36,6 +36,12 @@ class Image():
         self.edit_image = True
         # оновлюємо наше зображення
         self.update_image()
+        if self.progression in m_data.list_blits:
+            if self in m_data.list_blits[self.progression]:
+                pass
+            else:
+                # ми додаємо в цей список наше зображення
+                m_data.list_blits[self.progression].append(self)
     # создаємо метод який оновлює наше зображення
     def update_image(self):
         '''
@@ -52,11 +58,7 @@ class Image():
                 self.image = pygame.transform.scale(self.image, (self.width, self.height))
                 self.image = pygame.transform.rotate(self.image, self.rotate)
             # пепевіряємо чи є наше зораження в  списку в якому все відображаться на екрані
-            if self in m_data.list_blits[self.progression]:
-                pass
-            else:
-                # ми додаємо в цей список наше зображення
-                m_data.list_blits[self.progression].append(self)
+            
         except :
             # якщо сталась помилка при завантаженні зображення - ми пишемемо її
             pass
@@ -106,19 +108,23 @@ class Image():
         # e = pygame.time.get_ticks()
         # if e-s:
 # задаємо параметри для фону 
-background = Image(width = 1280, height = 851, x = 0, y = 0, name = "background")
+background = Image(width = 1280, height = 832, x = 0, y = 0, name = "background")
 # задаємо параметри для фону магазину
 background_shop = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_shop",progression='shop')
 background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_achievements",progression='achievements')
+background_keys_and_sounds = Image(progression='keys',width=1280,height= 832,name="background_keys_and_sounds",x=0,y=0)
+m_data.list_blits['sounds'].append(background_keys_and_sounds)
 # задаємо параметри для грального поля
 playing_field = Image(width = 1280, height = 832, x = 0, y = 0, name = "playing_field", progression = "pre-game")
 # задаємо параметри для поля гри
-play_field = Image(width = 1280, height = 835, x = 0, y = 0, name = "play_field", progression = "game")
+play_field = Image(width = 1280, height = 832, x = 0, y = 0, name = "play_field", progression = "game")
 # задаємо параметри для екрану програшу
-lose = Image(width = 1280, height = 852, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
+lose = Image(width = 1280, height = 832, x = 0, y = 0, name = "lose", progression = "lose", edit = False)
 # задаємо параметри для екрану перемоги
-win = Image(width = 1280, height = 852, x = 0, y = 0, name = "win", progression = "win", edit = False)
+win = Image(width = 1280, height = 832, x = 0, y = 0, name = "win", progression = "win", edit = False)
 # задаємо параметри для екрану досягнень
-background_achievements = Image(width = 1280, height = 851, x = 0, y = 0, name = "achievements", progression = "achievements")
+background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "achievements", progression = "achievements")
+background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_controls", progression = "controls")
 # задаємо параметри для протиповітряної охорони
 air_defence = Image(55.7,55.7,-999,-99,'weapons/Air_Defence',progression='None')
+target = Image(50,50,-99,-5798,'target',progression='capybara')

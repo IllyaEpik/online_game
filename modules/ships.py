@@ -56,33 +56,50 @@ class Ship(m_images.Image):
         '''
             >>> Перевіряє чи ми потрапили в ворожий корабель чи ні  
         '''
+        # задємо значення 0 в змінну да_ні
         yes_no = 0
+        # вороже поле
         field = m_data.enemy_field
+        # список клітинок
         cells = []
+        # цикл для кількості
         for count in range(int(self.name[0])):
             # Перевіряємо горизонтальне або вертикальне розміщення корабля
             if self.rotate % 180 == 0 and m_data.enemy_field[self.row][self.cell + count] != int(self.name[0]):
+                # до клітинки додаємо ряд і кількість клітинок
                 cells.append([self.row, self.cell + count])
+                # до змінної да_ні додаємо 1
                 yes_no += 1
+            #
             elif self.rotate % 180 != 0 and m_data.enemy_field[self.row + count][self.cell] != int(self.name[0]):
+                # до клітинки додаємо ряд і кількість клітинок
                 cells.append([self.row + count, self.cell])
+                # до змінної да_ні додаємо 1
                 yes_no += 1
-
         # Якщо перевірка пройдена успішно, оновлюємо поле 
         if yes_no == int(self.name[0]):
+            #
             if self in m_data.all_ships:
                 pass
             else:
                 try:
+                    #
                     for cell in cells:
+                        #
                         list = m_data.list_explosions
+                        #
                         list.reverse()
+                        #
                         count = 0
-
+                        #
                         for explosion in list:
+                            #
                             if explosion[1] == cell[0] and explosion[2] == cell[1]:
+                                #
                                 del m_data.list_explosions[count]
+                            #
                             count += 1
+                
                 except Exception as error:pass
                 self.explosion = True
 
@@ -132,24 +149,26 @@ class Ship(m_images.Image):
             >>> Обертає кораблі
         '''
         # Очищаємо місце для нового положення корабля на полі
-        for count in range(int(self.name[0])):
-            if self.rotate % 180 == 0:
-                m_data.my_field[self.row][self.cell + count] = 0
-            else:
-                m_data.my_field[self.row + count][self.cell] = 0
+        if self.row:
+            for count in range(int(self.name[0])):
+                if self.rotate % 180 == 0:
+                    m_data.my_field[self.row][self.cell + count] = 0
+                else:
+                    m_data.my_field[self.row + count][self.cell] = 0
         # Обираємо новий кут обертання
         self.rotate = self.rotate + 90
         fill_field(m_data.my_field)
         # Перевірка на можливість обертання корабля без зіткнень
         no_yes = True
         try:
-            for count in range(int(self.name[0])):
-                if self.rotate % 180 == 0:
-                    if m_data.my_field[self.row][self.cell + count] != 0:
-                        no_yes = False
-                else:
-                    if m_data.my_field[self.row + count][self.cell] != 0:
-                        no_yes = False
+            if self.row:
+                for count in range(int(self.name[0])):
+                    if self.rotate % 180 == 0:
+                        if m_data.my_field[self.row][self.cell + count] != 0:
+                            no_yes = False
+                    else:
+                        if m_data.my_field[self.row + count][self.cell] != 0:
+                            no_yes = False
         except:
             no_yes = False
         # Якщо обертання можливе, оновлюємо корабель
@@ -162,11 +181,12 @@ class Ship(m_images.Image):
         else:
             self.rotate -= 90
         # Оновлюємо поле
-        for count in range(int(self.name[0])):
-            if self.rotate % 180 == 0:
-                m_data.my_field[self.row][self.cell + count] = int(self.name[0])
-            else:
-                m_data.my_field[self.row + count][self.cell] = int(self.name[0])
+        if self.row:
+            for count in range(int(self.name[0])):
+                if self.rotate % 180 == 0:
+                    m_data.my_field[self.row][self.cell + count] = int(self.name[0])
+                else:
+                    m_data.my_field[self.row + count][self.cell] = int(self.name[0])
 
     # Метод для зміщення корабля на нову позицію
     def place(self, pos, multiplier_x=1, multiplier_y=1):
@@ -187,41 +207,45 @@ class Ship(m_images.Image):
                                 if m_data.my_field[row + count][cell] != 0 and m_data.my_field[row + count][cell] != 5:
                                     yes_no_1 = False   
                         if yes_no_1:
-                            for count in range(int(self.name[0])):
-                                if self.rotate % 180 == 0:
-                                    m_data.my_field[self.row][self.cell + count] = 0
-                                else:
-                                    m_data.my_field[self.row + count][self.cell] = 0
-                            fill_field(m_data.my_field)
-                            for count in range(int(self.name[0])):
-                                if self.rotate % 180 == 0:
-                                    m_data.my_field[self.row][self.cell + count] = int(self.name[0])
-                                else:
-                                    m_data.my_field[self.row + count][self.cell] = int(self.name[0])
-                            yes_no_1 = True
-                            for count in range(int(self.name[0])):
-                                if self.rotate % 180 == 0:
-                                    if m_data.my_field[row][cell + count] != 0:
-                                        yes_no_1 = False    
-                                else:                                 
-                                    if m_data.my_field[row + count][cell] != 0:
-                                        yes_no_1 = False   
-                            if yes_no_1:
+                            if self.row:
+                                for count in range(int(self.name[0])):
+                                    if self.rotate % 180 == 0:
+                                        m_data.my_field[self.row][self.cell + count] = 0
+                                    else:
+                                        m_data.my_field[self.row + count][self.cell] = 0
+                                fill_field(m_data.my_field)
+                                for count in range(int(self.name[0])):
+                                    if self.rotate % 180 == 0:
+                                        m_data.my_field[self.row][self.cell + count] = int(self.name[0])
+                                    else:
+                                        m_data.my_field[self.row + count][self.cell] = int(self.name[0])
+                                yes_no_1 = True
+                                for count in range(int(self.name[0])):
+                                    if self.rotate % 180 == 0:
+                                        if m_data.my_field[row][cell + count] != 0:
+                                            yes_no_1 = False    
+                                    else:                                 
+                                        if m_data.my_field[row + count][cell] != 0:
+                                            yes_no_1 = False   
+                                if yes_no_1:
+                                    yes_no = True
+                                fill_field(m_data.my_field)
+                            else:
                                 yes_no = True
-                            fill_field(m_data.my_field)
                     except:
                         pass
                     if yes_no:
                         rect = pygame.Rect(
-                            self.field_cor[0] + cell * 55.7*multiplier_x,
-                            self.field_cor[1] + row * 55.7*multiplier_y,
-                            55.7, 55.7)
+                            (self.field_cor[0] + cell * 55.7)*multiplier_x,
+                            (self.field_cor[1] + row * 55.7)*multiplier_y,
+                            55.7*multiplier_x, 55.7*multiplier_y)
                         if rect.collidepoint(pos):
-                            for count in range(int(self.name[0])):
-                                if self.rotate % 180 == 0:
-                                    m_data.my_field[self.row][self.cell + count] = 0
-                                else:
-                                    m_data.my_field[self.row + count][self.cell] = 0
+                            if self.row:
+                                for count in range(int(self.name[0])):
+                                    if self.rotate % 180 == 0:
+                                        m_data.my_field[self.row][self.cell + count] = 0
+                                    else:
+                                        m_data.my_field[self.row + count][self.cell] = 0
                             if self.celled != None:
                                 m_data.cells[self.name[0]][self.celled][0] = False
                                 self.celled = None
@@ -240,15 +264,22 @@ class Ship(m_images.Image):
                             return True
             count = 0
             for cell1 in m_data.cells[self.name[0]]:
-                if not cell1[0]:
+                if not cell1[0] or self.celled and m_data.cells[self.name[0]][self.celled] == cell1:
+                    if self.celled != None:
+                        print(self.celled)
+                        m_data.cells[self.name[0]][self.celled][0] = False
+                        self.celled = None
                     cell1[0] = True
                     self.x = cell1[1][0]
                     self.y = cell1[1][1]
-                    for count1 in range(int(self.name[0])):
-                        if self.rotate % 180 == 0:
-                            m_data.my_field[self.row][self.cell + count1] = 0
-                        else:
-                            m_data.my_field[self.row + count1][self.cell] = 0
+                    if self.row:
+                        for count1 in range(int(self.name[0])):
+                            if self.rotate % 180 == 0:
+                                m_data.my_field[self.row][self.cell + count1] = 0
+                            else:
+                                m_data.my_field[self.row + count1][self.cell] = 0
+                    self.row = None
+                    self.cell = None
                     self.celled = count
                     self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
                     break

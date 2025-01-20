@@ -34,6 +34,11 @@ def attack_for_cell(row,cell):
             height=55.7,
     )
     # для вибуху кораблів на ворожому полі
+    yes = False
+    if m_data.attack == 'fire_rocket' or m_data.fire_attack and m_data.attack == None and m_data.coins > 1:
+        # назва змінюється на вогонь
+        m_data.coins -= m_data.cost_data['fire_rocket']
+        yes = True
     if str(m_data.enemy_field[row][cell]) in list_explosion:
         # вибухи кораблів на ворожому полі
         m_data.enemy_field[row][cell] = 6
@@ -47,8 +52,10 @@ def attack_for_cell(row,cell):
         # назва змінюється на виьух
         name = "explosion"
         # для атаки з використанням вогненної ракети
-        if m_data.attack == 'fire_rocket':
+        print(m_data.fire_attack, m_data.attack)
+        if m_data.attack == 'fire_rocket' or m_data.fire_attack and m_data.attack == None and yes:
             # назва змінюється на вогонь
+            # m_data.coins -= m_data.cost_data['fire_rocket']
             name = 'fire'
             # назва картинки змінюється на вогонь
             image.name = 'fire'
@@ -152,6 +159,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
     if m_data.turn and m_data.connected and not m_data.list_rockets:
         # цикл для атаки самонаводящою ракетою
         if m_data.attack == 'homing_rocket':
+            m_data.coins -= m_data.cost_data[m_data.attack]
             # функція з вогнем
             fire()
             # список кораблів
@@ -240,11 +248,12 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                     # текст для відправки: пропуск
                     text_for_send+= 'pass:'
                 win_lose(text_for_send) 
+                # звук вибуху
                 m_audio.explosion.play()
-            
+            # додає картинку до списку ракет
             m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*main_row,f'weapons/homing_rocket','Noke',0),main_row,main_cell,lambda:atta(main_row,main_cell),0))
             try:
-                #
+                # запускає анімації
                 threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
             except:
                 pass
@@ -252,6 +261,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
             # звук вибуху
         # атака протиповітряної оборони
         elif m_data.attack == 'Air_Defence':
+            m_data.coins -= m_data.cost_data[m_data.attack]
             # функція вогню
             fire()
             # цикл для ряду
@@ -284,21 +294,21 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                             # текст для відправки: пропуск
                             text_for_send+='pass:;'
         else:
-            #
+            # цикл для ряду
             for row in range(10):
                 # цикл для клітинки
                 for cell in range(10):
-                    
-                    # створюємо хіт-бокс
+                    # наслідуємо клас Rect і створюємо хіт-бокс
                     rect = pygame.Rect((725+55.7*cell) * multiplier_x, 
                                     (115+55.7*row) * multiplier_y,
                                     55.7 * multiplier_x,
                                     55.7 * multiplier_y)
                     # перевірка на колізію
-
+                    # малюємо обводку
                     if rect.collidepoint(pos) and str(m_data.enemy_field[row][cell]) in attack_list:
                         # якщо атака ракетою 3x3
                         if m_data.attack == 'rocket_3x3':
+                            m_data.coins -= m_data.cost_data[m_data.attack]
                             # текст: атака
                             def atta(row,cell):
                                 '''
@@ -326,12 +336,13 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                             ok,ok1 = row,cell 
                             m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*row,f'weapons/rocket_3x3','Noke',0),ok,ok1,lambda:atta(ok,ok1),0))
                             try:
-                                #
+                                # запускаємо анімації
                                 threading.Thread(target=lambda:m_animations.move(m_data.list_rockets[-1][0])).start()
                             except:
                                 pass
                         # атака дінійною ракетою  
                         elif m_data.attack == 'line_rocket':
+                            m_data.coins -= m_data.cost_data[m_data.attack]
                             fire()
                             # функція для атаки
                             def atta(row,cell,last = 0):
@@ -357,7 +368,6 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                 
                             # змінна для тимчасового збереження рядка   
                             ok = row
-                            
                             # до списку ракет додаємо параметри
                             m_data.list_rockets.append((m_images.Image(55.7*2,55.7*0.5,-120,115+55.7*row,f'weapons/line_rocket','Noke',0),ok,atta,'pass;attack:'))
                             try:
@@ -368,6 +378,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                 # elif str(m_data.enemy_field[row][cell]) in '05':
                         # атака радаром
                         elif m_data.attack == 'radar':
+                            m_data.coins -= m_data.cost_data[m_data.attack]
                             # функція вогню
                             fire()
                             # нове досягнення
@@ -616,11 +627,11 @@ def win_lose(text_for_send):
         m_data.read_data['wins']+= 1
         # записується в дату
         m_data.reading_data(m_data.read_data,'date.txt')
-        # якщо ьільше ніж 2 перемоги, то
+        # якщо більше ніж 2 перемоги, то
         if m_data.read_data['wins'] > 2:
             # нове досягнення
             m_achievements.achievement('Smells Like Victory')
-            #
+            # перевіряє кількість перемог
             if m_data.read_data['wins'] > 49:
                 # нове досягнення
                 m_achievements.achievement('True Cossack')
@@ -628,7 +639,7 @@ def win_lose(text_for_send):
         if m_data.coins == 200:
             # нове досягнення
             m_achievements.achievement('Need More Gold!')
-        #
+        # перевіряє кількість монет
         elif m_data.coins == 190:
             # нове досягнення
             m_achievements.achievement("Big Spender")

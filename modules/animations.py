@@ -161,12 +161,17 @@ class Animation():
             
         except Exception as error:
             pass
-
+# функція для переходу
 def move(rocket,count = 50):
+    '''
+        >>> Відповідає за рух ракети
+    '''
     try:
+        # рахує довжину списку ракет
         while len(m_data.list_rockets) and (rocket in m_data.list_rockets[-1]) and m_data.progression == 'game':
-            
+            # додає число до ракет
             rocket.x += count
+            # робить зупинку на 0.01 секунду
             time.sleep(0.01)
     except:
         pass
