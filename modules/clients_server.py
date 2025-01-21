@@ -238,7 +238,7 @@ def activate():
                                         # позначаємо промах для ворожнечого поля
                                         m_data.enemy_field[int(cells1[0])][int(cells1[1])] = 8
                                         # Створюємо обект класа картинки, для відображення вогню, та передаємо параметри 
-                                        image = m_images.Image(
+                                        image = m_animations.Animation(
                                                 progression = "game",
                                                 name = 'fire',
                                                 x = 725+55.7*int(cells1[1]),
@@ -298,6 +298,12 @@ def activate():
                             m_transform.color = (255,25,25)
                             #задаємо кількість типів трансформації
                             m_transform.type_transform = 0
+                            m_data.read_data['loses'] = 1 + int(m_data.read_data['loses'])
+                            with open(m_data.path+m_data.type+'data.txt', "w") as file:
+                                # записуємо нікнейм, ip, звук і клієнт_сервер
+                                file.write(f"{m_buttons.nickname.TEXT}\n{m_data.ip}\n{not m_audio.track.stoped}\n{m_data.client_server}\n{m_data.read_data['wins']}\n{m_data.read_data['loses']}")
+                            if m_data.read_data['loses'] > 2:
+                                m_achievements.achievement('Losing Streak')
                             # стан гри змінюеться на програш
                             m_data.progression = "lose"
                             # додається нове досягнення

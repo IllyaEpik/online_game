@@ -7,6 +7,7 @@
 import pygame,random, time, threading,os
 import modules.data as m_data
 import modules.images as m_images
+import modules.buttons as m_buttons
 import modules.clients_server as m_client
 import modules.audio as m_audio
 import modules.achievements as m_achievements
@@ -38,6 +39,7 @@ def attack_for_cell(row,cell):
     if m_data.attack == 'fire_rocket' or m_data.fire_attack and m_data.attack == None and m_data.coins > 1:
         # назва змінюється на вогонь
         m_data.coins -= m_data.cost_data['fire_rocket']
+        m_data.list_Bought['fire_rocket'] = True
         yes = True
     if str(m_data.enemy_field[row][cell]) in list_explosion:
         # вибухи кораблів на ворожому полі
@@ -160,6 +162,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
         # цикл для атаки самонаводящою ракетою
         if m_data.attack == 'homing_rocket':
             m_data.coins -= m_data.cost_data[m_data.attack]
+            m_data.list_Bought['homing_rocket'] = True
             # функція з вогнем
             fire()
             # список кораблів
@@ -261,7 +264,6 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
             # звук вибуху
         # атака протиповітряної оборони
         elif m_data.attack == 'Air_Defence':
-            m_data.coins -= m_data.cost_data[m_data.attack]
             # функція вогню
             fire()
             # цикл для ряду
@@ -275,6 +277,8 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                     55.7 * multiplier_y)
                     # перевірка на колізію
                     if rect.collidepoint(pos) and str(m_data.my_field[row][cell]) in '05':
+                        m_data.coins -= m_data.cost_data[m_data.attack]
+                        m_data.list_Bought['Air_Defence'] = True
                         # до моїх ефектів додається протиповітряна оборона
                         m_data.my_buffs.append(['Air_Defence',row,cell])
                         # текст для відправки: ефект протиповітряної оборони
@@ -309,6 +313,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                         # якщо атака ракетою 3x3
                         if m_data.attack == 'rocket_3x3':
                             m_data.coins -= m_data.cost_data[m_data.attack]
+                            m_data.list_Bought['rocket_3x3'] = True
                             # текст: атака
                             def atta(row,cell):
                                 '''
@@ -343,6 +348,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                         # атака дінійною ракетою  
                         elif m_data.attack == 'line_rocket':
                             m_data.coins -= m_data.cost_data[m_data.attack]
+                            m_data.list_Bought['line_rocket'] = True
                             fire()
                             # функція для атаки
                             def atta(row,cell,last = 0):
@@ -378,6 +384,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                                 # elif str(m_data.enemy_field[row][cell]) in '05':
                         # атака радаром
                         elif m_data.attack == 'radar':
+                            m_data.list_Bought['radar'] = True
                             m_data.coins -= m_data.cost_data[m_data.attack]
                             # функція вогню
                             fire()
@@ -505,7 +512,7 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                             # створення назви для звичайної ракети
                             name_for_rocket = 'standart_rocket'
                             # якщо атака вогняною ракетою, то
-                            if m_data.attack == 'fire_rocket':
+                            if m_data.attack == 'fire_rocket' or (m_data.fire_attack and not m_data.attack):
                                 # назва ракети змінюється на вогняну ракету
                                 name_for_rocket = 'fire_rocket'
                             # до списку ракет додаємо параметри
@@ -520,6 +527,13 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
         #     text_for_send+= ';'+text
         
         # функція для перемоги і програшу
+        get = True
+        print(m_data.list_Bought)
+        for product in m_data.list_Bought:
+            if not m_data.list_Bought[product]:
+                get = False
+        if get:
+            m_achievements.achievement('Shopaholic')
         win_lose(text_for_send)
 # функція для вогню
 def fire():
@@ -622,23 +636,22 @@ def win_lose(text_for_send):
             # нове досягнення
             m_achievements.achievement('Total Domination')
         # додається перемога
-        m_data.read_data['wins']+= 1
+        m_data.read_data['wins'] = 1 + int(m_data.read_data['wins'])
+        with open(m_data.path+m_data.type+'data.txt', "w") as file:
+            # записуємо нікнейм, ip, звук і клієнт_сервер
+            file.write(f"{m_buttons.nickname.TEXT}\n{m_data.ip}\n{not m_audio.track.stoped}\n{m_data.client_server}\n{m_data.read_data['wins']}\n{m_data.read_data['loses']}")
         # записується в дату
         m_data.reading_data(m_data.read_data,'date.txt')
         # якщо більше ніж 2 перемоги, то
         if m_data.read_data['wins'] > 2:
             # нове досягнення
             m_achievements.achievement('Smells Like Victory')
-            # перевіряє кількість перемог
-            if m_data.read_data['wins'] > 49:
-                # нове досягнення
-                m_achievements.achievement('True Cossack')
         # перевірка наявних монет 
         if m_data.coins == 200:
             # нове досягнення
             m_achievements.achievement('Need More Gold!')
         # перевіряє кількість монет
-        elif m_data.coins == 190:
+        elif m_data.coins == 10:
             # нове досягнення
             m_achievements.achievement("Big Spender")
         # до тексту для відправки додається програш

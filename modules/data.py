@@ -29,10 +29,10 @@ cost_data = {
     "rocket_3x3":30,
     "fire_rocket":2,
 
-    "Energetic":20,
-    "radar":100,
-    "Air_Defence":20,
-    "Anti_fire":10,
+    "Energetic":10,
+    "radar":70,
+    "Air_Defence":10,
+    "Anti_fire":5,
 }
 weapon_data = {
     "rockets":{
@@ -58,7 +58,18 @@ list_achievements = []
 list_animations = []
 list_for_radar = []
 buffs = []
+list_Bought = {
+    "homing_rocket":False,
+    "rocket_3x3":False,
+    "line_rocket":False,
+    "fire_rocket":False,
 
+    "radar":False,
+    "Air_Defence":False,
+    "Energetic":False,
+    "Anti_fire":False
+    
+}
 list_rockets = []
 my_buffs = []
 # achievements_data = [

@@ -214,12 +214,16 @@ class Button(Image):
                             m_audio.buying.play()
                             # перевіряємо чи обран енергетик
                             if 'Energetic' == m_data.select_weapon:
+                                m_data.list_Bought['Energetic'] = True
+                                print('YOU LOST')
                                 m_data.coins -= m_data.cost_data[m_data.select_weapon]
                                 # додаємо енергетик в ефекти
                                 m_data.buffs.append(['Energetic'])
                                 # m_client.send('buff:Energetic')
                             # перевіряємо чи обран вогнегасник
                             elif "Anti_fire"== m_data.select_weapon:
+                                print("YOU LOST1")
+                                m_data.list_Bought['Anti_fire'] = True
                                 print('bosssssssssssssssssssssssssssssssssotron3000')
                                 m_data.coins -= m_data.cost_data[m_data.select_weapon]
                                 # додаємо пропуск
@@ -259,6 +263,7 @@ class Button(Image):
                                 # переміщює на вікно гри
                                 m_data.progression = "game"                     
                             else:
+                                print(m_data.coins)
                                 # обирає атаку
                                 m_data.attack = m_data.select_weapon
                                 # програє анімацію переходу
@@ -517,7 +522,7 @@ class Button(Image):
                     # безпечно відкриваємо data.txt
                     with open(m_data.path+m_data.type+'data.txt', "w") as file:
                         # записуємо нікнейм, ip, звук і клієнт_сервер
-                        file.write(f"{nickname.TEXT}\n{m_data.ip}\n{not m_audio.track.stoped}\n{m_data.client_server}")
+                        file.write(f"{nickname.TEXT}\n{m_data.ip}\n{not m_audio.track.stoped}\n{m_data.client_server}\n{m_data.read_data['wins']}\n{m_data.read_data['loses']}")
                     
                     # програє анімацію переходу
                     m_transform.type_transform = random.randint(0,m_transform.count_types)
