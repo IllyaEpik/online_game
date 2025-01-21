@@ -10,6 +10,16 @@ pygame.mixer.init()
 # встановлємо гучність для відтворення музики
 # pygame.mixer.music.set_volume(0.5)
 # створення класу для роботи з аудіо
+main_volume = 0.5
+try:
+    with open(m_data.path+m_data.type+'volume.txt', "r") as file:
+        text = file.read()
+        if 0 <= float(text) <= 1:
+            main_volume = float(text)
+except Exception as error:
+    print(error)
+    with open(m_data.path+m_data.type+'volume.txt', "w") as file:
+        file.write(str(main_volume))
 class Audio():
     '''
         >>> Додає фонову музику
@@ -17,6 +27,7 @@ class Audio():
     '''
     # ініцілізуємо клас аудіо 
     def __init__(self, name: str, loops: int = -1,volume = 0.5,max_time = "any"): 
+        global list_audio
         # створюємо змінні
         self.audio = None 
         self.name = name 
@@ -30,8 +41,13 @@ class Audio():
         if max_time == 'any':
             # додаємо довжину звуку
             max_time = self.audio.get_length()
+        # list_audio.append(self)
+    def volume(self, volume):
+        self.audio.set_volume(volume)
+
     # метод для відтворення аудіо
-    def play(self, volume = 0.5):
+    def play(self, volume = None):
+        global main_volume
         '''
             >>> Починає музику
             
@@ -40,7 +56,10 @@ class Audio():
             # зупиняємо музику
             self.stoped = False
             # відтворюємо музику
-            self.audio.set_volume(volume)
+            if volume:
+                self.audio.set_volume(volume)
+            else:
+                self.audio.set_volume(main_volume)
             self.audio.play(loops= self.loops)
         except:
             # якщо буде помилка при завантаженні, виводимо повідомлення про помилку
@@ -73,7 +92,7 @@ except Exception as error:
     print(error)
     with open(m_data.path+m_data.type+'music.txt', "w") as file:
         file.write('1')
-
+list_audio = []
 # задаємо саундтрек для доріжки звуку
 track = Audio(f'Soundtracks/{name}')
 # задаємо саундтрек для доріжки звуку

@@ -109,12 +109,15 @@ class Button(Image):
             elif self.function == "music":
                 # перевіряє чи зупинена музика
                 if m_audio.track.stoped:
+                    music3.name = 'pause'
                     # запускаємо музику
                     m_audio.track.play()
                     # self.name = "music"
                 else:
+                    music3.name = 'play'
                     # зупиняємо музику
                     m_audio.track.stop()
+                music3.update_image()
                     # self.name = "music_off"
                 # self.update_image()
             # перевіряємо чи відбувся виграш_програш
@@ -197,15 +200,16 @@ class Button(Image):
                 return True
             # перевіряємо покупку
             elif self.function == "buy":
+                print('hallo')
                 try:
                     # якщо не атакуємо
-                    if not m_data.attack:
+                    
                         # перевіряємо чи достатньо монет для покупки
                         if m_data.cost_data[m_data.select_weapon] <= m_data.coins:
                             # віднімаємо суму покупки
                             
                             # додаємо досягнення
-                            m_achievements.achievement('Hooked')
+                            m_achievements.achievement('Arm yourself')
                             # звук покупки
                             m_audio.buying.play()
                             # перевіряємо чи обран енергетик
@@ -216,6 +220,7 @@ class Button(Image):
                                 # m_client.send('buff:Energetic')
                             # перевіряємо чи обран вогнегасник
                             elif "Anti_fire"== m_data.select_weapon:
+                                print('bosssssssssssssssssssssssssssssssssotron3000')
                                 m_data.coins -= m_data.cost_data[m_data.select_weapon]
                                 # додаємо пропуск
                                 add = ';pass'
@@ -252,8 +257,7 @@ class Button(Image):
                                 # програє анімацію переходу
                                 m_transform.type_transform = random.randint(0,m_transform.count_types)
                                 # переміщює на вікно гри
-                                m_data.progression = "game"
-                                                        # m_attack.need_to_send.append('Anti_fire:')                           
+                                m_data.progression = "game"                     
                             else:
                                 # обирає атаку
                                 m_data.attack = m_data.select_weapon
@@ -261,8 +265,8 @@ class Button(Image):
                                 m_transform.type_transform = random.randint(0,m_transform.count_types)
                                 # переміщює на вікно гри
                                 m_data.progression = "game"
-                except:
-                    pass
+                except Exception as error:
+                    print(error)
             # перевіряємо магазин
             elif self.function == 'shop':
                 # програє анімацію переходу
@@ -356,6 +360,18 @@ class Button(Image):
             elif self.function and 'set_achievement' in self.function:
                 # додаємо опис до досягнень
                 description_.TEXT = (self.name.split('/')[1]+': '+m_data.achievements_data[self.function.split('/')[1]]['description']).split(' ') +['                ', '           ']
+                # multiplers = [
+                #     # додаємо параметри
+                #     self.rect.width/self.width,
+                #     self.rect.height/self.height
+                # ]
+                # # перевіряємо мультиплеер
+                # if multiplers[0] > multiplers[1]:
+                #     # до опису додаємо шрифт та розмір
+                #     description_.FONT = pygame.font.SysFont("algerian", int((description_.size*multiplers[1])))
+                # else:
+                #     # до опису додаємо шрифт та розмір
+                #     description_.FONT = pygame.font.SysFont("algerian", int((description_.size*multiplers[0])))
                 # додаємо '/' до назви обраної зброї
                 m_data.select_weapon = self.name.split('/')[1]
                 # додаємо шрифт та розмір до опису
@@ -410,7 +426,7 @@ class Button(Image):
                             list_text.append(text)
                     # опис повинен дорівнювати тексту в списку
                     description_.TEXT = list_text
-            # ghtdshz'vj aeyrws. s p,hj. d aeyrwsz[]
+            # превіряємо функцію і зброю в функціях
             elif self.function and 'weapons' in self.function:
                 # buff
                 # розділяємо строки з описом за допомогою '/'
@@ -502,6 +518,7 @@ class Button(Image):
                     with open(m_data.path+m_data.type+'data.txt', "w") as file:
                         # записуємо нікнейм, ip, звук і клієнт_сервер
                         file.write(f"{nickname.TEXT}\n{m_data.ip}\n{not m_audio.track.stoped}\n{m_data.client_server}")
+                    
                     # програє анімацію переходу
                     m_transform.type_transform = random.randint(0,m_transform.count_types)
                     # переходить в pre-game
@@ -756,6 +773,7 @@ class Auto(Image):
                 # цикл для клітинки в клітинках
                 for cell in m_data.cells[row]:
                     # задаємо False для клітинки
+                    print(cell,type(cell))
                     cell[0] =  False
             # for ship in m_data.all_ships:
             # поки True
@@ -939,6 +957,13 @@ out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text
 music =Button(width = 76, height = 72, x = nickname.width + 50, y = 45, text = "", fun = "music", name =  "music")
 # наслідуємо клас Button і задаємо необхідні параметри
 music2 =Button(width = 76, height = 72, x = 632, y = 22, text = "", fun = "music", name =  "music",progression='pre-game')
+music3 =Button(width = 76, height = 72, x = 830, y = 30, text = "", fun = "music", name =  "pause",progression='sounds')
+if m_audio.track.stoped:
+    music3.name = 'play'
+    music3.update_image()
+# plus = Button('+',50,50,1200,50,'','sounds','+',70,(255,255,255))
+# plus.second_color = [0,0,0]
+
 # до списку відображення гри додаємо музику
 m_data.list_blits['game'].append(music2)
 # наслідуємо клас Button і задаємо необхідні параметри

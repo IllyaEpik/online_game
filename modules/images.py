@@ -105,15 +105,13 @@ class Image():
             screen.blit(self.image, (x, y))
         except:
             pass
-        # e = pygame.time.get_ticks()
-        # if e-s:
 # задаємо параметри для фону 
 background = Image(width = 1280, height = 832, x = 0, y = 0, name = "background")
 # задаємо параметри для фону магазину
 background_shop = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_shop",progression='shop')
 background_achievements = Image(width = 1280, height = 832, x = 0, y = 0, name = "background_achievements",progression='achievements')
-background_keys_and_sounds = Image(progression='keys',width=1280,height= 832,name="background_keys_and_sounds",x=0,y=0)
-m_data.list_blits['sounds'].append(background_keys_and_sounds)
+background_keys = Image(progression='keys',width=1280,height= 832,name="background_keys",x=0,y=0)
+background_sounds = Image(progression='sounds',width=1280,height= 832,name="background_sounds",x=0,y=0)
 # задаємо параметри для грального поля
 playing_field = Image(width = 1280, height = 832, x = 0, y = 0, name = "playing_field", progression = "pre-game")
 # задаємо параметри для поля гри

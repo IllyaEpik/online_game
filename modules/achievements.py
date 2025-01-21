@@ -39,10 +39,12 @@ class achievement():
                 if yes_no:
                     achievement("Into the Sunset...")
             m_data.achievements_data[name]['has'] = "True"
+            self.img = None
             # задаємо шрифт
             self.FONT = pygame.font.SysFont("algerian", 40)
             # задаємо розмір квадрату
             self.rect = pygame.Rect(x,y,width,height)
+            self.square = None
             # додаємо срисок досягнень
             m_data.list_achievements.append(self)
             # розділяємо текст на частини
@@ -143,12 +145,6 @@ class achievement():
         '''
             >>> Трансформує масштаб картинки
         '''
-        # завантажуємо картинку
-        self.img = pygame.image.load(os.path.abspath(f"{__file__}/../../images/achievements/{self.name}.png"))
-        # трансформуємо масштаб
-        self.img = pygame.transform.scale(self.img, (100, 100))
-        # кольори пікселів, які збігаються стають прозорими
-        self.img.set_colorkey((0, 0, 0))
         # змінюємо розмір квадрату
         rect = pygame.Rect(
             self.rect.x*multiplier_x,
@@ -156,14 +152,21 @@ class achievement():
             self.rect.width*multiplier_x,
             self.rect.height*multiplier_y
             )
-        # промальовка квадрату
-        square = pygame.Surface((rect.width,rect.height))
-        # заповнення квадрату кольором
-        square.fill((69, 69, 69))
-        # заливаємо квадрат кольором зображення
-        square.set_alpha(200)
+        if not self.img or (self.img.get_width() != int(100*multiplier_x) or self.img.get_height() != int(100*multiplier_y)):
+            # завантажуємо картинку
+            self.img = pygame.image.load(os.path.abspath(f"{__file__}/../../images/achievements/{self.name}.png"))
+            # трансформуємо масштаб
+            self.img = pygame.transform.scale(self.img, (100*multiplier_x, 100*multiplier_y))
+            # кольори пікселів, які збігаються стають прозорими
+            self.img.set_colorkey((0, 0, 0))
+            # промальовка квадрату
+            self.square = pygame.Surface((rect.width,rect.height))
+            # заповнення квадрату кольором
+            self.square.fill((69, 69, 69))
+            # заливаємо квадрат кольором зображення
+            self.square.set_alpha(200)
         # відображення квадрату на екрані
-        screen.blit(square,rect)
+        screen.blit(self.square,rect)
         # відображення картинки на екрані
         screen.blit(self.img, ((self.rect.x+10)*multiplier_x,(self.rect.y)*multiplier_y))
         # задаємо кількість

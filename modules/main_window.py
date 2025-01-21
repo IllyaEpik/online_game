@@ -38,7 +38,7 @@ class Screen():
 
         # задаємо назву нашому екрану
         pygame.display.set_caption('online game')
-        
+        # завантажуємо іконку гравця
         icon = pygame.image.load(os.path.abspath(__file__ + "/../../images/icon.png"))
         pygame.display.set_icon(icon)
     # функція запуску
@@ -46,11 +46,10 @@ class Screen():
         '''
             >>> Запускає гру
         '''
-        # m_data.progression = 'lose'
         # запускаємо гру
         game = True
+        # до кількості додаємо 1
         self.counter += 1
-        
         # налаштування розміра дісплея
         size = pygame.display.Info()
         # поки гра триває
@@ -62,11 +61,11 @@ class Screen():
             multiplier_y = (HEIGHT / 100) / (832 / 100)
             # цикл всіх подій
             for event in pygame.event.get():
-                # якщо вікно зачинено то 
-
+                # якщо вікно гри зачинено то 
                 if event.type == pygame.QUIT:
-                    # значення гри неправда
+                    # гра закінчується
                     game = False
+                    # гра закінчилася
                     m_data.end=True
                     try:
                         # відключаємо клієнта
@@ -75,68 +74,98 @@ class Screen():
                         pass 
                 # коли кнопка миші натиснута
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    # перехід
                     if m_transform.type_transform == None:
+                        # цикл для спрайту в списку ефектів
                         for sprite in m_data.list_blits[m_data.progression]:
                             # print(sprite.name)
                             try:
                                 # if sprite.fun != '':
+                                # кнопка старт
                                 sprite.button_start(event)
                             except:
                                 pass
+                        # перевірка виграшу і програшу
                         if m_data.progression in "winlose":
                             # m_buttons.revenge.button_start(event)
+                            # перевірка натискання поза кнопкою старт
                             if m_buttons.out.button_start(event):
+                                # гра не починається
                                 game = False
+                                # гра не почалася
                                 m_data.end=True
                                 try:
                                     # відключаємо клієнта
                                     m_client.client.close()
                                 except:
                                     pass 
+                        # перевірка музики
                         if m_data.progression == 'sounds':
+                            # натискання мишки
+                            m_controls.fun(pygame.mouse.get_pos(),multiplier_x,multiplier_y)
                             print(event.pos)
+                            # перевірка x
                             if event.pos[0]< 800*multiplier_x:
                                 yes = 0
+                                # цикл для контролю в списку музики
                                 for control in m_controls.list_music:
                                     # print(control[0].rect.collidepoint(event.pos),control[0].rect.x,control[0].rect.y,control[0].rect.width,control[0].rect.height,control[2])
+                                    # перевірка обводки контроля
                                     if control[0].rect.collidepoint(event.pos):
                                         control[1] = 1
                                         control[0].COLOR = (50,50,255)
                                         control[0].second_color = (0,0,0)
+                                        # зміна треку
                                         m_controls.music_edit('soundtracks')
+                                        # трек змінен
                                         yes = 1
                                     else:
                                         control[1] = 0
                                         control[0].COLOR = (0,0,0)
                                         control[0].second_color = (255,255,255)
+                                # якщо трек не змінен
                                 if not yes:
+                                    # музика не змінюється
                                     m_controls.music_edit(None)
-                                
                             else:
+                                # цикл для контролю в списку музики
                                 for control in m_controls.list_music:
+                                    # перевірка контролю
                                     if control[1]:
+                                        # цикл для ключів в списку музики
                                         for key in m_controls.list_musics:
                                             control = key
+                                            # перевірка обводки контролю
                                             if control[0].rect.collidepoint(event.pos):
                                                 control[1] = 1
                                                 control[0].COLOR = (50,50,255)
                                                 control[0].second_color = (0,0,0)
+                                                # трек зупиняється
                                                 m_audio.track.stop()
+                                                # зміна треку
                                                 m_audio.track = m_audio.Audio('soundtracks/'+key[0].TEXT)
+                                                # трек грається
                                                 m_audio.track.play()
+                                                # безпечно відкриваємо файл з музикою
                                                 with open(m_data.path+m_data.type+'music.txt', "w") as file:
+                                                    # записуємо текст до ключа
                                                     file.write(key[0].TEXT)
                                             else:
                                                 control[1] = 0
                                                 control[0].COLOR = (0,0,0)
                                                 control[0].second_color = (255,255,255)
+                                        # зупинка
                                         break
+                        # перевірка ключів
                         if m_data.progression == 'keys':
                             print(event.pos)
+                            # перевірка x
                             if event.pos[0]< 800*multiplier_x:
                                 yes = 0
+                                # цикл для контролю в списку контролю
                                 for control in m_controls.list_controls:
                                     # print(control[0].rect.collidepoint(event.pos),control[0].rect.x,control[0].rect.y,control[0].rect.width,control[0].rect.height,control[2])
+                                    # перевірка обводки контролю
                                     if control[0].rect.collidepoint(event.pos):
                                         control[1] = 1
                                         control[0].COLOR = (50,50,255)
@@ -148,13 +177,18 @@ class Screen():
                                         control[0].COLOR = (0,0,0)
                                         control[0].second_color = (255,255,255)
                                 if not yes:
+                                    # текст змінюється на None
                                     m_controls.text_edit(None)
                                 
                             else:
+                                # цикл для контролю в списку контролю
                                 for control in m_controls.list_controls:
+                                    # перевірка контролю
                                     if control[1]:
+                                        # цикл для ключа в списку ключів
                                         for key in m_controls.list_keys:
                                             control = key
+                                            # перевірка обводки контроля
                                             if control[0].rect.collidepoint(event.pos):
                                                 control[1] = 1
                                                 control[0].COLOR = (50,50,255)
@@ -163,60 +197,58 @@ class Screen():
                                                 control[1] = 0
                                                 control[0].COLOR = (0,0,0)
                                                 control[0].second_color = (255,255,255)
+                                        # зупинка
                                         break
                         # якщо прогресс дорівнює меню то
                         if m_data.progression == "menu":
                             # вибір місця написання
                             m_buttons.input.activate(event) 
                             m_buttons.nickname.activate(event)
-                        # якщо прогресс дорівнює пре-грі то
+                        # прогресс дорівнює досягненням то
                         elif m_data.progression == 'achievements':
                             # m_buttons.achievements_.button_start(event)
                             for achievement in m_data.list_achievements_view:
                                 m_data.list_achievements_view[achievement].button_start(event)
+                        # якщо прогресс дорівнює пре-грі то    
                         if m_data.progression == "pre-game":
-                            # m_buttons.music2.button_start(event)
-                            # # преходить в гру
-                            # m_buttons.play.button_start(event)
                             # автоматична розтановка кораблів
                             m_buttons.auto.randomship(event.pos)
-                            # поворот кораблів
-                            # m_buttons.rotate.button_start(event)
-
                             # цикл всіх кораблів
                             for ship in m_data.all_ships:
                                 # виділення кораблів
                                 ship.activate(event, multiplier_x, multiplier_y)
                         # якщо прогресс дорівнює грі то
                         if m_data.progression == "game":
+                            # якщо підключено
                             if m_data.connected:
+                                # кнопка магазину і старту
                                 m_buttons.shop.button_start(event)
-                            # m_buttons.music2.button_start(event)
                             # вибір місця атаки
                             m_attack.attack(event.pos,multiplier_x,multiplier_y)
                             # m_buttons.shop.button_start(event)
-                            
+                        # при находженні в магазині
                         elif m_data.progression == 'shop':
-                            # m_buttons.shop_.button_start(event)
-                            # m_buttons.buy.button_start(event)
-                            
+                            # цикл для зброї в списку зброї
                             for weapon in m_buttons.list_weapons:
                                 weapon.button_start(event=event)
                     # якщо будь-яка клавіша натиснута то
                     else:
                         m_transform.type_transform = None
                         m_transform.size = 0
+                # якщо кнопка вгору натиснута
                 if event.type == pygame.KEYUP:
                     print(event.key, m_controls.controls['fire attack'])
                     if m_data.progression == 'game' and str(event.key) in m_controls.controls['fire attack']:
                         m_data.fire_attack = False
                         print('NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO')
+                # якщо кнопка вниз натиснута
                 if event.type == pygame.KEYDOWN:
                     print(m_controls.controls['rotate ship'],type(m_controls.controls['rotate ship']))
-                    
+                    # якщо знаходимося в меню
                     if m_data.progression == "menu":
                         # додає символи в event
                         m_buttons.input.edit(event)
+                        #редагуємо нікнейм
                         m_buttons.nickname.edit(event)
                         for object in [m_buttons.nickname]:
                             size = object.FONT.size(object.TEXT)
@@ -226,14 +258,17 @@ class Screen():
                             if object.width < object.start_width:
                                 object.width = object.start_width
                             object.update_image()
-                            
+                            # кнопка з музикою
                             m_buttons.music.rect = pygame.Rect(m_buttons.music.x, m_buttons.music.y,m_buttons.music.width,m_buttons.music.height)
                             m_buttons.music.x = m_buttons.nickname.width + 50
+                    # при знаходженні в ключах
                     elif m_data.progression == 'keys':
                         # print('yes')
+                        # цикл для контролю в списку контролю
                         for control in m_controls.list_controls:
                             if control[1]:
                                 # print('yes2')
+                                # цикл для ключів в списку ключів
                                 for key in m_controls.list_keys:
                                     if key[1]:
                                         # print('yes3')
@@ -246,30 +281,41 @@ class Screen():
                                             l_controls += f'{controls[control][0]},{controls[control][1]},{controls[control][2]},{controls[control][3]}\n'
                                         with open(m_data.path+m_data.type+'controls'+'.txt', "w") as file:
                                             file.write(l_controls)
+                    # при знаходженні в pre-game і ключа в контролі
                     elif m_data.progression == 'pre-game' and str(event.key) in m_controls.controls['rotate ship']:
+                        # цикл для корабля в усіх кораблів
                         for ship in m_data.all_ships:
                             # якщо корабль виділен
                             if ship.select:
                                 # поворот корабля   
                                 ship.rotate_ship()
+                    # при знаходженні в грі
                     elif m_data.progression == 'game':
                         # rect = pygame.Rect((725+55.7*cell) * multiplier_x, 
                         #             (115+55.7*row) * multiplier_y,
                         #             55.7 * multiplier_x,
                         #             55.7 * multiplier_y)
+                        # перевірка вогняної атаки
                         if str(event.key) in m_controls.controls['fire attack']:
                             m_data.fire_attack = True
                             print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhos')
+                        # перевірка рандомної атаки
                         if str(event.key) in m_controls.controls['random attack']:
                             yes = 0
+                            # цикл для кораблів на ворожому полі
                             for row in m_data.enemy_field:
                                 for cell in row:
+                                    # перевірка кораблів в клітинках
                                     if str(cell) in '012345':
                                         yes = True
+                                        # зупинка
                                         break
                             if yes:
+                                # поки True
                                 while True:
+                                    # рандомна розстановка в рядах
                                     row = random.randint(0,9)
+                                    # рандомна розстановка в клітинках
                                     cell = random.randint(0,9)
                                     if str(m_data.enemy_field[row][cell]) in '012345':
                                         print(row,cell,m_data.enemy_field[row][cell])
@@ -282,7 +328,9 @@ class Screen():
                     
             #         if key in m_controls.controls['fire attack']:
             #             m_data.fire_attack = True
+            # запис монет
             m_buttons.coins.TEXT = f"{m_data.coins}"
+            # запис монет
             m_buttons.coins_.TEXT = f"{m_data.coins}"
 
             # цикл відображення всього що є в списку
@@ -294,29 +342,33 @@ class Screen():
                                  sprite.width*multiplier_x,
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
+            # перевірка музики
             if m_data.progression == 'sounds':
+                # цикл для ключів в списку музики
                 for key in m_controls.list_musics:
                     sprite = key[0]
-
                     sprite.blit(self.screen,
                                  sprite.x*multiplier_x,
                                  sprite.y*multiplier_y,
                                  sprite.width*multiplier_x,
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
+            # перевірка ключів
             if m_data.progression == 'keys':
-                
+                # цикл для ключів в списку ключів
                 for key in m_controls.list_keys:
                     sprite = key[0]
-
                     sprite.blit(self.screen,
                                  sprite.x*multiplier_x,
                                  sprite.y*multiplier_y,
                                  sprite.width*multiplier_x,
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
+            # зупинка звуку
             if m_audio.track.stoped:
+                # якщо знаходимося в меню
                 if m_data.progression == "menu":
+                    # малюємо лінії 
                     pygame.draw.line(self.screen,(255,50,50),
                                     (m_buttons.music.x*multiplier_x,m_buttons.music.y*multiplier_y,),
                                     (m_buttons.music.x*multiplier_x + m_buttons.music.width*multiplier_x,m_buttons.music.y*multiplier_y + m_buttons.music.height*multiplier_y),10)
@@ -324,11 +376,14 @@ class Screen():
                     pygame.draw.line(self.screen,(255,50,50),
                                     (m_buttons.music2.x*multiplier_x,m_buttons.music2.y*multiplier_y,),
                                     (m_buttons.music2.x*multiplier_x + m_buttons.music2.width*multiplier_x,m_buttons.music2.y*multiplier_y + m_buttons.music2.height*multiplier_y),10)
-            # якщо знаходимось не в меню то
+            # якщо знаходимось не в списку досягнень то
             if m_data.list_achievements != []:
+                # список досягнень
                 achievement = m_data.list_achievements[0]
+                # рух досягнень
                 achievement.move()
                 achievement.blit(self.screen,multiplier_x,multiplier_y)
+            # якщо знаходимося в pre-game
             if m_data.progression in "pre-game":
                 # цикл для відображення всіх кораблів
                 for ship in m_data.all_ships:
@@ -341,8 +396,9 @@ class Screen():
                         elif ship.y == 120:
                             ship.jump_cor[3] = False
                             ship.jump_cor[-2] = False
-                            
+                            # нове досягнення
                             m_achievements.achievement('the bug')
+                    # перевірка кораблів на екрані
                     if ship.y > self.screen.get_size()[1]+1000:
                         ship.y = -100
                         ship.jump_cor[0] =0
@@ -350,13 +406,16 @@ class Screen():
                         ship.jump_cor[3] = True
                         ship.x = 805
                         ship.name = '4ticket'
-                        # ship.update_image()
+                        ship.update_image()
                         # ship.name = '4'
                     # саме відображення кораблів
                     ship.blit(self.screen,ship.x*multiplier_x,ship.y*multiplier_y,ship.width*multiplier_x,ship.height*multiplier_y,multiplier_x,multiplier_y)
+            # якщо знаходимося в грі то
             if m_data.progression == "game":
+                # цикл для ракет в списку ракет
                 for rocket in m_data.list_rockets:
                     try:
+                        # перевіряємо вид ракети
                         if rocket[0].name != 'weapons/line_rocket':
                             x = (725+55.7*rocket[2]) * multiplier_x
                             sprite = rocket[0]
@@ -370,7 +429,6 @@ class Screen():
                                 rocket[3]()
                                 m_data.list_rockets.remove(rocket)
                         else:
-                            
                             sprite = rocket[0]
                             sprite.blit(self.screen,
                                         sprite.x*multiplier_x,
@@ -391,10 +449,13 @@ class Screen():
                                         break
                     except Exception as error:
                         pass
-
+                # кількість 0
                 count = 0
+                # список для видалень
                 list_to_delete = []
+                # цикл для ефектів в ефектах
                 for buff in m_data.my_buffs:
+                    # перевірка ефекту протиповітряної оборони
                     if buff[0] == 'Air_Defence':
                         if str(m_data.my_field[buff[1]][buff[2]]) in '05':
                             m_images.air_defence.blit(self.screen,
@@ -403,27 +464,36 @@ class Screen():
                                                     )
                         else:
                             list_to_delete.append(count)
+                    # до кількості додаємо 1
                     count +=1
+                # цикл для видалення з списку видалення
                 for delete in list_to_delete:
                     del m_data.my_buffs[delete]
-
+                # цикл для спрайту в списку вибуху
                 for sprite in m_data.list_explosions:
                     sprite = sprite[0]
+                    # відображення спрайту на екрані
                     sprite.blit(self.screen,
                                 sprite.x*multiplier_x,
                                 sprite.y*multiplier_y,
                                 sprite.width*multiplier_x,
                                 sprite.height*multiplier_y,
                                 multiplier_x,multiplier_y)
+                # перевірка часу для радара
                 if m_data.time_for_radar:
+                    # цикл для спрайту в списку для радара
                     for sprite in m_data.list_for_radar:
+                        # малюємо круги
                         pygame.draw.circle(self.screen,(50,255,50),((sprite.x+sprite.width/2)*multiplier_x,(sprite.y+sprite.height/2)*multiplier_y),10,25)
-            
+                # якщо підключення відбулося
                 if m_data.connected:
+                    # якщо черга змінилась
                     if m_data.turn:
+                        # зміна кольору
                         m_buttons.opponent_turn.COLOR = (0, 0, 255)
                         # m_buttons.your_turn.COLOR = ()
                     else:
+                        # зміна кольору
                         m_buttons.opponent_turn.COLOR = (255, 0, 0)
                         # m_buttons.your_turn.COLOR = (140, 140, 140)
                     # if m_data.turn:
@@ -432,16 +502,22 @@ class Screen():
                     # else:
                     #     m_buttons.opponent_turn.COLOR = (255, 0, 0)
                     #     m_buttons.your_turn.COLOR = (140, 140, 140)
+                    # кнопка магазину
                     sprite = m_buttons.shop
+                    # виводимо кнопку на екран
                     m_buttons.shop.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                     # sprite = m_buttons.your_turn
                     # m_buttons.your_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
+                    # кнопка черги опонента
                     sprite = m_buttons.opponent_turn
+                    # виводимо кнопку на екран
                     m_buttons.opponent_turn.blit(self.screen,sprite.x*multiplier_x,sprite.y*multiplier_y,sprite.width*multiplier_x,sprite.height*multiplier_y,multiplier_x,multiplier_y)
                 else:
+                    # кнопка очікування
                     wait = m_buttons.wait
+                    # виводимо кнопку на екран
                     wait.blit(self.screen,wait.x*multiplier_x,wait.y*multiplier_y,wait.width*multiplier_x,wait.height*multiplier_y,multiplier_x,multiplier_y)
-
+            #  перевірка досягнень
             elif m_data.progression == 'achievements':
                 square = pygame.Surface((m_buttons.description_.rect.width,m_buttons.description_.rect.height))
                 square.fill((0,0,0))
@@ -458,7 +534,7 @@ class Screen():
                 x,y =50,50
                 for achievement_code in m_data.achievements_data:
                     achievement = m_data.achievements_data[achievement_code]
-                    
+                    # перевірка наявності досягнень
                     if achievement['has'] == 'True':
                         m_data.list_achievements_view[achievement_code].blit(self.screen,
                                  x*multiplier_x,
@@ -470,9 +546,27 @@ class Screen():
                         if x == 850:
                             x = 50
                             y += 200
-            pygame.mouse.set_visible(False)
-            x,y = pygame.mouse.get_pos()
-            m_images.target.blit(self.screen,x-25*multiplier_x,y-25*multiplier_y,50*multiplier_x,50*multiplier_y,multiplier_x,multiplier_y)
+            # якщо знаходимося в грі то 
+            if m_data.progression == 'game':
+                # прибираємо видимість мишки
+                pygame.mouse.set_visible(False)
+                # задаємо мишці координати появи
+                x,y = pygame.mouse.get_pos()
+                t= m_images.target
+                # відображаємо картинку цілі на екран
+                m_images.target.blit(self.screen,
+                                     x-50*multiplier_x,
+                                     y-50*multiplier_y,
+                                     100*multiplier_x,
+                                     100*multiplier_y,
+                                     multiplier_x,multiplier_y)
+            else:
+                # задаємо видимість мишки
+                pygame.mouse.set_visible(True)
+            # якщо знаходимося в звуках то
+            if m_data.progression == 'sounds':
+                # малюємо контрол 
+                m_controls.draw(self.screen,multiplier_x,multiplier_y)
             # оновлення екрану 
             m_transform.transform(self,multiplier_x,multiplier_y)
             # фпс

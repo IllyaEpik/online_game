@@ -381,8 +381,6 @@ def attack(pos: tuple,multiplier_x,multiplier_y):
                             m_data.coins -= m_data.cost_data[m_data.attack]
                             # функція вогню
                             fire()
-                            # нове досягнення
-                            m_achievements.achievement('used radar')
                             # змінюємо ширину
                             width = 55.7 * multiplier_x
                             # змінюємо висоту
