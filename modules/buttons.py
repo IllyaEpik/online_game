@@ -536,22 +536,37 @@ class Button(Image):
         # якщо картинка задана 
         self.rect = pygame.Rect(x,y,width,height)
         # ім'я не повинно дорівнювати ""
+        yes = 0
+        if self.image and self.image.get_width() != int(width) and self.TEXT:
+            yes = 1
+            
+        
         if self.name != "":
             # відображення картинки 
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
+        if yes:
+            font_size = 0
+            while True:
+                text_width, text_height = pygame.font.SysFont('algerian', font_size).size(self.TEXT)
+                if text_width > self.rect.width * 0.8: # Занимает не более 80% ширины
+                    self.current_size = font_size
+                    self.FONT = pygame.font.SysFont(None, font_size)
+                    break
+                print(self.rect,font_size)
+                font_size += 1
         # перевіряєо шрифт і розмірмо мультиплеер та розмір
-        if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
-            # додаємо шрифт і розмір
-            self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
-            # задаємо поточний розмір
-            self.current_size= int((self.size*(multiplier_y/2)))
-            # self.size = int((self.size*multiplier_y))
+        # if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
+        #     # додаємо шрифт і розмір
+        #     self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
+        #     # задаємо поточний розмір
+        #     self.current_size= int((self.size*(multiplier_y/2)))
+        #     # self.size = int((self.size*multiplier_y))
         # поточний розмір не дорівнює розміру мультиплеера
-        elif self.current_size != int((self.size*multiplier_x)) and multiplier_x <= multiplier_y:
-            # додаємо шрифт і розмір
-            self.FONT = pygame.font.SysFont("algerian", int((self.size*(multiplier_x))))
-            # поточний розмір дорівнює розміру мультиплеера
-            self.current_size = int((self.size*multiplier_x))
+        # elif self.current_size != int((self.size*multiplier_x)) and multiplier_x <= multiplier_y:
+        #     # додаємо шрифт і розмір
+        #     self.FONT = pygame.font.SysFont("algerian", int(font_size))
+        #     # поточний розмір дорівнює розміру мультиплеера
+        #     self.current_size = int((self.size*multiplier_x))
         # перевіряємо тип тексту
         if type(self.TEXT) == type(""):
             # додаємо розмір і шрифт до тексту
@@ -596,12 +611,12 @@ class Button(Image):
             # цикл для перевірки тексту
             for text in self.TEXT:
                 # перевіряємо мультиплеери
-                if multiplier_x > multiplier_y:
-                    # додаємо шрифт і розмір до тексту
-                    self.FONT = pygame.font.SysFont("algerian", int((40*multiplier_y)))
-                else:
-                    # додаємо шрифт і розмір до тексту
-                    self.FONT = pygame.font.SysFont("algerian", int((40*multiplier_x)))
+                # if multiplier_x > multiplier_y:
+                #     # додаємо шрифт і розмір до тексту
+                #     self.FONT = pygame.font.SysFont("algerian", int((40*multiplier_y)))
+                # else:
+                #     # додаємо шрифт і розмір до тексту
+                #     self.FONT = pygame.font.SysFont("algerian", int((40*multiplier_x)))
                 # додаємо до висоти тексту шрифт і розмір 
                 height = self.FONT.size(text)[1]
                 # додаємо шрифт і розмір до тексту
