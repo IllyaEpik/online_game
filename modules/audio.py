@@ -11,15 +11,18 @@ pygame.mixer.init()
 # pygame.mixer.music.set_volume(0.5)
 # створення класу для роботи з аудіо
 main_volume = 0.5
+soundtrack = 0.5
 try:
     with open(m_data.path+m_data.type+'volume.txt', "r") as file:
         text = file.read()
         if 0 <= float(text) <= 1:
             main_volume = float(text)
+            print(main_volume)
 except Exception as error:
     print(error)
     with open(m_data.path+m_data.type+'volume.txt', "w") as file:
         file.write(str(main_volume))
+        print("FFFFFFFFFFFFFFFFFFF")
 class Audio():
     '''
         >>> Додає фонову музику
@@ -44,13 +47,13 @@ class Audio():
         # list_audio.append(self)
     def volume(self, volume):
         self.audio.set_volume(volume)
-
+        if 'Soundtracks' in self.name:
+            self.audio.set_volume(soundtrack*main_volume)
     # метод для відтворення аудіо
     def play(self, volume = None):
-        global main_volume
+        global main_volume,soundtrack
         '''
             >>> Починає музику
-            
         '''
         try:
             # зупиняємо музику
@@ -58,6 +61,9 @@ class Audio():
             # відтворюємо музику
             if volume:
                 self.audio.set_volume(volume)
+            elif 'Soundtracks' in self.name:
+                print(soundtrack)
+                self.audio.set_volume(soundtrack*main_volume)
             else:
                 self.audio.set_volume(main_volume)
             self.audio.play(loops= self.loops)
@@ -95,8 +101,6 @@ except Exception as error:
 list_audio = []
 # задаємо саундтрек для доріжки звуку
 track = Audio(f'Soundtracks/{name}')
-# задаємо саундтрек для доріжки звуку
-# track_war = Audio('Soundtrack_war')
 # додаємо звук покупки
 buying = Audio('buying',0)
 # перевіряємо чи не дорівнює звук значенню False

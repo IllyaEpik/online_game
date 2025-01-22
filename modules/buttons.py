@@ -1055,12 +1055,7 @@ m_data.list_blits["game"].append(your_nickname)
 m_data.list_blits["game"].append(enemy_nickname)
 # до списку відображення програшу додаємо помсту і вихід
 m_data.list_blits["lose"].extend([revenge, out])
-# m_data.list_blits['win'].extend([revenge,out])
 # цикл для досягнень_кода в досягненнях_дати
 for achievement_code in m_data.achievements_data:
     # список прегляду доягнень, наслідування класу Button і задання необхідних параметрів 
     m_data.list_achievements_view[achievement_code] = Button(fun=f"set_achievements/{achievement_code}",width=50,height=50,x=0,y=0,name=f"achievements/{achievement_code}",progression='NONE',text='')
-# for achievement in m_data.list_achievements_view:
-#     pass
- 
-# achievements

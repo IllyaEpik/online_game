@@ -67,7 +67,7 @@ def fun(pos:list,multiplier_x,multiplier_y):
 
         m_audio.main_volume = (pos[0]-(942*multiplier_x))/(300*multiplier_x)
         print(m_audio.main_volume,pos[0]-(942*multiplier_x),300*multiplier_x) 
-        m_audio.track.volume(m_audio.main_volume)
+        m_audio.track.volume(m_audio.main_volume*m_audio.soundtrack)
         with open(m_data.path+m_data.type+'volume.txt', "w") as file:
             file.write(str(m_audio.main_volume))
 
