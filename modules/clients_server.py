@@ -9,7 +9,7 @@ import modules.buttons as m_buttons
 import modules.transform as m_transform
 import modules.achievements as m_achievements
 import modules.audio as m_audio
-import socket,random,os
+import socket,random,os,time
 import modules.animations as m_animations
 # створюємо функцію для відправкм даних на сервер
 def send(data:bytes):
@@ -181,8 +181,7 @@ def activate():
                                         if pos[3] == '1':
                                             volume = float(pos[3])
                                         else:
-                                            for c in range(1000):
-                                                print('YYYYYYYYYYYYYYYYYYYEEEEEEEEEEEEEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSSS')
+                                            pass
                                     except Exception as error:
                                         
                                         pass
@@ -213,11 +212,11 @@ def activate():
                                         width= 55.7,
                                         height=55.7,
                                     )
-                                    m_audio.explosion.play(volume)
                                     # додаємо картинку до списку вибуху
                                     m_data.list_explosions.append([image,pos[0],pos[1]])
                                 except Exception as error:
                                     pass
+                            m_audio.explosion.play(volume)
                             list_to_del.append(counter)
                         # записуємо "pass" в дату
                         elif "pass" in data[0]:
