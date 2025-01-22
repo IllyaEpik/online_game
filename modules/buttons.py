@@ -451,15 +451,14 @@ class Button(Image):
                     # до опису додаємо шрифт та розмір
                     description.FONT = pygame.font.SysFont("algerian", int((40*multiplers[0])))
     
-                # font_size = 0
-                # while True:
-                #     text_width, text_height = pygame.font.SysFont('algerian', font_size).size(description.TEXT)
-                #     if text_width > description.width*multiplers[0] * 0.8: # Занимает не более 80% ширины
-                #         description.current_size = font_size
-                #         description.FONT = pygame.font.SysFont(None, font_size)
-                #         break
-                #     print(self.rect,font_size)
-                #     font_size += 1
+                font_size = 0
+                while True:
+                    text_width, text_height = pygame.font.SysFont('algerian', font_size).size(description.TEXT)
+                    if text_width > description.width*multiplers[0] * 0.8: # Занимает не более 80% ширины
+                        description.current_size = font_size
+                        description.FONT = pygame.font.SysFont(None, font_size)
+                        break
+                    font_size += 1
                 # додаємо текст опису до шрифту і розміру опису
                 size = description.FONT.size(" ".join(description.TEXT))
                 # перевіряємо розмір опису
