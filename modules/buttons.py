@@ -979,9 +979,7 @@ play = Button(x = 900, y = 720, name = "", fun= 'play', width = 200, height = 65
 revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "win", fun= "win_lose")
 # наслідуємо клас Button і задаємо необхідні параметри
 out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text = "", fun = "check")
-# m_data.list_blits["pre-game"].extend([rotate,play])
-# revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "lose", fun= "win_lose")
-# out = Button(height = 80, width = 518, x = 0, y = 712, progression = "lose", text = "", fun = "check")
+
 # наслідуємо клас Button і задаємо необхідні параметри
 music =Button(width = 76, height = 72, x = nickname.width + 50, y = 45, text = "", fun = "music", name =  "music")
 # наслідуємо клас Button і задаємо необхідні параметри
@@ -990,9 +988,6 @@ music3 =Button(width = 76, height = 72, x = 830, y = 30, text = "", fun = "music
 if m_audio.track.stoped:
     music3.name = 'play'
     music3.update_image()
-# plus = Button('+',50,50,1200,50,'','sounds','+',70,(255,255,255))
-# plus.second_color = [0,0,0]
-
 # до списку відображення гри додаємо музику
 m_data.list_blits['game'].append(music2)
 # наслідуємо клас Button і задаємо необхідні параметри
@@ -1013,7 +1008,6 @@ controls = Button(width= 500, height= 100, name= "button_start", text= "controls
 controls_ = Button(width= 75, height= 75, name= "", text= "", x= 10, y= 10, fun= "controls",progression='controls')
 # наслідуємо клас Button і задаємо необхідні параметри
 back = Button(width= 75, height= 75, name= "", text= "", x= 10, y= 10, fun= "change:controls",progression='keys')
-# m_data.list_blits['keys'].append(controls_)
 # до списку відображення музики додаємо повернення назад
 m_data.list_blits['sounds'].append(back)
 # наслідуємо клас Button і задаємо необхідні параметри
@@ -1030,14 +1024,12 @@ your_nickname = Button(y = 10, x = 20, width= 200, height= 40, size = 40)
 coins = Button(y = 30, x = 950, width= 300, height= 90, size = 40, progression= "shop", text = "0", name = "")
 # наслідуємо клас Button і задаємо необхідні параметри
 coins_ = Button(y = 688, x = 75, width= 230, height= 120, size = 40, progression= "game", text = "0", name = "")
-# coin = Button(y = 50, x = 970, width= 50, height= 50, size = 0, progression= "shop", text = "", name = "duplone")
 # наслідуємо клас Button і задаємо необхідні параметри
 description = Button(y = 175, x = 950, width= 300, height= 533, size = 20, progression= "shop", text = "select item")
 # наслідуємо клас Button і задаємо необхідні параметри
 description_ = Button(y = 150, x = 950, width= 300, height= 533, size = 20, progression= "achievements", text = "select achievement",color=(50,200,50))
 # наслідуємо клас Button і задаємо необхідні параметри
 buy = Button(y = 696, x = 957, width= 321, height= 145, size = 40, progression= "shop", text = "", name = "",fun='buy')
-# m_data.list_blits["shop"].append(description)
 # наслідуємо клас Button і задаємо необхідні параметри
 homing_rocket = Button(y = 235, x = 15, width= 140, height= 140, progression= "shop", text = "", name = "", fun = "weapons/rockets/homing_rocket")
 # наслідуємо клас Button і задаємо необхідні параметри
@@ -1070,7 +1062,6 @@ if m_data.client_server == "server":
 if m_data.client_server == "client":
     # задаємо колір клієнту
     client.COLOR =(40,2,255)
-# your_turn = Button(width= 272, height= 66, x= 133, y= 712, text= "your step", progression= "", color=(0, 0, 255),size=50)
 # наслідуємо клас Button і задаємо необхідні параметри
 opponent_turn = Button(width= 350, height= 66, x= 800, y= 712, text= "turn", progression= "", color = (255, 0, 0),size=50)
 # до списку відображення гри додаємо твій нікнейм
