@@ -200,7 +200,6 @@ class Button(Image):
                 return True
             # перевіряємо покупку
             elif self.function == "buy":
-                print('hallo')
                 try:
                     # якщо не атакуємо
                     
@@ -451,6 +450,16 @@ class Button(Image):
                 else:
                     # до опису додаємо шрифт та розмір
                     description.FONT = pygame.font.SysFont("algerian", int((40*multiplers[0])))
+    
+                # font_size = 0
+                # while True:
+                #     text_width, text_height = pygame.font.SysFont('algerian', font_size).size(description.TEXT)
+                #     if text_width > description.width*multiplers[0] * 0.8: # Занимает не более 80% ширины
+                #         description.current_size = font_size
+                #         description.FONT = pygame.font.SysFont(None, font_size)
+                #         break
+                #     print(self.rect,font_size)
+                #     font_size += 1
                 # додаємо текст опису до шрифту і розміру опису
                 size = description.FONT.size(" ".join(description.TEXT))
                 # перевіряємо розмір опису
@@ -544,29 +553,19 @@ class Button(Image):
         if self.name != "":
             # відображення картинки 
             Image.blit(self, screen,x,y,width,height,multiplier_x,multiplier_y)
-        if yes:
-            font_size = 0
-            while True:
-                text_width, text_height = pygame.font.SysFont('algerian', font_size).size(self.TEXT)
-                if text_width > self.rect.width * 0.8: # Занимает не более 80% ширины
-                    self.current_size = font_size
-                    self.FONT = pygame.font.SysFont(None, font_size)
-                    break
-                print(self.rect,font_size)
-                font_size += 1
         # перевіряєо шрифт і розмірмо мультиплеер та розмір
-        # if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
-        #     # додаємо шрифт і розмір
-        #     self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
-        #     # задаємо поточний розмір
-        #     self.current_size= int((self.size*(multiplier_y/2)))
-        #     # self.size = int((self.size*multiplier_y))
+        if multiplier_x > multiplier_y and self.current_size !=int((self.size*multiplier_y)):
+            # додаємо шрифт і розмір
+            self.FONT = pygame.font.SysFont("algerian", int((self.size*multiplier_y)))
+            # задаємо поточний розмір
+            self.current_size= int((self.size*(multiplier_y/2)))
+            # self.size = int((self.size*multiplier_y))
         # поточний розмір не дорівнює розміру мультиплеера
-        # elif self.current_size != int((self.size*multiplier_x)) and multiplier_x <= multiplier_y:
-        #     # додаємо шрифт і розмір
-        #     self.FONT = pygame.font.SysFont("algerian", int(font_size))
-        #     # поточний розмір дорівнює розміру мультиплеера
-        #     self.current_size = int((self.size*multiplier_x))
+        elif self.current_size != int((self.size*multiplier_x)) and multiplier_x <= multiplier_y:
+            # додаємо шрифт і розмір
+            self.FONT = pygame.font.SysFont("algerian", int(self.size*multiplier_x))
+            # поточний розмір дорівнює розміру мультиплеера
+            self.current_size = int((self.size*multiplier_x))
         # перевіряємо тип тексту
         if type(self.TEXT) == type(""):
             # додаємо розмір і шрифт до тексту
@@ -606,6 +605,7 @@ class Button(Image):
         # превіряємо текст
         elif type(self.TEXT) == type([]):
             # кількість дорівнює 0 
+            
             count = 0
             # while True:
             # цикл для перевірки тексту
@@ -625,6 +625,15 @@ class Button(Image):
                 y = (self.rect.y+height*count) * multiplier_y+10
                 # задаємо x 
                 x = (self.rect.x)*multiplier_x+10
+                if self.second_color:
+                    # робимо анімацію удару
+                    render_stroke = self.FONT.render(text,True,self.second_color)
+                    # цикл для ряду
+                    for row in range(3):
+                        # цикл для клітинки
+                        for cell in range(3):
+                            # виводимо анімацію удару на екран
+                            screen.blit(render_stroke, (self.rect.x+10+row-1, y+cell-1))
                 # задаємо параметри до render
                 render = self.FONT.render(text,True,self.COLOR)
                 # задаємо прозорість 
