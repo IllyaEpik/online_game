@@ -3,7 +3,7 @@
     >>> Зупиняє звук і музику
 '''
 # імпортуємо модулі 
-import pygame, os 
+import pygame, os, time 
 import modules.data as m_data
 # ініцілізуємо звук
 pygame.mixer.init()
@@ -109,3 +109,23 @@ if m_data.read_data["sound"] != "False":
     track.play()
 # додаємо звук для вибуху
 explosion = Audio('blas',0)
+def edit_soundtrack():
+    global track 
+    while True:
+        if not track.stoped:
+            if int(track.audio.get_length()) <= m_data.count_of_music:
+                print(track.audio.get_length())
+                print("ok")
+                track.stop()
+                number = track.name.split("/")[1]
+                track.name = f"Soundtracks/{int(number)+1}"
+                if number == "5":
+                    track.name = f"Soundtracks/1"
+                track.audio = track.audio = pygame.mixer.Sound(os.path.abspath(f"{__file__}/../../audio/{track.name}.mp3"))
+                track.play()
+                m_data.count_of_music = 0
+                track.volume(main_volume * soundtrack)
+        else:
+            m_data.count_of_music = 0
+        time.sleep(1)
+        m_data.count_of_music += 1

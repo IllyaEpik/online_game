@@ -17,7 +17,9 @@ import modules.transform as m_transform
 import modules.audio as m_audio
 import modules.achievements as m_achievements
 import modules.animations as m_animations
+threading.Thread(target=m_audio.edit_soundtrack,daemon=True).start()
 threading.Thread(target=m_animations.play_animation,daemon=True).start()
+
 # клас для налаштування головного вікна
 class Screen():
     '''
