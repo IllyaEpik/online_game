@@ -17,6 +17,7 @@ import modules.transform as m_transform
 import modules.audio as m_audio
 import modules.achievements as m_achievements
 import modules.animations as m_animations
+import modules.controls as m_controls
 threading.Thread(target=m_audio.edit_soundtrack,daemon=True).start()
 threading.Thread(target=m_animations.play_animation,daemon=True).start()
 
@@ -87,6 +88,14 @@ class Screen():
                                 sprite.button_start(event)
                             except:
                                 pass
+                        if m_controls.off_change_button.rect.collidepoint(event.pos):
+                            if m_controls.off_change_button.TEXT == 'Off Change':
+                                m_data.is_change = False
+                                m_controls.off_change_button.TEXT = 'On Change'
+                            else:
+                                m_data.is_change = True
+                                m_controls.off_change_button.TEXT = 'Off Change'
+                            
                         # перевірка виграшу і програшу
                         if m_data.progression in "winlose":
                             # m_buttons.revenge.button_start(event)
@@ -573,5 +582,6 @@ class Screen():
             m_transform.transform(self,multiplier_x,multiplier_y)
             # фпс
             self.clock.tick(60)
+
 # створення екземпляру классу
 screen = Screen()

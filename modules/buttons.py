@@ -969,7 +969,6 @@ play = Button(x = 900, y = 720, name = "", fun= 'play', width = 200, height = 65
 revenge = Button(height = 90, width = 372, x = 28, y = 600, text = "", progression = "win", fun= "win_lose")
 # наслідуємо клас Button і задаємо необхідні параметри
 out = Button(height = 80, width = 518, x = 0, y = 712, progression = "win", text = "", fun = "check")
-
 # наслідуємо клас Button і задаємо необхідні параметри
 music =Button(width = 76, height = 72, x = nickname.width + 50, y = 45, text = "", fun = "music", name =  "music")
 # наслідуємо клас Button і задаємо необхідні параметри

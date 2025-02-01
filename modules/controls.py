@@ -59,6 +59,10 @@ for control in controls:
 list_keys = []
 # створюємо список для музики
 list_musics = []
+
+off_change_button = m_buttons.Button(progression='sounds', name='off_change', y=y, x=x, width=500, height=100, fun='off_change', text='Off Change')
+list_musics.append(off_change_button)
+
 def draw(screen,multiplier_x=1,multiplier_y=1):
     pygame.draw.line(screen,(255,255,255),(942*multiplier_x,60*multiplier_y),(1242*multiplier_x,60*multiplier_y),25)
     pygame.draw.line(screen,(50,255,50),(942*multiplier_x,60*multiplier_y),(942*multiplier_x+(300*m_audio.main_volume*multiplier_x),60*multiplier_y),25)
@@ -137,3 +141,5 @@ def music_edit(current):
         y -= 120
 # Виклик функції 
 music_edit(None)
+
+

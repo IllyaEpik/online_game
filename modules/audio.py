@@ -17,12 +17,12 @@ try:
         text = file.read()
         if 0 <= float(text) <= 1:
             main_volume = float(text)
-            print(main_volume)
+            # print(main_volume)
 except Exception as error:
     print(error)
     with open(m_data.path+m_data.type+'volume.txt', "w") as file:
         file.write(str(main_volume))
-        print("FFFFFFFFFFFFFFFFFFF")
+        # print("FFFFFFFFFFFFFFFFFFF")
 class Audio():
     '''
         >>> Додає фонову музику
@@ -62,7 +62,7 @@ class Audio():
             if volume:
                 self.audio.set_volume(volume)
             elif 'Soundtracks' in self.name:
-                print(soundtrack)
+                # print(soundtrack)
                 self.audio.set_volume(soundtrack*main_volume)
             else:
                 self.audio.set_volume(main_volume)
@@ -112,20 +112,22 @@ explosion = Audio('blas',0)
 def edit_soundtrack():
     global track 
     while True:
-        if not track.stoped:
-            if int(track.audio.get_length()) <= m_data.count_of_music:
-                print(track.audio.get_length())
-                print("ok")
-                track.stop()
-                number = track.name.split("/")[1]
-                track.name = f"Soundtracks/{int(number)+1}"
-                if number == "5":
-                    track.name = f"Soundtracks/1"
-                track.audio = track.audio = pygame.mixer.Sound(os.path.abspath(f"{__file__}/../../audio/{track.name}.mp3"))
-                track.play()
-                m_data.count_of_music = 0
-                track.volume(main_volume * soundtrack)
-        else:
-            m_data.count_of_music = 0
-        time.sleep(1)
-        m_data.count_of_music += 1
+        if m_data.is_change == True:
+            if not track.stoped:
+                if int(track.audio.get_length()) <= m_data.count_of_music:
+                    # print(track.audio.get_length())
+                    # print("ok")
+                    track.stop()
+                    number = track.name.split("/")[1]
+                    track.name = f"Soundtracks/{int(number)+1}"
+                    if number == "5":
+                        track.name = f"Soundtracks/1"
+                    track.audio = track.audio = pygame.mixer.Sound(os.path.abspath(f"{__file__}/../../audio/{track.name}.mp3"))
+                    track.play()
+                    m_data.count_of_music = 0
+                    track.volume(main_volume * soundtrack)
+                else:
+                    m_data.count_of_music = 0
+                time.sleep(1)
+                m_data.count_of_music += 1
+
