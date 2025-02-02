@@ -112,11 +112,9 @@ explosion = Audio('blas',0)
 def edit_soundtrack():
     global track 
     while True:
-        if m_data.is_change == True:
-            if not track.stoped:
-                if int(track.audio.get_length()) <= m_data.count_of_music:
-                    # print(track.audio.get_length())
-                    # print("ok")
+        if not track.stoped:
+            if int(track.audio.get_length()) <= m_data.count_of_music:
+                if m_data.is_change:
                     track.stop()
                     number = track.name.split("/")[1]
                     track.name = f"Soundtracks/{int(number)+1}"
@@ -128,6 +126,8 @@ def edit_soundtrack():
                     track.volume(main_volume * soundtrack)
                 else:
                     m_data.count_of_music = 0
-                time.sleep(1)
-                m_data.count_of_music += 1
+            else:
+                print('hhhhhhhhhhhhhhhhhhhh',m_data.is_change,int(track.audio.get_length()), m_data.count_of_music)
+            m_data.count_of_music += 1
+        time.sleep(1)
 

@@ -89,7 +89,7 @@ class Screen():
                             except:
                                 pass
                         if m_controls.off_change_button.rect.collidepoint(event.pos):
-                            if m_controls.off_change_button.TEXT == 'Off Change':
+                            if m_data.is_change:
                                 m_data.is_change = False
                                 m_controls.off_change_button.TEXT = 'On Change'
                             else:
@@ -151,12 +151,17 @@ class Screen():
                                                 control[1] = 1
                                                 control[0].COLOR = (50,50,255)
                                                 control[0].second_color = (0,0,0)
+                                                stoped = m_audio.track.stoped
                                                 # трек зупиняється
                                                 m_audio.track.stop()
                                                 # зміна треку
                                                 m_audio.track = m_audio.Audio('soundtracks/'+key[0].TEXT)
-                                                # трек грається
-                                                m_audio.track.play()
+                                                if not stoped:
+                                                    # трек грається
+                                                    m_audio.track.play()
+                                                else:
+                                                    rect = m_buttons.music3.rect
+                                                    m_buttons.music3.button_start([rect.x + 1, rect.y + 1])
                                                 # безпечно відкриваємо файл з музикою
                                                 with open(m_data.path+m_data.type+'music.txt', "w") as file:
                                                     # записуємо текст до ключа
