@@ -75,8 +75,12 @@ class Screen():
                         m_client.client.close()
                     except:
                         pass 
-                # коли кнопка миші натиснута
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                elif event.type == pygame.MOUSEWHEEL:
+                    m_controls.y_wheel += event.y * 5
+                    print(m_controls.y_wheel)
+                # коли кнопка миші наиснута
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    print(event.button)
                     # перехід
                     if m_transform.type_transform == None:
                         # цикл для спрайту в списку ефектів
@@ -112,8 +116,9 @@ class Screen():
                                     pass 
                         # перевірка музики
                         if m_data.progression == 'sounds':
+                
                             # натискання мишки
-                            m_controls.fun(pygame.mouse.get_pos(),multiplier_x,multiplier_y)
+                            m_controls.fun(pygame.mouse.get_pos(),multiplier_x,multiplier_y,[825*multiplier_x, 100*multiplier_y])
                             print(event.pos)
                             # перевірка x
                             if event.pos[0]< 800*multiplier_x:
@@ -139,15 +144,24 @@ class Screen():
                                     # музика не змінюється
                                     m_controls.music_edit(None)
                             else:
+
                                 # цикл для контролю в списку музики
                                 for control in m_controls.list_music:
+                                    print(control[0].rect)
+                                    # pygame.Rect()
                                     # перевірка контролю
                                     if control[1]:
                                         # цикл для ключів в списку музики
                                         for key in m_controls.list_musics:
                                             control = key
+                                            rect1 = control[0].rect.copy()
+                                            rect1.x += 825*multiplier_x
+                                            rect1.y += 100*multiplier_y
+                                            pygame.draw.rect(self.screen,(124,123,132),rect1)
+                                            print(control[0].rect)
+                                            print(rect1)
                                             # перевірка обводки контролю
-                                            if control[0].rect.collidepoint(event.pos):
+                                            if rect1.collidepoint(event.pos):
                                                 control[1] = 1
                                                 control[0].COLOR = (50,50,255)
                                                 control[0].second_color = (0,0,0)
@@ -236,9 +250,9 @@ class Screen():
                         # якщо прогресс дорівнює грі то
                         if m_data.progression == "game":
                             # якщо підключено
-                            if m_data.connected:
+                            # if m_data.connected:
                                 # кнопка магазину і старту
-                                m_buttons.shop.button_start(event)
+                            m_buttons.shop.button_start(event)
                             # вибір місця атаки
                             m_attack.attack(event.pos,multiplier_x,multiplier_y)
                             # m_buttons.shop.button_start(event)
@@ -360,15 +374,21 @@ class Screen():
                                  multiplier_x,multiplier_y)
             # перевірка музики
             if m_data.progression == 'sounds':
+                if int(m_controls.surface_sizes[0]*multiplier_x) != m_controls.music_surface.get_width() or int(m_controls.surface_sizes[1]*multiplier_y) != m_controls.music_surface.get_height(): 
+                    m_controls.music_surface = pygame.Surface([m_controls.surface_sizes[0]*multiplier_x, m_controls.surface_sizes[1]*multiplier_y])
+                    print("The best capybara")
+                m_controls.music_surface.fill((100, 100, 100))
+                m_controls.music_surface.set_colorkey((100,100,100))
                 # цикл для ключів в списку музики
                 for key in m_controls.list_musics:
                     sprite = key[0]
-                    sprite.blit(self.screen,
+                    sprite.blit(m_controls.music_surface,
                                  sprite.x*multiplier_x,
-                                 sprite.y*multiplier_y,
+                                 sprite.y*multiplier_y + m_controls.y_wheel,
                                  sprite.width*multiplier_x,
                                  sprite.height*multiplier_y,
                                  multiplier_x,multiplier_y)
+                self.screen.blit(m_controls.music_surface,[825*multiplier_x, 130*multiplier_y])
             # перевірка ключів
             if m_data.progression == 'keys':
                 # цикл для ключів в списку ключів
@@ -581,6 +601,7 @@ class Screen():
                 pygame.mouse.set_visible(True)
             # якщо знаходимося в звуках то
             if m_data.progression == 'sounds':
+                
                 # малюємо контрол 
                 m_controls.draw(self.screen,multiplier_x,multiplier_y)
             # оновлення екрану 

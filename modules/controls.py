@@ -11,6 +11,10 @@ controls = {
     "fire attack":[pygame.K_LSHIFT,None,None,None, ],
     'last item': [pygame.K_LCTRL,None,None,None,]
 }
+y_wheel = 0
+surface_sizes = [500,680]
+music_surface = pygame.Surface([500,600])
+music_surface.get_height
 # список для лрису
 descriptions = ['this key rotate your ship','this key do random attack on enemy field','if you attack when you press this key use fire rocket','use last item what you buy in shop (previous turn)']
 # словник з управлінням
@@ -66,7 +70,7 @@ list_musics.append(off_change_button)
 def draw(screen,multiplier_x=1,multiplier_y=1):
     pygame.draw.line(screen,(255,255,255),(942*multiplier_x,60*multiplier_y),(1242*multiplier_x,60*multiplier_y),25)
     pygame.draw.line(screen,(50,255,50),(942*multiplier_x,60*multiplier_y),(942*multiplier_x+(300*m_audio.main_volume*multiplier_x),60*multiplier_y),25)
-def fun(pos:list,multiplier_x,multiplier_y):
+def fun(pos:list,multiplier_x,multiplier_y,hk):
     if 1242*multiplier_x> pos[0] > 942*multiplier_x and 50*multiplier_y < pos[1] < 80*multiplier_y:
 
         m_audio.main_volume = (pos[0]-(942*multiplier_x))/(300*multiplier_x)
@@ -117,13 +121,13 @@ def music_edit(current):
     # Використовуємо глобальну змінну list_musics, щоб зберігати кнопки
     global list_musics
     # Початкова координата y для кнопок
-    y = 700
+    y = 600
     # Початкова координата x для кнопок
-    x = 825
+    x = 0
     # Очищуємо список vepbrb
     list_musics = []
     # Цикл для створення 4 кнопок
-    for count in range(5):
+    for count in range(len(music['soundtracks'])):
         # Друк порожнього рядка 
         print()
         # перевіряємо поточне
@@ -141,5 +145,7 @@ def music_edit(current):
         y -= 120
 # Виклик функції 
 music_edit(None)
+def music_download():
+    pass 
 
 
