@@ -29,15 +29,18 @@ class Audio():
         >>> Встановлює гучність для звуку
     '''
     # ініцілізуємо клас аудіо 
-    def __init__(self, name: str, loops: int = -1,volume = 0.5,max_time = "any"): 
+    def __init__(self, name: str, loops: int = -1,volume = 0.5,max_time = "any",user = True): 
         global list_audio
         # створюємо змінні
         self.audio = None 
         self.name = name 
         self.loops = loops
         self.stoped = True
-        # додаємо фонову музику
-        self.audio = pygame.mixer.Sound(os.path.abspath(f"{__file__}/../../audio/{self.name}.mp3"))
+        # додаємо музику
+        if user:
+            self.audio = pygame.mixer.Sound(os.path.abspath(f"{__file__}/../../audio/{self.name}.mp3"))
+        else:
+            self.audio = pygame.mixer.Sound(self.name)
         # встановлюємо гучність звуку
         self.audio.set_volume(volume)
         # перевіряємо чи дорівнює максимальний час будь-якому
@@ -55,6 +58,7 @@ class Audio():
         '''
             >>> Починає музику
         '''
+        print(self.audio.get_length(),'times')
         try:
             # зупиняємо музику
             self.stoped = False

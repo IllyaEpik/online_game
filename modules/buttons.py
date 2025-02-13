@@ -77,10 +77,12 @@ class Button(Image):
             self.select = False
     # метод з кнопкою старт
     def button_start(self, event):
+        global stroke
         '''
             >>> Створює кнопку старт
             >>> Перевіряє чи кнопка натиснута
         '''
+        # print(type(self.function) == type(stroke),self.name)
         # перевіряємо подію
         if type(event) == pygame.event.Event:
             # ставимо позицію
@@ -90,11 +92,15 @@ class Button(Image):
             pos = event
         # якщо кнопка натиснута
         if self.rect.collidepoint(pos):
+            # print(self.name,'hehe')
             if type(self.function) == type("123") and self.function.split(":")[0] == "c_s":
                 m_data.client_server = self.function.split(":")[1]
                 server.COLOR = (0,0,0)
                 client.COLOR = (0,0,0)
                 self.COLOR =(40,2,255)
+            elif type(self.function) == type(stroke):
+                # print('hahahah')
+                self.function(self)
             # якщо функція корабль то
             elif self.function == "ship":
                 # цикл для всіх кораблів
@@ -503,6 +509,7 @@ class Button(Image):
                     # розділяємо строки з описом за допомогою '/'
                     description.TEXT = [self.function.split('/')[2]+': '] +  list_text
             # превіряємо чи ми в 'start_game'
+            
             elif self.function == 'start_game':
                 # превіряємо текст нікнейму
                 if m_data.client_server and nickname.TEXT:

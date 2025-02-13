@@ -76,7 +76,8 @@ class Screen():
                     except:
                         pass 
                 elif event.type == pygame.MOUSEWHEEL:
-                    m_controls.y_wheel += event.y * 5
+                    if m_controls.y_wheel + event.y * 5 < -125:
+                        m_controls.y_wheel += event.y * 5
                     print(m_controls.y_wheel)
                 # коли кнопка миші наиснута
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -101,7 +102,7 @@ class Screen():
                                 m_controls.off_change_button.TEXT = 'Off Change'
                             
                         # перевірка виграшу і програшу
-                        if m_data.progression in "winlose":
+                        elif m_data.progression in "winlose":
                             # m_buttons.revenge.button_start(event)
                             # перевірка натискання поза кнопкою старт
                             if m_buttons.out.button_start(event):
@@ -115,8 +116,8 @@ class Screen():
                                 except:
                                     pass 
                         # перевірка музики
-                        if m_data.progression == 'sounds':
-                
+                        elif m_data.progression == 'sounds':
+                            t = pygame.time.get_ticks()
                             # натискання мишки
                             m_controls.fun(pygame.mouse.get_pos(),multiplier_x,multiplier_y,[825*multiplier_x, 100*multiplier_y])
                             print(event.pos)
@@ -132,7 +133,7 @@ class Screen():
                                         control[0].COLOR = (50,50,255)
                                         control[0].second_color = (0,0,0)
                                         # зміна треку
-                                        m_controls.music_edit('soundtracks')
+                                        m_controls.music_edit('soundtracks',multiplier_x)
                                         # трек змінен
                                         yes = 1
                                     else:
@@ -142,27 +143,33 @@ class Screen():
                                 # якщо трек не змінен
                                 if not yes:
                                     # музика не змінюється
-                                    m_controls.music_edit(None)
+                                    m_controls.music_edit(None,multiplier_x)
                             else:
 
                                 # цикл для контролю в списку музики
                                 for control in m_controls.list_music:
-                                    print(control[0].rect)
+                                    # print(control[0].rect)
                                     # pygame.Rect()
                                     # перевірка контролю
-                                    if control[1]:
+                                    if control[2]:
                                         # цикл для ключів в списку музики
                                         for key in m_controls.list_musics:
                                             control = key
+                                            # print('sos')
+                                            control[1].rect.x += 825*multiplier_x
+                                            control[1].rect.y += 100*multiplier_y
+                                            control[1].button_start(event.pos)
+                                            control[1].rect.x -= 825*multiplier_x
+                                            control[1].rect.y -= 100*multiplier_y
                                             rect1 = control[0].rect.copy()
                                             rect1.x += 825*multiplier_x
                                             rect1.y += 100*multiplier_y
                                             pygame.draw.rect(self.screen,(124,123,132),rect1)
-                                            print(control[0].rect)
-                                            print(rect1)
+                                            # print(control[1].rect,event.pos,control[1].name)
+                                            # print(rect1)
                                             # перевірка обводки контролю
                                             if rect1.collidepoint(event.pos):
-                                                control[1] = 1
+                                                control[2] = 1
                                                 control[0].COLOR = (50,50,255)
                                                 control[0].second_color = (0,0,0)
                                                 stoped = m_audio.track.stoped
@@ -181,13 +188,13 @@ class Screen():
                                                     # записуємо текст до ключа
                                                     file.write(key[0].TEXT)
                                             else:
-                                                control[1] = 0
+                                                control[2] = 0
                                                 control[0].COLOR = (0,0,0)
                                                 control[0].second_color = (255,255,255)
                                         # зупинка
                                         break
                         # перевірка ключів
-                        if m_data.progression == 'keys':
+                        elif m_data.progression == 'keys':
                             print(event.pos)
                             # перевірка x
                             if event.pos[0]< 800*multiplier_x:
@@ -230,7 +237,7 @@ class Screen():
                                         # зупинка
                                         break
                         # якщо прогресс дорівнює меню то
-                        if m_data.progression == "menu":
+                        elif m_data.progression == "menu":
                             # вибір місця написання
                             m_buttons.input.activate(event) 
                             m_buttons.nickname.activate(event)
@@ -240,7 +247,7 @@ class Screen():
                             for achievement in m_data.list_achievements_view:
                                 m_data.list_achievements_view[achievement].button_start(event)
                         # якщо прогресс дорівнює пре-грі то    
-                        if m_data.progression == "pre-game":
+                        elif m_data.progression == "pre-game":
                             # автоматична розтановка кораблів
                             m_buttons.auto.randomship(event.pos)
                             # цикл всіх кораблів
@@ -248,7 +255,7 @@ class Screen():
                                 # виділення кораблів
                                 ship.activate(event, multiplier_x, multiplier_y)
                         # якщо прогресс дорівнює грі то
-                        if m_data.progression == "game":
+                        elif m_data.progression == "game":
                             # якщо підключено
                             # if m_data.connected:
                                 # кнопка магазину і старту
@@ -382,6 +389,13 @@ class Screen():
                 # цикл для ключів в списку музики
                 for key in m_controls.list_musics:
                     sprite = key[0]
+                    sprite.blit(m_controls.music_surface,
+                                 sprite.x*multiplier_x,
+                                 sprite.y*multiplier_y + m_controls.y_wheel,
+                                 sprite.width*multiplier_x,
+                                 sprite.height*multiplier_y,
+                                 multiplier_x,multiplier_y)
+                    sprite = key[1]
                     sprite.blit(m_controls.music_surface,
                                  sprite.x*multiplier_x,
                                  sprite.y*multiplier_y + m_controls.y_wheel,

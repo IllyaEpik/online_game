@@ -3,7 +3,11 @@ import modules.data as m_data
 import modules.audio as m_audio
 import modules.images as m_images
 import modules.buttons as m_buttons
-import pygame
+import customtkinter
+import pygame, os, shutil
+screen = customtkinter.CTk()
+screen.withdraw()
+# print()
 # словник для крнтролю
 controls = {
     "rotate ship":[pygame.K_r,None,None,None,],
@@ -11,7 +15,7 @@ controls = {
     "fire attack":[pygame.K_LSHIFT,None,None,None, ],
     'last item': [pygame.K_LCTRL,None,None,None,]
 }
-y_wheel = 0
+y_wheel = -120
 surface_sizes = [500,680]
 music_surface = pygame.Surface([500,600])
 music_surface.get_height
@@ -114,7 +118,7 @@ def text_edit(current):
 # до функції редагування тексту додаємо значення None
 text_edit(None)
 # створює функцію для редагування музики
-def music_edit(current):
+def music_edit(current,multiplier_x):
     '''
         >>> Змінює саундтрек
     '''
@@ -126,10 +130,12 @@ def music_edit(current):
     x = 0
     # Очищуємо список vepbrb
     list_musics = []
+    if not current:
+        current = 'soundtracks'
     # Цикл для створення 4 кнопок
     for count in range(len(music['soundtracks'])):
         # Друк порожнього рядка 
-        print()
+        # print()
         # перевіряємо поточне
         if current:
             # беремо музику з тексту
@@ -138,14 +144,28 @@ def music_edit(current):
             # до тексту задаємо значення None
             text = 'None'
         # друк тексту кнопки, поточного значення і постійного значення 10
-        print(text, current, 10)
+        # print(text, current, 10)
         # Додаємо нову кнопку в список з музикою
-        list_musics.append([m_buttons.Button(width=400, height=100, x=x, y=y, text=text, progression='Noke'), 0, count])
+        list_musics.append([m_buttons.Button(width=100, height=100, x=x, y=y, text=text, progression='Noke'),
+                            # m_buttons.Button(width=400, height=100, x=x - 50 * multiplier_x, y=y, text=text, progression='Noke'),
+                            m_buttons.Button(width=100, height=100, x=x + 150 * multiplier_x, y=y, text="", progression=text, name = "upload",fun=music_upload),
+                            0, count])
+        # print(x,y)
         # Змінюємо координату y для розташування кнопок вертикально
         y -= 120
+def music_upload(self:m_buttons.Button):
+    # print('haaaaads')
+    filename = customtkinter.filedialog.askopenfilename(filetypes=(('MP3','*.mp3'),("WAV","*.wav"),('OGG','*.ogg'))) 
+    r = None
+    # with open(filename,'r') as file:
+    #     r = file
+    #     os.path
+    # with open(,'w') as file:
+    #     file.writable(r)
+    # 
+    # os.remove()
+    shutil.copy(filename,os.path.abspath(m_data.path+f"/../audio/Soundtracks/{self.progression}.{filename.split('.')[-1]}"))
 # Виклик функції 
-music_edit(None)
-def music_download():
-    pass 
+music_edit(None,1)
 
 
